@@ -64,3 +64,6 @@ name = "lang#typescriptreact"
 [[custom_plugins]]
 repo = 'Shougo/vimproc.vim'
 merged = true
+
+[[layers]]
+  name = "debug"
