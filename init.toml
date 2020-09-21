@@ -36,9 +36,21 @@ auto_completion_complete_with_key_sequence = "nil"
 auto_completion_complete_with_key_sequence_delay = 0.1
 
 [[layers]]
+  name = "lang#toml"
+
+[[layers]]
+  name = "checkers"
+
+[[layers]]
+  name = "VersionControl"
+
+[[layers]]
 name = 'shell'
 default_position = 'top'
 default_height = 30
+
+[[layers]]
+  name = "core#statusline"
 
 [[layers]]
 name = "lsp"
