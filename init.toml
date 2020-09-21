@@ -66,4 +66,4 @@ repo = 'Shougo/vimproc.vim'
 merged = true
 
 [[layers]]
-  name = "debug"
+    name = "denite"
