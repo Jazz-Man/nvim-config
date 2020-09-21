@@ -53,13 +53,32 @@ default_height = 30
   name = "core#statusline"
 
 [[layers]]
+  name = "core"
+
+[[layers]]
+  name = "gtags"
+  gtagslabel = "pygments"
+
+[[layers]]
 name = "lsp"
 
 [[layers]]
   name = "lang#typescript"
 
 [[layers]]
-name = "lang#typescriptreact"
+  name = "lang#typescriptreact"
+
+[[layers]]
+  name = "lang#dockerfile"
+
+[[layers]]
+  name = "lang#html"
+
+[[layers]]
+name = "lang#javascript"
+
+[[layers]]
+  name = "lang#php"
 
 [[custom_plugins]]
 repo = 'Shougo/vimproc.vim'
@@ -67,3 +86,16 @@ merged = true
 
 [[layers]]
     name = "denite"
+
+[[layers]]
+  name = "edit"
+
+[[layers]]
+  name = "format"
+  format_on_save = true
+
+[[layers]]
+  name = "fzf"
+
+[[layers]]
+  name = "git"
