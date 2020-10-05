@@ -2,19 +2,18 @@
 
 lua << END
 local plugins = {
-  ["Nvim-Switch-Buffer"] = {
-    commands = { "SwitchBuffer" },
-    keys = { { "", "S" } },
-    loaded = false,
-    only_sequence = false,
-    only_setup = false,
-    path = "/Users/admin/.local/share/nvim/site/pack/packer/opt/Nvim-Switch-Buffer"
-  },
   ["packer.nvim"] = {
     loaded = false,
     only_sequence = false,
     only_setup = false,
-    path = "/Users/admin/.local/share/nvim/site/pack/packer/opt/packer.nvim"
+    path = "/Users/vasilsokolik/.local/share/nvim/site/pack/packer/opt/packer.nvim"
+  },
+  ["vim-airline"] = {
+    config = { "\27LJ\1\2ï\2\0\0\3\0\v\0\0314\0\0\0007\0\1\0007\0\2\0%\1\3\0'\2\1\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\4\0%\2\5\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\6\0%\2\a\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\b\0%\2\t\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\n\0'\2\1\0>\0\3\1G\0\1\0.airline#extensions#tabline#buffer_nr_show\25unique_tail_improved)airline#extensions#tabline#formatter\6|,airline#extensions#tabline#left_alt_sep\6 (airline#extensions#tabline#left_sep'airline#extensions#tabline#enabled\17nvim_set_var\bapi\bvim\0" },
+    loaded = false,
+    only_sequence = true,
+    only_setup = true,
+    path = "/Users/vasilsokolik/.local/share/nvim/site/pack/packer/opt/vim-airline"
   }
 }
 
@@ -139,15 +138,24 @@ end
 -- Runtimepath customization
 
 -- Pre-load configuration
+-- Setup for: vim-airline
+loadstring("\27LJ\1\2I\0\0\3\0\4\0\a4\0\0\0007\0\1\0007\0\2\0%\1\3\0)\2\2\0>\0\3\1G\0\1\0\18termguicolors\20nvim_set_option\bapi\bvim\0")()
+vim.cmd("packadd vim-airline")
 -- Post-load configuration
 -- Config for: formatter.nvim
 require [[config/formatter]]
 -- Config for: nvim-lspconfig
 require [[config/lsp]]
+-- Config for: completion-nvim
+loadstring("\27LJ\1\2É\1\0\0\2\0\6\0\0174\0\0\0007\0\1\0'\1\1\0:\1\2\0004\0\0\0007\0\1\0'\1\1\0:\1\3\0004\0\0\0007\0\1\0'\1\1\0:\1\4\0004\0\0\0007\0\1\0'\1\1\0:\1\5\0G\0\1\0!completion_enable_auto_paren$completion_matching_ignore_case\"completion_auto_change_source!completion_enable_auto_hover\6g\bvim\0")()
+-- Config for: nvim-colorizer.lua
+loadstring("\27LJ\1\2u\0\0\3\0\5\0\b4\0\0\0%\1\1\0>\0\2\0027\0\2\0003\1\3\0003\2\4\0>\0\3\1G\0\1\0\1\0\5\vcss_fn\2\vrgb_fn\2\tmode\15background\vhsl_fn\2\bcss\2\1\2\0\0\6*\nsetup\14colorizer\frequire\0")()
+-- Config for: nvim-tree.lua
+loadstring("\27LJ\1\2 \4\0\0\3\0\17\0C4\0\0\0007\0\1\0007\0\2\0%\1\3\0%\2\4\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\5\0'\2(\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\6\0003\2\a\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\b\0'\2\1\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\t\0'\2\1\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\n\0'\2\1\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\v\0'\2\1\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\f\0'\2\0\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\r\0'\2\1\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\14\0%\2\15\0>\0\3\0014\0\0\0007\0\1\0007\0\2\0%\1\16\0'\2\1\0>\0\3\1G\0\1\0\22lua_tree_tab_open\a:~\"lua_tree_root_folder_modifier\20lua_tree_git_hl\27lua_tree_hide_dotfiles\28lua_tree_indent_markers\20lua_tree_follow\24lua_tree_auto_close\23lua_tree_auto_open\1\4\0\0\t.git\17node_modules\v.cache\20lua_tree_ignore\19lua_tree_width\tleft\18lua_tree_side\17nvim_set_var\bapi\bvim\0")()
+-- Config for: vim-material
+loadstring("\27LJ\1\2Á\1\0\0\3\0\n\0\0184\0\0\0007\0\1\0007\0\2\0%\1\3\0%\2\4\0>\0\3\0014\0\0\0007\0\1\0007\0\5\0%\1\6\0>\0\2\0014\0\0\0007\0\1\0007\0\a\0%\1\b\0%\2\t\0>\0\3\1G\0\1\0\rmaterial\18airline_theme\17nvim_set_var\29colorscheme vim-material\17nvim_command\tdark\15background\20nvim_set_option\bapi\bvim\0")()
 -- Config for: nvim-treesitter
 require [[config/treesitter]]
--- Config for: nvim-colorizer.lua
-require'colorizer'.setup()
 -- Conditional loads
 -- Load plugins in order defined by `after`
 vim._update_package_paths()
@@ -159,10 +167,8 @@ endfunction
 
 
 " Command lazy-loads
-command! -nargs=* -range -bang -complete=file SwitchBuffer call s:load(['Nvim-Switch-Buffer'], { "cmd": "SwitchBuffer", "l1": <line1>, "l2": <line2>, "bang": <q-bang>, "args": <q-args> })
 
 " Keymap lazy-loads
-noremap <silent> S <cmd>call <SID>load(['Nvim-Switch-Buffer'], { "keys": "S", "prefix": "" })<cr>
 
 augroup packer_load_aucmds
   au!

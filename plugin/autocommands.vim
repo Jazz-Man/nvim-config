@@ -45,15 +45,15 @@ augroup numbertoggle
 augroup END
 
 " highlight yanked region, see `:h lua-highlight`
-augroup custom_highlight
-  autocmd!
-  autocmd ColorScheme * highlight YankColor ctermfg=59 ctermbg=41 guifg=#34495E guibg=#2ECC71
-augroup END
+" augroup custom_highlight
+"   autocmd!
+"   autocmd ColorScheme * highlight YankColor ctermfg=59 ctermbg=41 guifg=#34495E guibg=#2ECC71
+" augroup END
 
-augroup highlight_yank
-  autocmd!
-  au TextYankPost * silent! lua vim.highlight.on_yank{higroup="YankColor", timeout=300}
-augroup END
+" augroup highlight_yank
+"   autocmd!
+  " au TextYankPost * silent! lua vim.highlight.on_yank{higroup="YankColor", timeout=300}
+" augroup END
 
 if has ('autocmd') " Remain compatible with earlier versions
   augroup vimrc " Source vim configuration upon save

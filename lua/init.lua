@@ -1,22 +1,14 @@
---- packer.nvim
---- https://github.com/wbthomason/packer.nvim
-
+local global = require "utils/global"
+local A = require "utils/general"
 local com = vim.api.nvim_command
 
 local g = vim.g
-
-local fn = vim.fn
-local luv = vim.loop
-
-local packer_path = luv.os_homedir() .. "/.local/share/nvim/site/pack/packer/opt/packer.nvim"
 
 com("packadd packer.nvim")
 -- Built in plugins
 com("packadd! cfilter")
 com("packadd! matchit")
-
--- Temporary until https://github.com/neovim/neovim/pull/12632 is merged
-vim._update_package_paths()
+com("packadd! menu.vim")
 
 local packer = require("packer")
 local packages = require("packages")
@@ -26,11 +18,61 @@ packer.startup(
     for key, value in pairs(packages) do
       packer.use(value)
     end
-
-    -- Temporary until https://github.com/neovim/neovim/pull/12632 is merged
-    vim._update_package_paths()
   end
 )
+
+local M = {}
+
+function M.createdir()
+  local data_dir = {
+    global.cache_dir .. "backup",
+    global.cache_dir .. "session",
+    global.cache_dir .. "swap",
+    global.cache_dir .. "tags",
+    global.cache_dir .. "undo"
+  }
+  if not global.isdir(global.cache_dir) then
+    os.execute("mkdir -p " .. global.cache_dir)
+  end
+  for _, v in pairs(data_dir) do
+    if not global.isdir(v) then
+      os.execute("mkdir -p " .. v)
+    end
+  end
+end
+
+function M.leader_map()
+  g.mapleader = " "
+  A.Key_mapper("n", " ", "")
+  A.Key_mapper("x", " ", "")
+end
+
+function M.disable_distribution_plugins()
+  -- g.loaded_gzip = 1
+  -- g.loaded_tar = 1
+  -- g.loaded_tarPlugin = 1
+  -- g.loaded_zip = 1
+  -- g.loaded_zipPlugin = 1
+  -- g.loaded_getscript = 1
+  -- g.loaded_getscriptPlugin = 1
+  -- g.loaded_vimball = 1
+  -- g.loaded_vimballPlugin = 1
+  g.loaded_matchit = 1
+  g.loaded_matchparen = 1
+  -- g.loaded_2html_plugin = 1
+  -- g.loaded_logiPat = 1
+  -- g.loaded_rrhelper = 1
+  g.loaded_netrw = 1
+  g.loaded_netrwPlugin = 1
+  g.loaded_netrwSettings = 1
+  g.loaded_netrwFileHandlers = 1
+end
+
+function M.locad_core()
+  M.createdir()
+  -- M.disable_distribution_plugins()
+  M.leader_map()
+end
 
 -- Diagnostics
 g.diagnostic_enable_virtual_text = 1
@@ -39,15 +81,16 @@ g.diagnostic_enable_underline = 1
 g.diagnostic_insert_delay = 1
 g.diagnostic_virtual_text_prefix = "▢"
 
--- Dirvish
-g.loaded_netrwPlugin = 1
-g.dirvish_mode = [[:sort ,^.*[/],]]
 
 -- Fugitive
 g.fugitive_pty = 0
+
+M.locad_core()
 
 -- Mapping
 require "mapping"
 
 -- Command
 require "command"
+
+require "autocmd"

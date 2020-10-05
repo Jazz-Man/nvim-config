@@ -5,6 +5,8 @@ scriptencoding utf-8
 
 set fillchars=fold:\ ,vert:\│,msgsep:‾
 
+set hidden
+
 " Split window below/right when creating horizontal/vertical windows
 set splitbelow splitright
 
@@ -160,5 +162,8 @@ augroup cursor_color
   autocmd ColorScheme * highlight Cursor2 guifg=red guibg=red
 augroup END
 
-nnoremap <C-Left> :tabprevious<CR>
-nnoremap <C-Right> :tabnext<CR>
+
+nmap <silent> <A-Up> :wincmd k<CR>
+nmap <silent> <A-Down> :wincmd j<CR>
+nmap <silent> <A-Left> :wincmd h<CR>
+nmap <silent> <A-Right> :wincmd l<CR>

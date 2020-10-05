@@ -73,7 +73,6 @@ local function make_on_attach(config, bufnr)
     lsp_status.on_attach(client, bufnr)
     diagnostic.on_attach(client, bufnr)
     completion.on_attach(client, bufnr)
-    local opts = {noremap = true, silent = true}
     K.Key_mapper("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", true)
     K.Key_mapper("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", true)
     K.Key_mapper("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", true)
@@ -92,7 +91,7 @@ local function make_on_attach(config, bufnr)
     K.Key_mapper("n", "[d", ":NextDiagnostic<CR>", true)
     K.Key_mapper("n", "[D", "PrevDiagnosticCycle<CR>", true)
     K.Key_mapper("n", "]D", ":NextDiagnosticCycle<CR>", true)
-    K.Key_mapper("n", ",f", "<cmd>Format<CR>", true)
+    K.Key_mapper("n", "<Leader>f", "<cmd>Format<CR>", true)
     K.Key_mapper("n", "pd", "<cmd>lua peek_definition()<CR>", true)
 
     if client.resolved_capabilities.document_formatting then
@@ -100,10 +99,14 @@ local function make_on_attach(config, bufnr)
     end
 
     if client.resolved_capabilities.document_highlight then
-      vim.api.nvim_command("augroup lsp_aucmds")
-      vim.api.nvim_command("au CursorHold <buffer> lua vim.lsp.buf.document_highlight()")
-      vim.api.nvim_command("au CursorMoved <buffer> lua vim.lsp.buf.clear_references()")
-      vim.api.nvim_command("augroup END")
+      local group = {
+        lsp_aucmds = {
+          "CursorHold <buffer> lua vim.lsp.buf.document_highlight()",
+          "CursorMoved <buffer> lua vim.lsp.buf.clear_references()"
+        }
+      }
+
+      K.Create_augroup(group)
     end
 
     if config.after then

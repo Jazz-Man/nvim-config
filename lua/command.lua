@@ -10,9 +10,9 @@ com([[command! -nargs=0 SessionSave lua require 'utils/session'.SessionSave()]])
 com([[command! -nargs=* FdFiles cgetexpr system('fd -g "' . <q-args> . '" -E "*.snap" -E "test"')]])
 
 -- Dirvish
-com([[command! -nargs=? -complete=dir Explore Dirvish <args>]])
-com([[command! -nargs=? -complete=dir Sexplore belowright split | silent Dirvish <args>]])
-com([[command! -nargs=? -complete=dir Vexplore leftabove vsplit | silent Dirvish <args>]])
+-- com([[command! -nargs=? -complete=dir Explore Dirvish <args>]])
+-- com([[command! -nargs=? -complete=dir Sexplore belowright split | silent Dirvish <args>]])
+-- com([[command! -nargs=? -complete=dir Vexplore leftabove vsplit | silent Dirvish <args>]])
 
 -- Yank
 com([[command! -nargs=? -complete=dir YRelative :let @+ = expand("%")]])
