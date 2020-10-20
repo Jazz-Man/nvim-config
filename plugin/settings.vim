@@ -1,6 +1,8 @@
 " General settings
 syntax enable
 
+set termguicolors
+
 scriptencoding utf-8
 
 set fillchars=fold:\ ,vert:\│,msgsep:‾
@@ -41,17 +43,23 @@ set backupcopy=yes  " copy the original file to backupdir and overwrite it
 set autoindent
 set smartindent
 set cindent
-set tabstop=4       " number of visual spaces per TAB
-set softtabstop=4   " number of spaces in tab when editing
-set shiftwidth=4    " number of spaces to use for autoindent
+set tabstop=2       " number of visual spaces per TAB
+set softtabstop=2   " number of spaces in tab when editing
+set shiftwidth=2    " number of spaces to use for autoindent
 set expandtab       " expand tab to spaces so that tabs are spaces
 
 " Set matching pairs of characters and highlight matching brackets
 set matchpairs+=<:>,「:」,『:』,【:】,“:”,‘:’,《:》
 
 " Show line number and relative line number
-set number relativenumber
+set number
 
+
+set mouse=a
+
+set ttyfast
+
+set lazyredraw
 " Ignore case in general, but become case-sensitive when uppercase is present
 set ignorecase smartcase
 
@@ -69,7 +77,7 @@ set showbreak=↪
 set wildmode=full
 
 " Show current line where the cursor is
-set cursorline
+" set cursorline
 
 " Minimum lines to keep above and below cursor when scrolling
 set scrolloff=3
@@ -84,6 +92,9 @@ set inccommand=nosplit
 
 set switchbuf=usetab
 
+"" Automatic indentation.
+filetype indent on
+
 " Ignore certain files and folders when globbing
 set wildignore+=*.o,*.obj,*.bin,*.dll,*.exe
 set wildignore+=*/.git/*,*/.svn/*,*/__pycache__/*,*/build/**
@@ -94,11 +105,12 @@ set wildignore+=*.aux,*.bbl,*.blg,*.brf,*.fls,*.fdb_latexmk,*.synctex.gz
 " Ask for confirmation when handling unsaved or read-only files
 set confirm
 
+set showmatch
 " Do not use visual and errorbells
 set visualbell noerrorbells
 
 " The level we start to fold
-set foldlevel=0
+set foldlevel=2
 
 " Use list mode and customized listchars
 set list listchars=tab:▸\ ,extends:❯,precedes:❮,nbsp:+

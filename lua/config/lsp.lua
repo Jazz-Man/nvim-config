@@ -94,9 +94,9 @@ local function make_on_attach(config, bufnr)
     K.Key_mapper("n", "<Leader>f", "<cmd>Format<CR>", true)
     K.Key_mapper("n", "pd", "<cmd>lua peek_definition()<CR>", true)
 
-    if client.resolved_capabilities.document_formatting then
-      K.Key_mapper("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<cr>", true)
-    end
+    -- if client.resolved_capabilities.document_formatting then
+    K.Key_mapper("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<cr>", true)
+    -- end
 
     if client.resolved_capabilities.document_highlight then
       local group = {
@@ -115,23 +115,86 @@ local function make_on_attach(config, bufnr)
   end
 end
 
+local cssLintSettings = {
+  compatibleVendorPrefixes = "ignore",
+  vendorPrefix = "warning",
+  duplicateProperties = "ignore",
+  emptyRules = "ignore",
+  importStatement = "ignore"
+}
+
+local cssLSSetting = {
+  validate = true,
+  lint = cssLintSettings
+}
+
 local servers = {
   bashls = {},
+  sqlls = {},
   dockerls = {},
   cssls = {
     filetypes = {"css", "scss", "less", "sass"},
-    root_dir = nvim_lsp.util.root_pattern("package.json", ".git"),
+    -- root_dir = nvim_lsp.util.root_pattern("package.json", ".git"),
     settings = {
-      css = {validate = true},
-      scss = {validate = true},
-      less = {validate = true},
-      sass = {validate = true}
+      css = cssLSSetting,
+      scss = cssLSSetting,
+      less = cssLSSetting,
+      sass = cssLSSetting
     }
   },
   html = {},
-  jsonls = {},
+  jsonls = {
+    settings = {
+      json = {
+        colorDecorators = {
+          enable = true
+        },
+        format = {
+          enable = true
+        },
+        schemaDownload = {
+          enable = true
+        },
+        schemas = {
+          {
+            fileMatch = {
+              "package.json"
+            },
+            uri = "https://json.schemastore.org/package"
+          },
+          {
+            fileMatch = {
+              "composer.json"
+            },
+            uri = "https://json.schemastore.org/composer"
+          },
+          {
+            fileMatch = {"tsconfig.json"},
+            uri = "https://json.schemastore.org/tsconfig"
+          }
+        }
+      }
+    }
+  },
   vimls = {},
-  yamlls = {},
+  yamlls = {
+    settings = {
+      yaml = {
+        completion = true,
+        hover = true,
+        format = {
+          enable = true,
+          bracketSpacing = true,
+          printWidth = 80,
+          proseWrap = "preserve",
+          singleQuote = true
+        },
+        schemaStore = {
+          enable = true
+        }
+      }
+    }
+  },
   tsserver = {},
   sumneko_lua = {
     settings = {
@@ -164,6 +227,19 @@ local servers = {
     },
     settings = {
       intelephense = {
+        completion = {
+          insertUseDeclaration = true,
+          fullyQualifyGlobalConstantsAndFunctions = true,
+          triggerParameterHints = true,
+          maxItems = 100
+        },
+        format = {
+          enable = true,
+          braces = "psr12"
+        },
+        phpdoc = {
+          textFormat = "text"
+        },
         stubs = {
           "amqp",
           "apache",

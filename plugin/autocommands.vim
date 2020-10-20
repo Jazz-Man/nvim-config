@@ -12,10 +12,10 @@ augroup term_settings
   autocmd TermOpen * startinsert
 augroup END
 
-augroup accurate_syn_highlight
-  autocmd!
-  autocmd BufEnter * :syntax sync fromstart
-augroup END
+" augroup accurate_syn_highlight
+"   autocmd!
+"   autocmd BufEnter * :syntax sync fromstart
+" augroup END
 
 " Return to last edit position when opening a file
 augroup resume_edit_position
