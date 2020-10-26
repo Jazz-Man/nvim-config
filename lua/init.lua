@@ -75,11 +75,11 @@ function M.locad_core()
 end
 
 -- Diagnostics
-g.diagnostic_enable_virtual_text = 1
-g.diagnostic_trimmed_virtual_text = 60
-g.diagnostic_enable_underline = 1
-g.diagnostic_insert_delay = 1
-g.diagnostic_virtual_text_prefix = "▢"
+-- g.diagnostic_enable_virtual_text = 1
+-- g.diagnostic_trimmed_virtual_text = 60
+-- g.diagnostic_enable_underline = 1
+-- g.diagnostic_insert_delay = 1
+-- g.diagnostic_virtual_text_prefix = "▢"
 
 
 -- Fugitive
