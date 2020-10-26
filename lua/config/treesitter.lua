@@ -1,3 +1,4 @@
+require "nvim-treesitter.parsers".get_parser_configs().markdown = nil
 require "nvim-treesitter.configs".setup {
   ensure_installed = "all",
   highlight = {
@@ -12,6 +13,9 @@ require "nvim-treesitter.configs".setup {
       node_incremental = "gsi", -- increment to the upper named parent
       node_decremental = "gsd" -- decrement to the previous node
     }
+  },
+  indent = {
+    enable = true
   },
   refactor = {
     highlight_defintions = {
@@ -47,6 +51,15 @@ require "nvim-treesitter.configs".setup {
         ["ic"] = "@class.inner"
       }
     },
+    swap = {
+      enable = true,
+      swap_next = {
+        ["<leader>a"] = "@parameter.inner"
+      },
+      swap_previous = {
+        ["<leader>A"] = "@parameter.inner"
+      }
+    },
     move = {
       enable = true,
       goto_next_start = {
@@ -65,6 +78,16 @@ require "nvim-treesitter.configs".setup {
         ["[F"] = "@function.outer",
         ["{C"] = "@class.outer"
       }
-    }
+    },
+    lsp_interop = {
+      enable = true,
+      peek_definition_code = {
+        ["df"] = "@function.outer",
+        ["dF"] = "@class.outer",
+      },
+    },
+  },
+  playground = {
+    enable = true
   }
 }

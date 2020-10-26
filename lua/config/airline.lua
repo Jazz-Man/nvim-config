@@ -1,4 +1,3 @@
-vim.api.nvim_set_option("termguicolors", true)
 vim.api.nvim_set_var("airline#extensions#tabline#enabled", 1)
 vim.api.nvim_set_var("airline#extensions#tabline#left_sep", " ")
 vim.api.nvim_set_var("airline#extensions#tabline#left_alt_sep", "|")

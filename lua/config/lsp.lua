@@ -69,6 +69,7 @@ local function make_on_attach(config, bufnr)
       config.before(client)
     end
 
+
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
     lsp_status.on_attach(client, bufnr)
     diagnostic.on_attach(client, bufnr)
@@ -134,7 +135,7 @@ local servers = {
   dockerls = {},
   cssls = {
     filetypes = {"css", "scss", "less", "sass"},
-    -- root_dir = nvim_lsp.util.root_pattern("package.json", ".git"),
+    root_dir = nvim_lsp.util.root_pattern("package.json", ".git"),
     settings = {
       css = cssLSSetting,
       scss = cssLSSetting,
@@ -143,6 +144,59 @@ local servers = {
     }
   },
   html = {},
+  diagnosticls = {
+    filetypes = {"javascript", "javascriptreact", "typescript", "typescriptreact", "css", "scss"},
+    init_options = {
+      linters = {
+        eslint = {
+          command = "eslint",
+          rootPatterns = {".git"},
+          debounce = 100,
+          args = {"--stdin", "--stdin-filename", "%filepath", "--format", "json"},
+          sourceName = "eslint",
+          parseJson = {
+            errorsRoot = "[0].messages",
+            line = "line",
+            column = "column",
+            endLine = "endLine",
+            endColumn = "endColumn",
+            message = "[eslint] ${message} [${ruleId}]",
+            security = "severity"
+          },
+          securities = {
+            [2] = "error",
+            [1] = "warning"
+          }
+        }
+      },
+      filetypes = {
+        javascript = "eslint",
+        javascriptreact = "eslint",
+        typescript = "eslint",
+        typescriptreact = "eslint"
+      },
+      formatters = {
+        prettierEslint = {
+          command = "prettier-eslint",
+          args = {"--stdin"},
+          rootPatterns = {".git"}
+        },
+        prettier = {
+          command = "prettier",
+          args = {"--stdin-filepath", "%filename"}
+        }
+      },
+      formatFiletypes = {
+        css = "prettier",
+        javascript = "prettierEslint",
+        javascriptreact = "prettierEslint",
+        json = "prettier",
+        scss = "prettier",
+        typescript = "prettierEslint",
+        typescriptreact = "prettierEslint"
+      }
+    }
+  },
   jsonls = {
     settings = {
       json = {

@@ -35,12 +35,15 @@ local packages = {
   {"tpope/vim-repeat"},
   {"tpope/vim-surround"},
   {"tpope/vim-ragtag"},
-  {
-    "sbdchd/neoformat",
-    config = "require [[config/formatter]]"
-  },
+  -- {
+  --   "sbdchd/neoformat",
+  --   config = "require [[config/formatter]]"
+  -- },
   {
     "vim-airline/vim-airline",
+    setup = function()
+      vim.api.nvim_set_option("termguicolors", true)
+    end,
     config = "require [[config/airline]]"
   },
   {
@@ -59,16 +62,25 @@ local packages = {
         "mhartington/formatter.nvim",
         config = "require [[config/formatter]]"
       },
-      {"nvim-lua/diagnostic-nvim"},
+      {
+        "nvim-lua/diagnostic-nvim",
+        config = "require [[config/diagnostic]]"
+      },
       {"nvim-lua/lsp-status.nvim"}
     }
   },
   {
     "nvim-treesitter/nvim-treesitter",
-    config = "require [[config/treesitter]]"
+    config = "require [[config/treesitter]]",
+    requires = {
+      "nvim-treesitter/nvim-treesitter-textobjects",
+      "nvim-treesitter/nvim-treesitter-refactor",
+      "nvim-treesitter/playground"
+    }
   },
   {
     "nvim-treesitter/completion-treesitter",
+    config = "require [[config/completion]]",
     requires = {
       "nvim-lua/completion-nvim"
     }
