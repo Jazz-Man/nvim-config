@@ -9,6 +9,8 @@ function global.load_variables()
   global.vim_path = home .. path_sep .. ".config" .. path_sep .. "nvim"
   global.cache_dir = home .. path_sep .. ".cache" .. path_sep .. "vim" .. path_sep
   global.modules_dir = global.vim_path .. path_sep .. "modules"
+  global.snippet_dir = global.vim_path .. path_sep .. "snippets" 
+  global.template_dir = global.vim_path .. path_sep .. "template" 
   global.path_sep = path_sep
   global.home = home
 end

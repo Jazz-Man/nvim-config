@@ -1,8 +1,23 @@
 local packages = {
   {"wbthomason/packer.nvim", opt = true},
+  ---
+  --- Appearance
+  ---
   {
     "sainnhe/sonokai",
     config = "require [[config/theme]]"
+  },
+  {
+    "norcalli/nvim-colorizer.lua",
+    config = "require [[config/colorizer]]"
+  },
+  -- {
+  --   "glepnir/galaxyline.nvim",
+  --   config = "require [[config/galaxyline]]"
+  -- },
+  {
+    "vim-airline/vim-airline",
+    config = "require [[config/airline]]"
   },
   {
     "kyazdani42/nvim-tree.lua",
@@ -11,21 +26,21 @@ local packages = {
       "kyazdani42/nvim-web-devicons"
     }
   },
-  {
-    "mileszs/ack.vim",
-    cmd = {
-      "Ack",
-      "AckAdd",
-      "AckFromSearch",
-      "LAck",
-      "LAckAdd",
-      "AckFile",
-      "AckHelp",
-      "LAckHelp",
-      "AckWindow",
-      "LAckWindow"
-    }
-  },
+  -- {
+  --   "mileszs/ack.vim",
+  --   cmd = {
+  --     "Ack",
+  --     "AckAdd",
+  --     "AckFromSearch",
+  --     "LAck",
+  --     "LAckAdd",
+  --     "AckFile",
+  --     "AckHelp",
+  --     "LAckHelp",
+  --     "AckWindow",
+  --     "LAckWindow"
+  --   }
+  -- },
   "svermeulen/vimpeccable",
   {"tpope/vim-commentary"},
   {
@@ -35,29 +50,48 @@ local packages = {
   {"tpope/vim-repeat"},
   {"tpope/vim-surround"},
   {"tpope/vim-ragtag"},
-  -- {
-  --   "sbdchd/neoformat",
-  --   config = "require [[config/formatter]]"
-  -- },
+  ---
+  --- Completion
+  ---
   {
-    "vim-airline/vim-airline",
-    setup = function()
-      vim.api.nvim_set_option("termguicolors", true)
-    end,
-    config = "require [[config/airline]]"
+    "nvim-treesitter/completion-treesitter",
+    requires = {
+      {
+        "nvim-lua/completion-nvim",
+        config = "require [[config/completion]]",
+        requires = {
+          {"steelsojka/completion-buffers"},
+          {"hrsh7th/vim-vsnip", event = "InsertCharPre"},
+          {"hrsh7th/vim-vsnip-integ", event = "InsertCharPre"},
+          {
+            "mattn/vim-sonictemplate",
+            cmd = "Template"
+            -- ft = {"go", "typescript", "lua", "javascript", "vim", "rust", "markdown"}
+          },
+          {"Raimondi/delimitMate", event = "InsertCharPre"},
+          {
+            "mattn/emmet-vim",
+            event = "InsertEnter",
+            ft = {
+              "html",
+              "css",
+              "scss",
+              "javascript",
+              "javascriptreact",
+              "vue",
+              "typescript",
+              "typescriptreact"
+            }
+          }
+        }
+      }
+    }
   },
-  {
-    "norcalli/nvim-colorizer.lua",
-    config = "require [[config/colorizer]]"
-  },
+  -- LSP setup
   {
     "neovim/nvim-lspconfig",
     config = "require [[config/lsp]]",
     requires = {
-      {
-        "nvim-lua/completion-nvim",
-        config = "require [[config/completion]]"
-      },
       {
         "mhartington/formatter.nvim",
         config = "require [[config/formatter]]"
@@ -76,13 +110,6 @@ local packages = {
       "nvim-treesitter/nvim-treesitter-textobjects",
       "nvim-treesitter/nvim-treesitter-refactor",
       "nvim-treesitter/playground"
-    }
-  },
-  {
-    "nvim-treesitter/completion-treesitter",
-    config = "require [[config/completion]]",
-    requires = {
-      "nvim-lua/completion-nvim"
     }
   },
   {"skywind3000/vim-quickui"}

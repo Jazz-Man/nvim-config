@@ -1,5 +1,7 @@
 local global = require "utils/global"
 local A = require "utils/general"
+
+local options = require "options"
 local com = vim.api.nvim_command
 
 local g = vim.g
@@ -7,7 +9,6 @@ local g = vim.g
 com("packadd packer.nvim")
 -- Built in plugins
 com("packadd! cfilter")
-com("packadd! matchit")
 com("packadd! menu.vim")
 
 local packer = require("packer")
@@ -29,7 +30,9 @@ function M.createdir()
     global.cache_dir .. "session",
     global.cache_dir .. "swap",
     global.cache_dir .. "tags",
-    global.cache_dir .. "undo"
+    global.cache_dir .. "undo",
+    global.snippet_dir,
+    global.template_dir
   }
   if not global.isdir(global.cache_dir) then
     os.execute("mkdir -p " .. global.cache_dir)
@@ -48,20 +51,20 @@ function M.leader_map()
 end
 
 function M.disable_distribution_plugins()
-  -- g.loaded_gzip = 1
-  -- g.loaded_tar = 1
-  -- g.loaded_tarPlugin = 1
-  -- g.loaded_zip = 1
-  -- g.loaded_zipPlugin = 1
-  -- g.loaded_getscript = 1
-  -- g.loaded_getscriptPlugin = 1
-  -- g.loaded_vimball = 1
-  -- g.loaded_vimballPlugin = 1
+  g.loaded_gzip = 1
+  g.loaded_tar = 1
+  g.loaded_tarPlugin = 1
+  g.loaded_zip = 1
+  g.loaded_zipPlugin = 1
+  g.loaded_getscript = 1
+  g.loaded_getscriptPlugin = 1
+  g.loaded_vimball = 1
+  g.loaded_vimballPlugin = 1
   g.loaded_matchit = 1
   g.loaded_matchparen = 1
-  -- g.loaded_2html_plugin = 1
-  -- g.loaded_logiPat = 1
-  -- g.loaded_rrhelper = 1
+  g.loaded_2html_plugin = 1
+  g.loaded_logiPat = 1
+  g.loaded_rrhelper = 1
   g.loaded_netrw = 1
   g.loaded_netrwPlugin = 1
   g.loaded_netrwSettings = 1
@@ -70,18 +73,13 @@ end
 
 function M.locad_core()
   M.createdir()
-  -- M.disable_distribution_plugins()
+  M.disable_distribution_plugins()
   M.leader_map()
+
+  options:load_options()
 end
 
--- Diagnostics
--- g.diagnostic_enable_virtual_text = 1
--- g.diagnostic_trimmed_virtual_text = 60
--- g.diagnostic_enable_underline = 1
--- g.diagnostic_insert_delay = 1
--- g.diagnostic_virtual_text_prefix = "▢"
-
-
+g.vimsyn_embed = "lPr"
 -- Fugitive
 g.fugitive_pty = 0
 
