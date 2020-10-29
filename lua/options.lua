@@ -6,7 +6,7 @@ local options = setmetatable({}, {__index = {global_local = {}, window_local = {
 function options:load_options()
   self.global_local = {
     termguicolors = true,
-    mouse = "nv",
+    mouse = "a",
     errorbells = true,
     visualbell = true,
     hidden = true,

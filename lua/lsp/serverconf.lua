@@ -13,7 +13,6 @@ local cssLSSetting = {
   lint = cssLintSettings
 }
 
-
 local servers = {
   bashls = {},
   sqlls = {},
@@ -134,11 +133,17 @@ local servers = {
       }
     }
   },
-  tsserver = {},
+  tsserver = {
+    filetypes = {"javascript", "javascriptreact", "typescript", "typescriptreact"},
+    root_patterns = {"package.json", "tsconfig.json", ".git"}
+  },
   sumneko_lua = {
     settings = {
       Lua = {
-        runtime = {version = "LuaJIT", path = vim.split(package.path, ";")},
+        runtime = {
+          version = "LuaJIT",
+          path = vim.split(package.path, ";")
+        },
         completion = {keywordSnippet = "Disable"},
         diagnostics = {
           enable = true,
@@ -177,7 +182,8 @@ local servers = {
           braces = "psr12"
         },
         phpdoc = {
-          textFormat = "text"
+          textFormat = "snippet",
+          useFullyQualifiedNames = true
         },
         stubs = {
           "amqp",

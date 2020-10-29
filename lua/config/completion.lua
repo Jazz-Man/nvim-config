@@ -21,7 +21,7 @@ vim.api.nvim_set_var(
   }
 )
 
-vim.g.user_emmet_mode = "i"
+vim.g.user_emmet_mode = "a"
 
 vim.api.nvim_set_var(
   "completion_chain_complete_list",

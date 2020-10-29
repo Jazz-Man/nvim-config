@@ -1,5 +1,6 @@
 local packages = {
   {"wbthomason/packer.nvim", opt = true},
+  "nvim-lua/plenary.nvim",
   ---
   --- Appearance
   ---
@@ -26,21 +27,21 @@ local packages = {
       "kyazdani42/nvim-web-devicons"
     }
   },
-  -- {
-  --   "mileszs/ack.vim",
-  --   cmd = {
-  --     "Ack",
-  --     "AckAdd",
-  --     "AckFromSearch",
-  --     "LAck",
-  --     "LAckAdd",
-  --     "AckFile",
-  --     "AckHelp",
-  --     "LAckHelp",
-  --     "AckWindow",
-  --     "LAckWindow"
-  --   }
-  -- },
+  {
+    "mileszs/ack.vim",
+    cmd = {
+      "Ack",
+      "AckAdd",
+      "AckFromSearch",
+      "LAck",
+      "LAckAdd",
+      "AckFile",
+      "AckHelp",
+      "LAckHelp",
+      "AckWindow",
+      "LAckWindow"
+    }
+  },
   "svermeulen/vimpeccable",
   {"tpope/vim-commentary"},
   {
@@ -55,37 +56,29 @@ local packages = {
   ---
   {
     "nvim-treesitter/completion-treesitter",
-    requires = {
-      {
-        "nvim-lua/completion-nvim",
-        config = "require [[config/completion]]",
-        requires = {
-          {"steelsojka/completion-buffers"},
-          {"hrsh7th/vim-vsnip", event = "InsertCharPre"},
-          {"hrsh7th/vim-vsnip-integ", event = "InsertCharPre"},
-          {
-            "mattn/vim-sonictemplate",
-            cmd = "Template"
-            -- ft = {"go", "typescript", "lua", "javascript", "vim", "rust", "markdown"}
-          },
-          {"Raimondi/delimitMate", event = "InsertCharPre"},
-          {
-            "mattn/emmet-vim",
-            event = "InsertEnter",
-            ft = {
-              "html",
-              "css",
-              "scss",
-              "javascript",
-              "javascriptreact",
-              "vue",
-              "typescript",
-              "typescriptreact"
-            }
-          }
-        }
-      }
+    config = "require [[config/treesitter]]"
+  },
+  {"steelsojka/completion-buffers"},
+  {"hrsh7th/vim-vsnip", event = "InsertCharPre"},
+  {"hrsh7th/vim-vsnip-integ", event = "InsertCharPre"},
+  {"mattn/vim-sonictemplate", cmd = "Template"},
+  {"Raimondi/delimitMate", event = "InsertCharPre"},
+  {
+    "mattn/emmet-vim",
+    -- event = "InsertEnter",
+    ft = {
+      "html",
+      "css",
+      "scss",
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact"
     }
+  },
+  {
+    "nvim-lua/completion-nvim",
+    config = "require [[config/completion]]"
   },
   -- LSP setup
   {
@@ -101,6 +94,14 @@ local packages = {
         config = "require [[config/diagnostic]]"
       },
       {"nvim-lua/lsp-status.nvim"}
+    }
+  },
+  {
+    "rafcamlet/nvim-luapad",
+    cmd = {
+      "Luapad",
+      "LuaRun",
+      "Lua"
     }
   },
   {

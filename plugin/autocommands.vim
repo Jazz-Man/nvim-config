@@ -1,8 +1,8 @@
-augroup dynamic_smartcase
-  autocmd!
-  autocmd CmdLineEnter : set nosmartcase
-  autocmd CmdLineLeave : set smartcase
-augroup END
+" augroup dynamic_smartcase
+"   autocmd!
+"   autocmd CmdLineEnter : set nosmartcase
+"   autocmd CmdLineLeave : set smartcase
+" augroup END
 
 augroup term_settings
   autocmd!
@@ -44,20 +44,4 @@ augroup numbertoggle
   autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu | set nornu | endif
 augroup END
 
-" highlight yanked region, see `:h lua-highlight`
-" augroup custom_highlight
-"   autocmd!
-"   autocmd ColorScheme * highlight YankColor ctermfg=59 ctermbg=41 guifg=#34495E guibg=#2ECC71
-" augroup END
 
-" augroup highlight_yank
-"   autocmd!
-  " au TextYankPost * silent! lua vim.highlight.on_yank{higroup="YankColor", timeout=300}
-" augroup END
-
-if has ('autocmd') " Remain compatible with earlier versions
-  augroup vimrc " Source vim configuration upon save
-    autocmd! BufWritePost $MYVIMRC source % | echom "Reloaded " . $MYVIMRC | redraw
-    autocmd! BufWritePost $MYGVIMRC if has('gui_running') | so % | echom "Reloaded " . $MYGVIMRC | endif | redraw
-  augroup END
-endif " has autocmd

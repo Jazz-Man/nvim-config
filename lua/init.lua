@@ -88,6 +88,5 @@ M.locad_core()
 require "mapping"
 
 -- Command
-require "command"
 
 require "autocmd"

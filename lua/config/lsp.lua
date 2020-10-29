@@ -1,11 +1,11 @@
 local K = require "utils/general"
 
 local servers = require "lsp/serverconf"
-
-local nvim_lsp = require("nvim_lsp")
-local lsp_status = require("lsp-status")
-local completion = require("completion")
-local diagnostic = require("diagnostic")
+local util = require "nvim_lsp/util"
+local nvim_lsp = require "nvim_lsp"
+local lsp_status = require "lsp-status"
+local completion = require "completion"
+local diagnostic = require "diagnostic"
 
 lsp_status.config {
   kind_labels = vim.g.completion_customize_lsp_label,
@@ -100,17 +100,16 @@ local function make_on_attach(config, bufnr)
     K.Key_mapper("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<cr>", true)
     -- end
 
-    if client.resolved_capabilities.document_highlight then
-      local group = {
-        lsp_aucmds = {
-          "CursorHold <buffer> lua vim.lsp.buf.document_highlight()",
-          "CursorMoved <buffer> lua vim.lsp.buf.clear_references()"
-        }
-      }
+    local lsp_event = {}
 
-      K.Create_augroup(group)
+    if client.resolved_capabilities.document_highlight then
+      lsp_event.highlights = {
+        {"CursorHold,CursorHoldI", "<buffer>", "lua vim.lsp.buf.document_highlight()"},
+        {"CursorMoved","<buffer>","lua vim.lsp.buf.clear_references()"}
+      }
     end
 
+    K.Create_augroup(lsp_event)
     if config.after then
       config.after(client)
     end
@@ -118,41 +117,19 @@ local function make_on_attach(config, bufnr)
 end
 
 local snippet_capabilities = {
-  textDocument = {completion = {completionItem = {snippetSupport = true}}}
+  textDocument = {
+    completion = {
+      completionItem = {
+        snippetSupport = true
+      }
+    }
+  }
 }
-
-local function deep_extend(policy, ...)
-  local result = {}
-  local function helper(policy, k, v1, v2)
-    if type(v1) ~= "table" or type(v2) ~= "table" then
-      if policy == "error" then
-        error("Key " .. vim.inspect(k) .. " is already present with value " .. vim.inspect(v1))
-      elseif policy == "force" then
-        return v2
-      else
-        return v1
-      end
-    else
-      return deep_extend(policy, v1, v2)
-    end
-  end
-
-  for _, t in ipairs({...}) do
-    for k, v in pairs(t) do
-      if result[k] ~= nil then
-        result[k] = helper(policy, k, result[k], v)
-      else
-        result[k] = v
-      end
-    end
-  end
-
-  return result
-end
 
 for server, config in pairs(servers) do
   config.on_attach = make_on_attach(config)
-  config.capabilities = deep_extend("keep", config.capabilities or {}, lsp_status.capabilities, snippet_capabilities)
+  config.capabilities =
+    util.tbl_deep_extend("keep", config.capabilities or {}, lsp_status.capabilities, snippet_capabilities)
 
   nvim_lsp[server].setup(config)
 end

@@ -2,11 +2,45 @@ local a = require "utils/general"
 
 local autocmd = {
   bufs = {
-    {"BufWritePost", [[$VIM_PATH/{*.vim,*.yaml,vimrc} nested source $MYVIMRC | redraw]]}
+    {"BufWritePost", [[$VIM_PATH/{*.vim,*.lua,vimrc} nested source $MYVIMRC | redraw]]},
+    -- Reload Vim script automatically if setlocal autoread
+    {
+      "BufWritePost,FileWritePost",
+      "*.vim",
+      [[nested if &l:autoread > 0 | source <afile> | echo 'source ' . bufname('%') | endif]]
+    },
+    {"BufWritePre", "/tmp/*", "setlocal noundofile"},
+    {"BufWritePre", "COMMIT_EDITMSG", "setlocal noundofile"},
+    {"BufWritePre", "MERGE_MSG", "setlocal noundofile"},
+    {"BufWritePre", "*.tmp", "setlocal noundofile"},
+    {"BufWritePre", "*.bak", "setlocal noundofile"}
+    -- {"BufWritePre", "*.tsx", "lua vim.api.nvim_command('Format')"}
+  },
+  wins = {
+    -- Highlight current line only on focused window
+    {
+      "WinEnter,BufEnter,InsertLeave",
+      "*",
+      [[if ! &cursorline && &filetype !~# '^\(denite\|clap_\)' && ! &pvw | setlocal cursorline | endif]]
+    },
+    {
+      "WinLeave,BufLeave,InsertEnter",
+      "*",
+      [[if &cursorline && &filetype !~# '^\(denite\|clap_\)' && ! &pvw | setlocal nocursorline | endif]]
+    },
+    -- Equalize window dimensions when resizing vim window
+    {"VimResized", "*", [[tabdo wincmd =]]},
+    -- Force write shada on leaving nvim
+    {"VimLeave", "*", [[if has('nvim') | wshada! | else | wviminfo! | endif]]},
+    -- Check if file changed when its window is focus, more eager than 'autoread'
+    {"FocusGained", "* checktime"}
   },
   yank = {
-    {"TextYankPost", [[* silent! lua vim.highlight.on_yank({higroup="YankColor", timeout=400})]]},
-    {"ColorScheme", [[* highlight YankColor ctermfg=59 ctermbg=41 guifg=#34495E guibg=#2ECC71]]}
+    {"TextYankPost", [[* silent! lua vim.highlight.on_yank({higroup="IncSearch", timeout=400})]]}
+  },
+  cmd = {
+    {"CmdLineEnter", "set nosmartcase"},
+    {"CmdLineLeave", "set smartcase"}
   }
 }
 
