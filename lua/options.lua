@@ -126,6 +126,8 @@ function options:load_options()
   for name, value in pairs(self.window_local) do
     vim.wo[name] = value
   end
+
+  vim.g.vimsyn_embed = "lPr"
 end
 
 return options

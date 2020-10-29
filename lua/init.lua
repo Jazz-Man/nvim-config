@@ -14,14 +14,6 @@ com("packadd! menu.vim")
 local packer = require("packer")
 local packages = require("packages")
 
-packer.startup(
-  function()
-    for key, value in pairs(packages) do
-      packer.use(value)
-    end
-  end
-)
-
 local M = {}
 
 function M.createdir()
@@ -77,9 +69,16 @@ function M.locad_core()
   M.leader_map()
 
   options:load_options()
+
+  packer.startup(
+    function()
+      for key, value in pairs(packages) do
+        packer.use(value)
+      end
+    end
+  )
 end
 
-g.vimsyn_embed = "lPr"
 -- Fugitive
 g.fugitive_pty = 0
 
