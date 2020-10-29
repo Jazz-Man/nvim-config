@@ -10,11 +10,6 @@ K.Key_mapper("n", ";", ":")
 K.Key_mapper("x", ":", ";")
 K.Key_mapper("x", ";", ":")
 
--- Brackets
-K.Key_mapper("i", "{", "{}<Left>")
-K.Key_mapper("i", "[", "[]<Left>")
-K.Key_mapper("i", "(", "()<Left>")
-
 -- Completion
 K.Key_mapper("i", "<C-]>", "<C-x><C-]>") -- Tag
 K.Key_mapper("i", "<C-k>", "<C-x><C-o>") -- Omni
@@ -24,6 +19,7 @@ K.Key_mapper("i", "<C-l>", "<C-x><C-l>") -- Line
 K.Key_mapper("i", "<C-d>", "<C-x><C-s>") -- Spell
 K.Key_mapper("i", "<Tab>", [[pumvisible() ? '<C-n>' : '<Tab>']], true, true, false) -- Spell
 K.Key_mapper("i", "<S-Tab>", [[pumvisible() ? '<C-p>' : '<S-Tab>']], true, true, false) -- Spell
+
 
 -- Tabs
 K.Key_mapper("n", "<Tab>", "gt")
