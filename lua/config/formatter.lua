@@ -1,4 +1,3 @@
-local api = vim.api
 
 -- Find executable locally
 -- local function setPrettier(exe)
@@ -12,81 +11,11 @@ local api = vim.api
 --   return fmt_prettier
 -- end
 
+
 -- Formatter setup
-require "format".setup(
-  {
-    -- javascript = {
-    --   prettier = function()
-    --     return {
-    --       exe = setPrettier("prettier"),
-    --       args = {"--stdin-filepath", api.nvim_buf_get_name(0)},
-    --       stdin = true
-    --     }
-    --   end
-    -- },
-    -- javascriptreact = {
-    --   prettier = function()
-    --     return {
-    --       exe = setPrettier("prettier"),
-    --       args = {"--stdin-filepath", api.nvim_buf_get_name(0)},
-    --       stdin = true
-    --     }
-    --   end
-    -- },
-    -- typescript = {
-    --   prettier = function()
-    --     return {
-    --       exe = setPrettier("prettier"),
-    --       args = {"--stdin-filepath", api.nvim_buf_get_name(0)},
-    --       stdin = true
-    --     }
-    --   end
-    -- },
-    -- typescriptreact = {
-    --   prettier = function()
-    --     return {
-    --       exe = setPrettier("prettier"),
-    --       args = {"--stdin-filepath", api.nvim_buf_get_name(0)},
-    --       stdin = true
-    --     }
-    --   end
-    -- },
-    -- css = {
-    --   prettier = function()
-    --     return {
-    --       exe = setPrettier("prettier"),
-    --       args = {"--stdin-filepath", api.nvim_buf_get_name(0)},
-    --       stdin = true
-    --     }
-    --   end
-    -- },
-    -- less = {
-    --   prettier = function()
-    --     return {
-    --       exe = setPrettier("prettier"),
-    --       args = {"--stdin-filepath", api.nvim_buf_get_name(0)},
-    --       stdin = true
-    --     }
-    --   end
-    -- },
-    -- html = {
-    --   prettier = function()
-    --     return {
-    --       exe = setPrettier("prettier"),
-    --       args = {"--stdin-filepath", api.nvim_buf_get_name(0)},
-    --       stdin = true
-    --     }
-    --   end
-    -- },
-    -- json = {
-    --   prettier = function()
-    --     return {
-    --       exe = setPrettier("prettier"),
-    --       args = {"--stdin-filepath", api.nvim_buf_get_name(0)},
-    --       stdin = true
-    --     }
-    --   end
-    -- },
+require("formatter").setup({
+  logging = false,
+  filetype = {
     lua = {
       luafmt = function()
         return {
@@ -97,4 +26,4 @@ require "format".setup(
       end
     }
   }
-)
+})

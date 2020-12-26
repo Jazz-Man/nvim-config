@@ -65,7 +65,11 @@ local packages = {
   {"Raimondi/delimitMate", event = "InsertCharPre"},
   {
     "mattn/emmet-vim",
-    -- event = "InsertEnter",
+    event = "InsertEnter",
+    cmd = {
+      "Emmet",
+      "EmmetInstall"
+    },
     ft = {
       "html",
       "css",
@@ -89,28 +93,32 @@ local packages = {
         "mhartington/formatter.nvim",
         config = "require [[config/formatter]]"
       },
-      {
-        "nvim-lua/diagnostic-nvim",
-        config = "require [[config/diagnostic]]"
-      },
+      -- {
+      --   "nvim-lua/diagnostic-nvim",
+      --   config = "require [[config/diagnostic]]"
+      -- },
       {"nvim-lua/lsp-status.nvim"}
     }
   },
-  {
-    "rafcamlet/nvim-luapad",
-    cmd = {
-      "Luapad",
-      "LuaRun",
-      "Lua"
-    }
-  },
+  -- {
+  --   "rafcamlet/nvim-luapad",
+  --   ft = {
+  --     "lua",
+  --     "vim"
+  --   },
+  --   cmd = {
+  --     "Luapad",
+  --     "LuaRun",
+  --     "Lua"
+  --   }
+  -- },
   {
     "nvim-treesitter/nvim-treesitter",
     config = "require [[config/treesitter]]",
     requires = {
       "nvim-treesitter/nvim-treesitter-textobjects",
       "nvim-treesitter/nvim-treesitter-refactor",
-      "nvim-treesitter/playground"
+      -- "nvim-treesitter/playground"
     }
   },
   {"skywind3000/vim-quickui"}

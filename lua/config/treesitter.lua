@@ -1,4 +1,4 @@
-require "nvim-treesitter.parsers".get_parser_configs().markdown = nil
+-- require "nvim-treesitter.parsers".get_parser_configs().markdown = nil
 require "nvim-treesitter.configs".setup {
   ensure_installed = "all",
   highlight = {
@@ -26,9 +26,9 @@ require "nvim-treesitter.configs".setup {
     },
     smart_rename = {
       enable = true,
-      keymaps = {
-        smart_rename = "grr" -- mapping to rename reference under cursor
-      }
+      -- keymaps = {
+      --   smart_rename = "grr" -- mapping to rename reference under cursor
+      -- }
     },
     navigation = {
       enable = true,

@@ -38,6 +38,11 @@ function U.SetupCommandAbbr(from, to)
   )
 end
 
+function U.dump(...)
+    local objects = vim.tbl_map(vim.inspect, {...})
+    print(unpack(objects))
+end
+
 -- Extract color values from highlight strings
 -- TODO: check for nil values
 function U.GetColorFromHighlights(string, t)

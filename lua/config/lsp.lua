@@ -1,11 +1,11 @@
 local K = require "utils/general"
 
 local servers = require "lsp/serverconf"
-local util = require "nvim_lsp/util"
-local nvim_lsp = require "nvim_lsp"
+local util = require "lspconfig/util"
+local nvim_lsp = require "lspconfig"
 local lsp_status = require "lsp-status"
 local completion = require "completion"
-local diagnostic = require "diagnostic"
+-- local diagnostic = require "diagnostic"
 
 lsp_status.config {
   kind_labels = vim.g.completion_customize_lsp_label,
@@ -73,8 +73,10 @@ local function make_on_attach(config, bufnr)
 
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
     lsp_status.on_attach(client, bufnr)
-    diagnostic.on_attach(client, bufnr)
+    -- diagnostic.on_attach(client, bufnr)
     completion.on_attach(client, bufnr)
+
+    -- K.dump(client.name)
     K.Key_mapper("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", true)
     K.Key_mapper("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", true)
     K.Key_mapper("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", true)
@@ -93,19 +95,21 @@ local function make_on_attach(config, bufnr)
     K.Key_mapper("n", "[d", ":NextDiagnostic<CR>", true)
     K.Key_mapper("n", "[D", "PrevDiagnosticCycle<CR>", true)
     K.Key_mapper("n", "]D", ":NextDiagnosticCycle<CR>", true)
-    K.Key_mapper("n", "<Leader>f", "<cmd>Format<CR>", true)
     K.Key_mapper("n", "pd", "<cmd>lua peek_definition()<CR>", true)
 
-    -- if client.resolved_capabilities.document_formatting then
-    K.Key_mapper("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<cr>", true)
-    -- end
+
+    if client.resolved_capabilities.document_formatting then
+      K.Key_mapper("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<cr>", true)
+    else
+      K.Key_mapper("n", "<Leader>lf", "<cmd>Format<CR>", true)
+    end
 
     local lsp_event = {}
 
     if client.resolved_capabilities.document_highlight then
       lsp_event.highlights = {
         {"CursorHold,CursorHoldI", "<buffer>", "lua vim.lsp.buf.document_highlight()"},
-        {"CursorMoved","<buffer>","lua vim.lsp.buf.clear_references()"}
+        {"CursorMoved", "<buffer>", "lua vim.lsp.buf.clear_references()"}
       }
     end
 

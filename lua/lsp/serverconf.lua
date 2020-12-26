@@ -1,4 +1,4 @@
-local nvim_lsp = require("nvim_lsp")
+local nvim_lsp = require("lspconfig")
 
 local cssLintSettings = {
   compatibleVendorPrefixes = "ignore",
@@ -27,6 +27,7 @@ local servers = {
       sass = cssLSSetting
     }
   },
+  jdtls = {},
   html = {},
   diagnosticls = {
     filetypes = {"javascript", "javascriptreact", "typescript", "typescriptreact", "css", "scss"},
