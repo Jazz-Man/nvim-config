@@ -6,13 +6,10 @@ local com = vim.api.nvim_command
 
 local g = vim.g
 
-com("packadd packer.nvim")
 -- Built in plugins
 com("packadd! cfilter")
 com("packadd! menu.vim")
 
-local packer = require("packer")
-local packages = require("packages")
 
 local M = {}
 
@@ -68,12 +65,15 @@ function M.locad_core()
   M.disable_distribution_plugins()
   M.leader_map()
 
-  options:load_options()
+ options:load_options()
+local packer = require("packer")
+local packages = require("packages")
+
 
   packer.startup(
-    function()
+    function(use)
       for key, value in pairs(packages) do
-        packer.use(value)
+        use(value)
       end
     end
   )

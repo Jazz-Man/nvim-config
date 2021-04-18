@@ -1,5 +1,20 @@
 local nvim_lsp = require("lspconfig")
 
+local system_name
+if vim.fn.has("mac") == 1 then
+  system_name = "macOS"
+elseif vim.fn.has("unix") == 1 then
+  system_name = "Linux"
+elseif vim.fn.has('win32') == 1 then
+  system_name = "Windows"
+else
+  print("Unsupported system for sumneko")
+end
+
+-- set the path to the sumneko installation; if you previously installed via the now deprecated :LspInstall, use
+local sumneko_root_path = '/Users/vasilsokolik/tools/lua-language-server'
+local sumneko_binary = sumneko_root_path.."/bin/macOS/lua-language-server"
+
 local cssLintSettings = {
   compatibleVendorPrefixes = "ignore",
   vendorPrefix = "warning",
@@ -15,7 +30,9 @@ local cssLSSetting = {
 
 local servers = {
   bashls = {},
-  sqlls = {},
+  sqlls = {
+cmd = {"sql-language-server", "up", "--method", "stdio"};
+},
   dockerls = {},
   cssls = {
     filetypes = {"css", "scss", "less", "sass"},
@@ -83,33 +100,56 @@ local servers = {
     }
   },
   jsonls = {
+    init_options = {
+      provideFormatter = true
+    },
     settings = {
       json = {
-        colorDecorators = {
-          enable = true
-        },
-        format = {
-          enable = true
-        },
-        schemaDownload = {
-          enable = true
-        },
         schemas = {
           {
-            fileMatch = {
-              "package.json"
-            },
-            uri = "https://json.schemastore.org/package"
+            description = "TypeScript compiler configuration file",
+            fileMatch = {"tsconfig.json", "tsconfig.*.json"},
+            url = "http://json.schemastore.org/tsconfig"
           },
           {
-            fileMatch = {
-              "composer.json"
-            },
-            uri = "https://json.schemastore.org/composer"
+            description = "Babel configuration",
+            fileMatch = {".babelrc.json", ".babelrc", "babel.config.json"},
+            url = "http://json.schemastore.org/lerna"
           },
           {
-            fileMatch = {"tsconfig.json"},
-            uri = "https://json.schemastore.org/tsconfig"
+            description = "ESLint config",
+            fileMatch = {".eslintrc.json", ".eslintrc"},
+            url = "http://json.schemastore.org/eslintrc"
+          },
+          {
+            description = "Prettier config",
+            fileMatch = {".prettierrc", ".prettierrc.json", "prettier.config.json"},
+            url = "http://json.schemastore.org/prettierrc"
+          },
+          {
+            description = "Vercel Now config",
+            fileMatch = {"now.json"},
+            url = "http://json.schemastore.org/now"
+          },
+          {
+            description = "Stylelint config",
+            fileMatch = {".stylelintrc", ".stylelintrc.json", "stylelint.config.json"},
+            url = "http://json.schemastore.org/stylelintrc"
+          },
+          {
+            description = "NPM package.json files",
+            fileMatch = {"package.json"},
+            url = "https://json.schemastore.org/package"
+          },
+          {
+            description = "PHP Package",
+            fileMatch = {"composer.json"},
+            url = "https://json.schemastore.org/composer"
+          },
+          {
+            description = "JSHint configuration files",
+            fileMatch = {".jshintrc"},
+            url = "https://json.schemastore.org/jshintrc"
           }
         }
       }
@@ -134,37 +174,7 @@ local servers = {
       }
     }
   },
-  tsserver = {
-    filetypes = {"javascript", "javascriptreact", "typescript", "typescriptreact"},
-    root_patterns = {"package.json", "tsconfig.json", ".git"}
-  },
-  sumneko_lua = {
-    settings = {
-      Lua = {
-        runtime = {
-          version = "LuaJIT",
-          path = vim.split(package.path, ";")
-        },
-        completion = {keywordSnippet = "Disable"},
-        diagnostics = {
-          enable = true,
-          globals = {
-            "vim",
-            "describe",
-            "it",
-            "before_each",
-            "after_each"
-          }
-        },
-        workspace = {
-          library = {
-            [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-            [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true
-          }
-        }
-      }
-    }
-  },
+  tsserver = {},
   intelephense = {
     init_options = {
       clearCache = true,

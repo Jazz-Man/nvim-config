@@ -8,7 +8,6 @@ vim.g.completion_enable_auto_paren = 1
 vim.g.completion_enable_snippet = "vim-vsnip"
 vim.g.completion_matching_smart_case = 1
 
-
 vim.g.vsnip_snippet_dir = global.snippet_dir
 
 vim.g.sonictemplate_postfix_key = "<C-j>"
@@ -33,7 +32,9 @@ vim.api.nvim_set_var(
             "lsp",
             "snippet",
             "buffers",
-            "path"
+            "path",
+            "ts",
+            "tags"
           }
         },
         {mode = "<c-p>"},

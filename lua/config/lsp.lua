@@ -5,15 +5,20 @@ local util = require "lspconfig/util"
 local nvim_lsp = require "lspconfig"
 local lsp_status = require "lsp-status"
 local completion = require "completion"
--- local diagnostic = require "diagnostic"
 
 lsp_status.config {
   kind_labels = vim.g.completion_customize_lsp_label,
   select_symbol = function(cursor_pos, symbol)
     if symbol.valueRange then
       local value_range = {
-        ["start"] = {character = 0, line = vim.fn.byte2line(symbol.valueRange[1])},
-        ["end"] = {character = 0, line = vim.fn.byte2line(symbol.valueRange[2])}
+        ["start"] = {
+          character = 0,
+          line = vim.fn.byte2line(symbol.valueRange[1])
+        },
+        ["end"] = {
+          character = 0,
+          line = vim.fn.byte2line(symbol.valueRange[2])
+        }
       }
 
       return require("lsp-status/util").in_range(cursor_pos, value_range)
@@ -21,49 +26,16 @@ lsp_status.config {
   end
 }
 
--- Taken from https://www.reddit.com/r/neovim/comments/gyb077/nvimlsp_peek_defination_javascript_ttserver/
-function preview_location(location, context, before_context)
-  -- location may be LocationLink or Location (more useful for the former)
-  context = context or 10
-  before_context = before_context or 5
-  local uri = location.targetUri or location.uri
-  if uri == nil then
-    return
-  end
-  local bufnr = vim.uri_to_bufnr(uri)
-  if not vim.api.nvim_buf_is_loaded(bufnr) then
-    vim.fn.bufload(bufnr)
-  end
-  local range = location.targetRange or location.range
-  local contents =
-    vim.api.nvim_buf_get_lines(bufnr, range.start.line - before_context, range["end"].line + 1 + context, false)
-  local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
-  return vim.lsp.util.open_floating_preview(contents, filetype)
-end
-
-function preview_location_callback(_, method, result)
-  local context = 10
-  if result == nil or vim.tbl_isempty(result) then
-    print("No location found: " .. method)
-    return nil
-  end
-  if vim.tbl_islist(result) then
-    floating_buf, floating_win = preview_location(result[1], context)
-  else
-    floating_buf, floating_win = preview_location(result, context)
-  end
-end
-
-function peek_definition()
-  if vim.tbl_contains(vim.api.nvim_list_wins(), floating_win) then
-    vim.api.nvim_set_current_win(floating_win)
-  else
-    local params = vim.lsp.util.make_position_params()
-    return vim.lsp.buf_request(0, "textDocument/definition", params, preview_location_callback)
-  end
-end
-
 lsp_status.register_progress()
+
+vim.lsp.handlers["textDocument/codeAction"] = require "lsputil.codeAction".code_action_handler
+vim.lsp.handlers["textDocument/references"] = require "lsputil.locations".references_handler
+vim.lsp.handlers["textDocument/definition"] = require "lsputil.locations".definition_handler
+vim.lsp.handlers["textDocument/declaration"] = require "lsputil.locations".declaration_handler
+vim.lsp.handlers["textDocument/typeDefinition"] = require "lsputil.locations".typeDefinition_handler
+vim.lsp.handlers["textDocument/implementation"] = require "lsputil.locations".implementation_handler
+vim.lsp.handlers["textDocument/documentSymbol"] = require "lsputil.symbols".document_handler
+vim.lsp.handlers["workspace/symbol"] = require "lsputil.symbols".workspace_handler
 
 local function make_on_attach(config, bufnr)
   return function(client)
@@ -73,14 +45,12 @@ local function make_on_attach(config, bufnr)
 
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
     lsp_status.on_attach(client, bufnr)
-    -- diagnostic.on_attach(client, bufnr)
     completion.on_attach(client, bufnr)
 
-    -- K.dump(client.name)
     K.Key_mapper("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", true)
     K.Key_mapper("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", true)
     K.Key_mapper("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", true)
-    K.Key_mapper("i", "gs", "<cmd>lua vim.lsp.buf.signature_help()<CR>", true)
+    K.Key_mapper("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<CR>", true)
     K.Key_mapper("n", "g0", "<cmd>lua vim.lsp.buf.document_symbol()<CR>", true)
     K.Key_mapper("n", "gW", "<cmd>lua vim.lsp.buf.workspace_symbol()<CR>", true)
     K.Key_mapper("n", "gt", "<cmd>lua vim.lsp.buf.type_definition()<CR>", true)
@@ -89,14 +59,17 @@ local function make_on_attach(config, bufnr)
     K.Key_mapper("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", true)
     K.Key_mapper("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", true)
     K.Key_mapper("n", "ga", "<cmd>lua vim.lsp.buf.code_action()<CR>", true)
-    K.Key_mapper("n", "gD", "<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>", true)
+    K.Key_mapper("n", "gD", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>", true)
 
-    K.Key_mapper("n", "]d", ":PrevDiagnostic<CR>", true)
-    K.Key_mapper("n", "[d", ":NextDiagnostic<CR>", true)
-    K.Key_mapper("n", "[D", "PrevDiagnosticCycle<CR>", true)
-    K.Key_mapper("n", "]D", ":NextDiagnosticCycle<CR>", true)
-    K.Key_mapper("n", "pd", "<cmd>lua peek_definition()<CR>", true)
+    -- DiagnosticCycle
+    K.Key_mapper("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_prev { wrap = false }<CR>", true)
+    K.Key_mapper("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_next { wrap = false }<CR>", true)
+    -- Diagnostic
+    K.Key_mapper("n", "[D", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", true)
+    K.Key_mapper("n", "]D", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", true)
 
+    -- OpenDiagnostic
+    K.Key_mapper("n", "pd", "<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>", true)
 
     if client.resolved_capabilities.document_formatting then
       K.Key_mapper("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<cr>", true)
