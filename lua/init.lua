@@ -8,8 +8,9 @@ local g = vim.g
 
 -- Built in plugins
 com("packadd! cfilter")
-com("packadd! menu.vim")
+--com("packadd! menu.vim")
 
+vim.cmd [[packadd packer.nvim]]
 
 local M = {}
 
@@ -63,11 +64,11 @@ end
 function M.locad_core()
   M.createdir()
   M.disable_distribution_plugins()
-  M.leader_map()
+--  M.leader_map()
 
  options:load_options()
-local packer = require("packer")
-local packages = require("packages")
+ local packer = require("packer")
+ local packages = require("packages")
 
 
   packer.startup(
@@ -85,8 +86,8 @@ g.fugitive_pty = 0
 M.locad_core()
 
 -- Mapping
-require "mapping"
+-- require "mapping"
 
 -- Command
 
-require "autocmd"
+-- require "autocmd"

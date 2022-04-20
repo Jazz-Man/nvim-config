@@ -4,7 +4,7 @@ local servers = require "lsp/serverconf"
 local util = require "lspconfig/util"
 local nvim_lsp = require "lspconfig"
 local lsp_status = require "lsp-status"
-local completion = require "completion"
+-- local completion = require "completion"
 
 lsp_status.config {
   kind_labels = vim.g.completion_customize_lsp_label,
@@ -45,7 +45,7 @@ local function make_on_attach(config, bufnr)
 
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
     lsp_status.on_attach(client, bufnr)
-    completion.on_attach(client, bufnr)
+    -- completion.on_attach(client, bufnr)
 
     K.Key_mapper("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", true)
     K.Key_mapper("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", true)
@@ -105,8 +105,8 @@ local snippet_capabilities = {
 
 for server, config in pairs(servers) do
   config.on_attach = make_on_attach(config)
-  config.capabilities =
-    util.tbl_deep_extend("keep", config.capabilities or {}, lsp_status.capabilities, snippet_capabilities)
+  -- config.capabilities =
+  --   util.tbl_deep_extend("keep", config.capabilities or {}, lsp_status.capabilities, snippet_capabilities)
 
   nvim_lsp[server].setup(config)
 end

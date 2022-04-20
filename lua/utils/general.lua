@@ -17,7 +17,7 @@ end
 
 -- Key mapping
 function U.Key_mapper(mode, key, result, silent, expr, script)
-  vim.fn.nvim_set_keymap(
+  vim.api.nvim_set_keymap(
     mode,
     key,
     result,
