@@ -4,8 +4,9 @@ if not status_ok then
 end
 
 
+vim.wo.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 
--- require "nvim-treesitter.parsers".get_parser_configs().markdown = nil
 configs.setup {
   ensure_installed = "all",
   highlight = {
@@ -33,9 +34,9 @@ configs.setup {
     },
     smart_rename = {
       enable = true,
-      -- keymaps = {
-      --   smart_rename = "grr" -- mapping to rename reference under cursor
-      -- }
+      keymaps = {
+        smart_rename = "grr",
+      },
     },
     navigation = {
       enable = true,

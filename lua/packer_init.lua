@@ -23,12 +23,10 @@ if not status_ok then return end
 local packer_utils_ok, packer_utils = pcall(require, "packer.util")
 if not packer_utils_ok then return end
 
-
-
 -- Have packer use a popup window
 packer.init {
-  ensure_dependencies = true,  
-  display = {
+    ensure_dependencies = true,
+    display = {
         open_fn = function()
             return packer_utils.float {border = "rounded"}
         end
@@ -86,7 +84,15 @@ return packer.startup(function(use)
 
     use {"RishabhRD/nvim-lsputils", requires = {"RishabhRD/popfix"}}
 
-    use {"nvim-treesitter/nvim-treesitter", run = ':TSUpdate'}
+    use {
+        "nvim-treesitter/nvim-treesitter",
+        config = "require [[config/treesitter]]",
+        run = ':TSUpdate',
+        requires = {
+            "nvim-treesitter/nvim-treesitter-refactor",
+            "nvim-treesitter/nvim-treesitter-textobjects"
+        }
+    }
 
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
