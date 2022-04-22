@@ -1,3 +1,9 @@
 vim.o.termguicolors = true
 
-require('init')
+-- Import Lua modules
+
+require('packer_init')
+
+require("options")
+
+require('autocmd')
