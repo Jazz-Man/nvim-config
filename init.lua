@@ -1,9 +1,7 @@
-vim.o.termguicolors = true
-
--- Import Lua modules
+require("options")
 
 require('packer_init')
 
-require("options")
-
 require('autocmd')
+
+require('mapping')
