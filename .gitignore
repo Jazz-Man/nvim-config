@@ -4,3 +4,4 @@
 plugin/packer_compiled.*
 .vscode/
 .php_cs
+Profiles.json
