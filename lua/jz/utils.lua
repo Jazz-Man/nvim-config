@@ -1,5 +1,9 @@
--- prevents luacheck from making lints for setting things on vim
-local vim = assert(vim)
+---@class MapConfig
+---@field public silent boolean|nil
+---@field public buffer number|boolean|nil
+---@field public replace_keycodes boolean|nil
+
+
 local lazy = require 'lazy'
 
 local M = {}
@@ -34,22 +38,25 @@ function M.isdir(path)
 end
 
 -- check index in table
----comment
----@param tab any
----@param idx any
+---@param tab table
+---@param idx string
 ---@return boolean
 function M.has_key(tab, idx)
-  for index, _ in pairs(tab) do if index == idx then return true end end
+  for index, _ in pairs(tab) do
+    if index == idx then
+      return true
+    end
+  end
   return false
 end
 
 ---@param mode string|table
 ---@param lhs string
 ---@param rhs string|function
----@param opts table
----@param defaults table
+---@param opts MapConfig|nil
+---@param defaults MapConfig|nil
 
-function M.map(mode, lhs, rhs, --[[optional]] opts, --[[optional]] defaults)
+function M.map(mode, lhs, rhs, opts, defaults)
   opts = vim.tbl_deep_extend("force", { silent = true }, defaults or {},
     opts or {})
 
@@ -58,33 +65,45 @@ end
 
 ---@param lhs string
 ---@param rhs string|function
----@param opts table
-function M.nmap(lhs, rhs, --[[optional]] opts) M.map("n", lhs, rhs, opts) end
+---@param opts MapConfig|nil
+function M.nmap(lhs, rhs, opts)
+  M.map("n", lhs, rhs, opts)
+end
 
 ---@param lhs string
 ---@param rhs string|function
----@param opts table
-function M.vmap(lhs, rhs, --[[optional]] opts) M.map("v", lhs, rhs, opts) end
+---@param opts MapConfig|nil
+function M.vmap(lhs, rhs, opts)
+  M.map("v", lhs, rhs, opts)
+end
 
 ---@param lhs string
 ---@param rhs string|function
----@param opts table
-function M.xmap(lhs, rhs, --[[optional]] opts) M.map("x", lhs, rhs, opts) end
+---@param opts MapConfig|nil
+function M.xmap(lhs, rhs, opts)
+  M.map("x", lhs, rhs, opts)
+end
 
 ---@param lhs string
 ---@param rhs string|function
----@param opts table
-function M.imap(lhs, rhs, --[[optional]] opts) M.map("i", lhs, rhs, opts) end
+---@param opts MapConfig|nil
+function M.imap(lhs, rhs, opts)
+  M.map("i", lhs, rhs, opts)
+end
 
 ---@param lhs string
 ---@param rhs string|function
----@param opts table
-function M.omap(lhs, rhs, --[[optional]] opts) M.map("o", lhs, rhs, opts) end
+---@param opts MapConfig|nil
+function M.omap(lhs, rhs, opts)
+  M.map("o", lhs, rhs, opts)
+end
 
 ---@param lhs string
 ---@param rhs string|function
----@param opts table
-function M.smap(lhs, rhs, --[[optional]] opts) M.map("s", lhs, rhs, opts) end
+---@param opts MapConfig|nil
+function M.smap(lhs, rhs, opts)
+  M.map("s", lhs, rhs, opts)
+end
 
 ---@param definitions table
 function M.autocommand(definitions)
@@ -109,13 +128,19 @@ end
 
 ---@param msg any
 ---@param name string
-function M.warn(msg, name) vim.notify(msg, vim.log.levels.WARN, { title = name }) end
+function M.warn(msg, name)
+  vim.notify(msg, vim.log.levels.WARN, { title = name })
+end
 
 ---@param msg any
 ---@param name string
-function M.error(msg, name) vim.notify(msg, vim.log.levels.ERROR, { title = name }) end
+function M.error(msg, name) 
+  vim.notify(msg, vim.log.levels.ERROR, { title = name }) 
+end
 
-function M.info(msg, name) vim.notify(msg, vim.log.levels.INFO, { title = name }) end
+function M.info(msg, name) 
+  vim.notify(msg, vim.log.levels.INFO, { title = name }) 
+end
 
 ---@param ... string|function
 ---@return table

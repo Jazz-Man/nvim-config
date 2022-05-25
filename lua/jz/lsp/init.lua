@@ -12,11 +12,10 @@ pcall(function()
   })
 end)
 
-local vim = assert(vim)
 
 local lspconfig = require "lspconfig"
 
--- local handlers = require "lsp/handlers"
+
 local handlers = vim.lsp.handlers
 
 local on_attach = require 'jz.lsp.on_attach'
@@ -37,21 +36,27 @@ handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on
 
 
 
-local function prefer_null_ls_fmt(client)
+local function prefer_null_ls_fmt(client, bufnr)
   client.server_capabilities.documentHighlightProvider = false
   client.server_capabilities.documentFormattingProvider = false
-  on_attach(client)
+  on_attach.on_attach(client, bufnr)
+end
+
+local function lsp_on_init(client)
+
+  client.config.flags = client.config.flags or {}
+  client.config.flags.allow_incremental_sync = true
 end
 
 for server, config in pairs(servers) do
-  if type(config) == 'function' then config = config() end
+  -- if type(config) == 'function' then config = config() end
 
   if config.prefer_null_ls then
     if config.on_attach then
       local old_on_attach = config.on_attach
       config.on_attach = function(client, bufnr)
         old_on_attach(client, bufnr)
-        prefer_null_ls_fmt(client)
+        prefer_null_ls_fmt(client, bufnr)
       end
     else
       config.on_attach = prefer_null_ls_fmt
@@ -61,7 +66,7 @@ for server, config in pairs(servers) do
       local old_on_attach = config.on_attach
       config.on_attach = function(client, bufnr)
         old_on_attach(client, bufnr)
-        prefer_null_ls_fmt(client)
+        prefer_null_ls_fmt(client, bufnr)
       end
     else
       config.on_attach = on_attach.on_attach
@@ -70,10 +75,7 @@ for server, config in pairs(servers) do
 
   config.capabilities = capabilities.setup(config)
 
-  config.on_init = function(client)
-    client.config.flags = client.config.flags or {}
-    client.config.flags.allow_incremental_sync = true
-  end
+  config.on_init = lsp_on_init
 
   config.autostart = true
   config.flags = { debounce_text_changes = 50 }
@@ -81,3 +83,4 @@ for server, config in pairs(servers) do
   lspconfig[server].setup(config)
 
 end
+

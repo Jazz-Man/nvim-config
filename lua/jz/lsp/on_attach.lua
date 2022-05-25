@@ -1,6 +1,5 @@
-local vim = assert(vim)
-
 local utils = require 'jz.utils'
+local signature = require 'jz.lsp.lsp_signature'
 
 
 local M = {}
@@ -44,12 +43,7 @@ function M.on_attach(client, bufnr)
     end
   })
 
-  require 'lsp_signature'.on_attach({
-    bind = true,
-    handler_opts = {
-      border = "single"
-    }
-  }, bufnr)
+  signature.setup(bufnr)
 
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
 

@@ -33,7 +33,7 @@ null_ls.setup {
     null_diag.eslint_d,
     null_diag.eslint,
     null_diag.gitlint,
-    null_diag.luacheck,
+    null_diag.selene,
     null_diag.php,
     null_diag.phpmd,
     null_diag.phpstan,

@@ -1,5 +1,3 @@
-local vim = assert(vim)
-
 -----------------------------------------------------------
 -- Plugin manager configuration file
 -----------------------------------------------------------
@@ -53,6 +51,7 @@ return packer.startup(function(use)
 
   use 'NvChad/nvterm'
 
+
   use {
     "numToStr/Comment.nvim",
     module = "Comment",
@@ -70,7 +69,6 @@ return packer.startup(function(use)
     event = "BufRead",
   }
 
-  -- use "nvim-lualine/lualine.nvim"
 
   use {
     "nvim-lualine/lualine.nvim",
@@ -84,6 +82,12 @@ return packer.startup(function(use)
       require('nvim-web-devicons').setup({ default = true })
     end,
     event = "VimEnter"
+  }
+
+  use {
+    "akinsho/bufferline.nvim",
+    after = "nvim-web-devicons",
+    config = "require ('jz.config.bufferline')"
   }
 
   -- UI Helpers
@@ -135,7 +139,7 @@ return packer.startup(function(use)
     requires = {
       "hrsh7th/cmp-buffer", -- buffer completions
       "hrsh7th/cmp-path", -- path completions,
-      {"saadparwaiz1/cmp_luasnip", after = "LuaSnip"}, -- snippet completions
+      { "saadparwaiz1/cmp_luasnip", after = "LuaSnip" }, -- snippet completions
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-nvim-lua", -- nvim-cmp source for neovim Lua API.
       "hrsh7th/cmp-nvim-lsp-document-symbol", -- nvim-cmp source for textDocument/documentSymbol via nvim-lsp.
@@ -167,7 +171,7 @@ return packer.startup(function(use)
     "nvim-treesitter/nvim-treesitter",
     config = "require('jz.config.treesitter')",
     run = ':TSUpdate',
-    event = "BufRead",
+    event = { "BufRead", "BufNewFile" },
     requires = {
       { "nvim-treesitter/nvim-treesitter-refactor", after = { 'nvim-treesitter' } },
       { "nvim-treesitter/nvim-treesitter-textobjects", after = { 'nvim-treesitter' } },
@@ -188,5 +192,7 @@ return packer.startup(function(use)
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
-  if PACKER_BOOTSTRAP then require('packer').sync() end
+  if PACKER_BOOTSTRAP then
+    require('packer').sync()
+  end
 end)

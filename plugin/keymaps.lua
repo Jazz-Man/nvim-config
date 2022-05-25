@@ -1,5 +1,5 @@
-local vim = assert(vim)
 
+---@module "jz.utils"
 local util = require 'jz.utils'
 
 

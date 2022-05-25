@@ -1,5 +1,3 @@
-local vim = assert(vim)
-
 local prefix = vim.diagnostic and "DiagnosticSign" or "LspDiagnosticsSign"
 
 
@@ -52,10 +50,10 @@ if vim.diagnostic then
         min = vim.diagnostic.severity.HINT,
       },
       -- format = function(diagnostic)
-        -- if diagnostic.severity == vim.diagnostic.severity.ERROR then
-        --   return string.format('E: %s', diagnostic.message)
-        -- end
-        -- return ("%s"):format(diagnostic.message)
+      -- if diagnostic.severity == vim.diagnostic.severity.ERROR then
+      --   return string.format('E: %s', diagnostic.message)
+      -- end
+      -- return ("%s"):format(diagnostic.message)
       -- end,
     },
     signs = true,
