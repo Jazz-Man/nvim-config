@@ -37,8 +37,3 @@ config.setup({
   -- quick type
   quick_type_flags = { '--just-types' },
 })
-
-
--- config.update_tool('quicktype', function(tool)
---     tool.pkg_mgr = 'yarn'
--- end)

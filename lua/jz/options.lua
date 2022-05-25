@@ -1,11 +1,15 @@
-local global = require "utils/global"
-local A = require "utils/general"
+local utils = require 'jz.utils'
 
 local global_config = {
   -----------------------------------------------------------
   -- General
   -----------------------------------------------------------
-  mouse = "a", -- Enable mouse support
+  mouse = "ar", -- Enable mouse support
+  mousemodel = "popup_setpos",
+
+  exrc = false, -- ignore '~/.exrc'
+  secure = true,
+
   clipboard = "unnamedplus", -- Copy/paste to system clipboard
   swapfile = false, -- Don't use swapfile
   shada = {
@@ -25,7 +29,9 @@ local global_config = {
   -- Encoding and File formatt
   -----------------------------------------------------------
   encoding = "utf-8", -- String-encoding used internally and for RPC communication.
+  fileencoding = "utf-8",
   fileformats = "unix,mac,dos",
+  fileformat = "unix",
 
   -----------------------------------------------------------
   -- Memory, CPU
@@ -33,8 +39,8 @@ local global_config = {
   hidden = true, -- Enable background buffers
   history = 2000, -- Remember N lines in history
   lazyredraw = true, -- Faster scrolling
-  synmaxcol = 2500, -- Max column for syntax highlight
-  updatetime = 1000, -- ms to wait for trigger an event
+  synmaxcol = 500, -- Max column for syntax highlight
+  updatetime = 500, -- ms to wait for trigger an event
   timeout = true,
   ttimeout = true,
   timeoutlen = 500, -- Time in milliseconds to wait for a mapped sequence to complete. (default 1000)
@@ -64,7 +70,7 @@ local global_config = {
   showmode = false, -- If in Insert, Replace or Visual mode put a message on the last line.
   pumblend = 17, -- Enables pseudo-transparency for the popup-menu.
   showtabline = 2, -- always show tabs
-  cmdheight = 2,
+  cmdheight = 1,
   -- cursorline = true,
 
   -----------------------------------------------------------
@@ -76,13 +82,13 @@ local global_config = {
   -----------------------------------------------------------
   -- Dirs
   -----------------------------------------------------------
-  directory = global.cache_dir .. "swag/", -- List of directory names for the swap file, separated with commas.
-  undodir = global.cache_dir .. "undo/",
+  directory = utils.cache_dir .. "swag/", -- List of directory names for the swap file, separated with commas.
+  undodir = utils.cache_dir .. "undo/",
   undofile = true,
-  backupdir = global.cache_dir .. "backup/",
-  viewdir = global.cache_dir .. "view/",
+  backupdir = utils.cache_dir .. "backup/",
+  viewdir = utils.cache_dir .. "view/",
   backupskip = "/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*,*/shm/*,/private/var/*,.vault.vim",
-  spellfile = global.cache_dir .. "spell/en.uft-8.add",
+  spellfile = utils.cache_dir .. "spell/en.uft-8.add",
 
   -----------------------------------------------------------
   -- Search
@@ -97,7 +103,7 @@ local global_config = {
   virtualedit = "block",
   viewoptions = "folds,cursor,curdir,slash,unix",
 
-  sessionoptions = "curdir,help,tabpages,winsize",
+  sessionoptions = { "curdir", "help", "tabpages", "winsize" },
 
   wildignorecase = true,
   wildignore = ".git,.hg,.svn,*.pyc,*.o,*.out,*.jpg,*.jpeg,*.png,*.gif,*.zip,**/tmp/**,*.DS_Store,**/node_modules/**,**/bower_modules/**",
@@ -115,8 +121,14 @@ local global_config = {
   startofline = false,
   whichwrap = "h,l,<,>,[,],~",
   switchbuf = "useopen",
-  backspace = {"indent","eol","start"},
-  diffopt = "filler,iwhite,internal,algorithm:patience",
+  backspace = { "indent", "eol", "start" },
+  diffopt = {
+    "internal",
+    "filler",
+    "closeoff",
+    "hiddenoff",
+    "algorithm:patience"
+  },
   jumpoptions = "stack",
   scrolloff = 2,
   sidescrolloff = 5,
@@ -129,7 +141,7 @@ local global_config = {
   showcmd = true, -- Show (partial) command in the last line of the screen.
   cmdwinheight = 5,
   equalalways = false,
-  display = "lastline",
+  display = "msgsep",
   showbreak = "↳  ",
   listchars = "tab:»·,nbsp:+,trail:·,extends:→,precedes:←",
 
@@ -147,7 +159,7 @@ local window_config = {
   linebreak = true, -- Wrap on word boundary
   breakindentopt = "shift:2,min:20",
   colorcolumn = "120",
-  signcolumn = "yes", -- When and how to draw the signcolumn.
+  signcolumn = "yes:1", -- When and how to draw the signcolumn.
   -- conceallevel = 2, -- Determine how text with the "conceal" syntax attribute :syn-conceal is shown
   -- concealcursor = "niv", -- Sets the modes in which text in the cursor line can also be concealed.
   -- winblend = 10, -- Enables pseudo-transparency for a floating window.
@@ -161,7 +173,7 @@ local window_config = {
 }
 
 
-if global.is_mac then
+if utils.is_mac then
   vim.g.clipboard = {
     name = "macOS-clipboard",
     copy = { ["+"] = "pbcopy", ["*"] = "pbcopy" },
@@ -176,29 +188,51 @@ for name, value in pairs(window_config) do vim.wo[name] = value end
 
 vim.g.vimsyn_embed = "lPr"
 
-vim.g.mapleader = " "
-A.Key_mapper("n", " ", "")
-A.Key_mapper("x", " ", "")
 
 -- Disable Distribution Plugins
 
-vim.g.loaded_gzip = 1
-vim.g.loaded_tar = 1
-vim.g.loaded_tarPlugin = 1
-vim.g.loaded_zip = 1
-vim.g.loaded_zipPlugin = 1
-vim.g.loaded_getscript = 1
-
-vim.g.loaded_vimball = 1
-vim.g.loaded_vimballPlugin = 1
-
--- vim.g.loaded_matchit = 1
-vim.g.loaded_matchparen = 1
-vim.g.loaded_2html_plugin = 1
-vim.g.loaded_logiPat = 1
+local disabled_built_ins = {
+  -- 'netrw',
+  -- 'netrwPlugin',
+  -- 'netrwSettings',
+  -- 'netrwFileHandlers',
+  'gzip',
+  'zip',
+  'zipPlugin',
+  'tar',
+  'tarPlugin',
+  'getscript',
+  'getscriptPlugin',
+  'vimball',
+  'vimballPlugin',
+  '2html_plugin',
+  'logipat',
+  'rrhelper',
+  'spellfile_plugin',
+  'fzf',
+  -- 'matchit',
+  --'matchparen',
+}
+for _, plugin in pairs(disabled_built_ins) do
+  vim.g['loaded_' .. plugin] = 1
+end
 
 -- Disable providers
-vim.g.loaded_perl_provider = 0
-vim.g.loaded_ruby_provider = 0
+
+local providers = {
+  'perl',
+  'ruby',
+  'python'
+}
+
+for _, provider in pairs(providers) do
+  vim.g['loaded_' .. provider .. '_provider'] = 0
+end
+
+-- Map leader to <space>
+-- vim.api.nvim_set_keymap('', '<Space>', '<Nop>', { noremap = true, silent=true})
+vim.g.mapleader      = ' '
+vim.g.maplocalleader = ' '
+
 
 -- vim.cmd [[packadd menu.vim]]

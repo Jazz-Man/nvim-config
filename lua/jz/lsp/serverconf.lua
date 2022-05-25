@@ -1,10 +1,6 @@
-local status_ok, util = pcall(require, "lspconfig/util")
-if not status_ok then return end
-
 local runtime_path = vim.split(package.path, ';')
 table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
-
 
 local cssLintSettings = {
   compatibleVendorPrefixes = "ignore",
@@ -19,11 +15,10 @@ local cssLSSetting = { validate = true, lint = cssLintSettings }
 local servers = {
   awk_ls = {},
   bashls = {},
-  sqlls = { cmd = { "sql-language-server", "up", "--method", "stdio" } },
+  sqls = {},
   dockerls = {},
   cssls = {
     filetypes = { "css", "scss", "less", "sass" },
-    root_dir = util.root_pattern("package.json", ".git"),
     settings = {
       css = cssLSSetting,
       scss = cssLSSetting,
@@ -31,12 +26,15 @@ local servers = {
       sass = cssLSSetting
     }
   },
-  jdtls = {},
   html = {},
   diagnosticls = {
     filetypes = {
-      "javascript", "javascriptreact", "typescript", "typescriptreact",
-      "css", "scss"
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact",
+      "css",
+      "scss"
     },
     init_options = {
       linters = {
@@ -143,7 +141,7 @@ local servers = {
       }
     }
   },
-gopls = {},
+  gopls = {},
   vimls = {},
   yamlls = {
     settings = {
@@ -173,23 +171,18 @@ gopls = {},
         },
         diagnostics = {
           -- Get the language server to recognize the `vim` global
-          globals = { 'vim' }
+          globals = {
+            "vim",
+            "nvim",
+            "RELOAD"
+          }
         },
         workspace = {
           -- Make the server aware of Neovim runtime files
-          library = {
-            [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-            [vim.fn.stdpath("config") .. "/lua"] = true,
-          }
+          library = vim.api.nvim_get_runtime_file('', true)
         },
         -- Do not send telemetry data containing a randomized but unique identifier
-        telemetry = { enable = false },
-        format = {
-          enable = true,
-          -- Put format options here
-          -- NOTE: the value should be STRING!!
-          defaultConfig = { indent_style = "space", indent_size = "2" }
-        }
+        telemetry = { enable = false }
       }
     }
   },
@@ -203,39 +196,13 @@ gopls = {},
           triggerParameterHints = true,
           maxItems = 100
         },
-        format = { 
-          enable = true, 
-          braces = "psr12" 
-        },
-        phpdoc = { 
-          textFormat = "snippet", 
-          useFullyQualifiedNames = true 
-        },
+        format = { enable = true, braces = "psr12" },
+        phpdoc = { textFormat = "snippet", useFullyQualifiedNames = true },
         stubs = {
-          "amqp", 
-          "apache", 
-          "apcu", 
-          "bcmath", 
-          "blackfire", 
-          "bz2",
-          "calendar", 
-          "cassandra", 
-          "com_dotnet", 
-          "Core", 
-          "couchbase",
-          "crypto", 
-          "ctype", 
-          "cubrid", 
-          "curl", 
-          "date", 
-          "dba",
-          "decimal", 
-          "dom", 
-          "ds", 
-          "enchant", 
-          "Ev", 
-          "event", 
-          "exif",
+          "amqp", "apache", "apcu", "bcmath", "blackfire", "bz2",
+          "calendar", "cassandra", "com_dotnet", "Core", "couchbase",
+          "crypto", "ctype", "cubrid", "curl", "date", "dba",
+          "decimal", "dom", "ds", "enchant", "Ev", "event", "exif",
           "fann", "FFI", "ffmpeg", "fileinfo", "filter", "fpm", "ftp",
           "gd", "gearman", "geoip", "geos", "gettext", "gmagick",
           "gmp", "gnupg", "grpc", "hash", "http", "ibm_db2", "iconv",

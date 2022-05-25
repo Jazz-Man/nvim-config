@@ -1,17 +1,37 @@
-local K = require "utils/general"
+local vim = assert(vim)
 
-local util = require("utils")
-
-local opts = {noremap = true, silent = true}
+local util = require 'jz.utils'
 
 
--- Remap space as leader key
--- vim.keymap.set({'n', 'v'}, '<Space>', '<Nop>', opts)
-util.nnoremap('<Space>', '<NOP>')
-util.vnoremap('<Space>', '<NOP>')
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+util.nmap('<leader><leader>x', ':call rd#save_and_exec()<CR>')
 
+
+--- Comments
+util.nmap('<leader>/', '<CMD>lua require("Comment.api").toggle_current_linewise()<CR>')
+util.vmap('<leader>/', "<ESC><cmd>lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())<CR>")
+
+
+-- toggle in terminal mode
+
+util.map({ 't', 'n' }, '<A-i>', function()
+  require("nvterm.terminal").toggle "float"
+end)
+
+util.map({ 't', 'n' }, '<A-h>', function()
+  require("nvterm.terminal").toggle "horizontal"
+end)
+
+util.map({ 't', 'n' }, '<A-v>', function()
+  require("nvterm.terminal").toggle "vertical"
+end)
+
+util.nmap('<leader>h', function()
+  require("nvterm.terminal").new "horizontal"
+end)
+
+util.nmap('<leader>v', function()
+  require("nvterm.terminal").new "vertical"
+end)
 
 -- Remap for dealing with word wrap
 -- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'",
@@ -32,13 +52,6 @@ vim.g.maplocalleader = " "
 -- Using backtick for marks drops you on the exact column
 -- K.Key_mapper("n", "`", "'")
 -- K.Key_mapper("n", "'", "`")
-
--- Command mode
--- K.Key_mapper("n", ":", ";")
--- K.Key_mapper("n", ";", ":")
--- K.Key_mapper("x", ":", ";")
--- K.Key_mapper("x", ";", ":")
-
 
 -- Completion
 -- K.Key_mapper("i", "<C-]>", "<C-x><C-]>") -- Tag

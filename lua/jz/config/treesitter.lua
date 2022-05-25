@@ -1,7 +1,5 @@
 local treesitter = prequire("nvim-treesitter.configs")
 
-local comment = prequire("Comment")
-
 
 if treesitter then
 
@@ -19,10 +17,10 @@ if treesitter then
       enable = true,
       keymaps = {
         -- mappings for incremental selection (visual mappings)
-        init_selection = "gss", -- maps in normal mode to init the node/scope selection
-        scope_incremental = "gsu", -- increment to the upper scope (as defined in locals.scm)
-        node_incremental = "gsi", -- increment to the upper named parent
-        node_decremental = "gsd" -- decrement to the previous node
+        init_selection = '<CR>', -- maps in normal mode to init the node/scope selection
+        scope_incremental = '<Tab>', -- increment to the upper scope (as defined in locals.scm)
+        node_incremental = '<CR>', -- increment to the upper named parent
+        node_decremental = '<S-Tab>' -- decrement to the previous node
       }
     },
     indent = {
@@ -109,25 +107,4 @@ if treesitter then
     }
   }
 
-
-  if comment then
-    comment.setup {
-      pre_hook = function(ctx)
-        local utils = require "Comment.utils"
-
-        local location = nil
-        if ctx.ctype == utils.ctype.block then
-          location = require("ts_context_commentstring.utils").get_cursor_location()
-        elseif ctx.cmotion == utils.cmotion.v or ctx.cmotion == utils.cmotion.V then
-          location = require("ts_context_commentstring.utils").get_visual_start_location()
-        end
-
-        return require("ts_context_commentstring.internal").calculate_commentstring {
-          key = ctx.ctype == utils.ctype.line and "__default" or "__multiline",
-          location = location,
-        }
-      end,
-    }
-
-  end
 end

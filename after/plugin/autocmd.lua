@@ -1,22 +1,19 @@
-local utils = require("utils")
+local utils = require 'jz.utils'
 
 local opt_local = vim.opt_local
-
-
 
 local autocmd = {
   no_cursorline_in_insert_mode = {
     {
       event = { 'InsertLeave', 'WinEnter', 'BufEnter' },
-      options = {
-        callback = function() opt_local.cursorline = true end
-      }
-    },
-    {
+      options = { callback = function()
+        opt_local.cursorline = true
+      end }
+    }, {
       event = { 'InsertEnter', 'WinLeave', 'BufLeave' },
-      options = {
-        callback = function() opt_local.cursorline = false end
-      }
+      options = { callback = function()
+        opt_local.cursorline = false
+      end }
     }
   },
   disable_undo = {
@@ -44,31 +41,14 @@ local autocmd = {
         end
       }
     },
-    {
-      event = "CmdLineEnter",
-      options = {
-        command = 'set nosmartcase'
-      }
-    },
-    {
-      event = "CmdLineLeave",
-      options = {
-        command = "set smartcase"
-      }
-    },
-    {
+    { event = "CmdLineEnter", options = { command = 'set nosmartcase' } },
+    { event = "CmdLineLeave", options = { command = "set smartcase" } }, {
       event = "CmdlineEnter",
-      options = {
-        pattern = "/,\\?",
-        command = ":set hlsearch"
-      }
+      options = { pattern = "/,\\?", command = ":set hlsearch" }
     },
     {
       event = "CmdlineLeave",
-      options = {
-        pattern = "/,\\?",
-        command = ":set nohlsearch"
-      }
+      options = { pattern = "/,\\?", command = ":set nohlsearch" }
     }
   },
   packer_user_config = {
