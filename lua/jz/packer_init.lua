@@ -49,6 +49,10 @@ return packer.startup(function(use)
 
   use 'nathom/filetype.nvim'
 
+  use({ "nvim-lua/plenary.nvim" })
+
+  use({ "nvim-lua/popup.nvim" })
+
   use 'NvChad/nvterm'
 
 
@@ -71,12 +75,6 @@ return packer.startup(function(use)
 
 
   use {
-    "nvim-lualine/lualine.nvim",
-    after = "nvim-web-devicons",
-    config = "require('jz.config.statusline')"
-  }
-
-  use {
     "kyazdani42/nvim-web-devicons",
     config = function()
       require('nvim-web-devicons').setup({ default = true })
@@ -85,19 +83,27 @@ return packer.startup(function(use)
   }
 
   use {
-    "akinsho/bufferline.nvim",
+    "nvim-lualine/lualine.nvim",
     after = "nvim-web-devicons",
-    config = "require ('jz.config.bufferline')"
+    config = "require('jz.config.statusline')"
   }
 
-  -- UI Helpers
+  use {
+    "akinsho/bufferline.nvim",
+    after = "nvim-web-devicons",
+    config = "require('jz.config.bufferline')"
+  }
 
-  use({ "nvim-lua/plenary.nvim" })
+  use {
+    "Shatur/neovim-session-manager",
+    -- module = "session_manager",
+    config = function()
+      require('session_manager').setup({})
+    end,
+    wants = "plenary.nvim"
+  }
 
-  use({ "nvim-lua/popup.nvim" })
-
-
-  use { "RishabhRD/popfix" }
+  -- use { "RishabhRD/popfix" }
 
   -- Go Language
   use { "crispgm/nvim-go", config = "require ('jz.config.go')", ft = { "go" } }

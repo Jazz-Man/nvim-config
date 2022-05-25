@@ -10,6 +10,7 @@ local global_config = {
   exrc = false, -- ignore '~/.exrc'
   secure = true,
 
+  ruler = false,
   clipboard = "unnamedplus", -- Copy/paste to system clipboard
   swapfile = false, -- Don't use swapfile
   shada = {
@@ -65,13 +66,18 @@ local global_config = {
   ignorecase = true, -- Ignore case letters when search
   smartcase = true, -- Ignore lowercase for the whole pattern
   termguicolors = true, -- Enable 24-bit RGB colors
-  laststatus = 2, -- Set global statusline
+  -- laststatus = 3, -- Set global statusline
   wrap = false,
   showmode = false, -- If in Insert, Replace or Visual mode put a message on the last line.
   pumblend = 17, -- Enables pseudo-transparency for the popup-menu.
   showtabline = 2, -- always show tabs
   cmdheight = 1,
-  -- cursorline = true,
+  title = true,
+  cursorline = true,
+
+  -- disable tilde on end of buffer: https://github.com/neovim/neovim/pull/8546#issuecomment-643643758
+  fillchars = { eob = " " },
+
 
   -----------------------------------------------------------
   -- Fold config
@@ -156,6 +162,8 @@ local window_config = {
   -- Neovim UI
   -----------------------------------------------------------
   number = true, -- Show line number
+  numberwidth = 2,
+  relativenumber = false,
   linebreak = true, -- Wrap on word boundary
   breakindentopt = "shift:2,min:20",
   colorcolumn = "120",
@@ -182,9 +190,13 @@ if utils.is_mac then
   }
 end
 
-for name, value in pairs(global_config) do vim.opt[name] = value end
+for name, value in pairs(global_config) do
+  vim.opt[name] = value
+end
 
-for name, value in pairs(window_config) do vim.wo[name] = value end
+for name, value in pairs(window_config) do
+  vim.wo[name] = value
+end
 
 vim.g.vimsyn_embed = "lPr"
 

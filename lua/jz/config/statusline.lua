@@ -13,7 +13,7 @@ lualine.setup {
     section_separators = { left = '', right = '' },
     disabled_filetypes = {},
     always_divide_middle = true,
-    globalstatus = false
+    globalstatus = true
   },
   sections = {
     lualine_a = { 'mode' },
@@ -39,13 +39,13 @@ lualine.setup {
     lualine_y = {},
     lualine_z = {}
   },
-  tabline = {
-    lualine_a = { 'buffers' },
-    lualine_b = { 'branch' },
-    lualine_c = { 'filename' },
-    lualine_x = {},
-    lualine_y = {},
-    lualine_z = { 'tabs' }
-  },
-  extensions = { "quickfix" }
+  -- tabline = {
+  --   lualine_a = { 'buffers' },
+  --   lualine_b = {},
+  --   lualine_c = {},
+  --   lualine_x = {},
+  --   lualine_y = {},
+  --   lualine_z = { 'tabs' }
+  -- },
+  extensions = { "quickfix", "nerdtree" }
 }
