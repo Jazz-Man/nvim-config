@@ -103,6 +103,12 @@ return packer.startup(function(use)
     wants = "plenary.nvim"
   }
 
+  use {
+    "lukas-reineke/indent-blankline.nvim",
+    event = "BufRead",
+    config = "require('jz.config.blankline')"
+  }
+
   -- use { "RishabhRD/popfix" }
 
   -- Go Language
