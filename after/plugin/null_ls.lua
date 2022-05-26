@@ -1,4 +1,10 @@
-local null_ls = require 'null-ls'
+
+local res, null_ls = pcall(require, "null-ls")
+if not res then
+  return
+end
+
+
 local on_attach = require 'jz.lsp.on_attach'
 
 

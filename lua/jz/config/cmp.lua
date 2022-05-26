@@ -1,7 +1,7 @@
 local present, cmp = pcall(require, "cmp")
 
 if not present then
-   return
+  return
 end
 
 local vim = vim
@@ -13,6 +13,26 @@ local utils = require 'jz.utils'
 
 local luasnip = utils.require_on_exported_call("luasnip")
 
+local function autopairs()
+
+  local status_ok, autopairs = pcall(require, "nvim-autopairs")
+
+  if not status_ok then
+    return
+  end
+
+  autopairs.setup {
+    fast_wrap = {},
+    map_c_h = true,
+    map_c_w = true,
+    disable_filetype = { "TelescopePrompt", "vim" },
+  }
+
+  local cmp_autopairs = require "nvim-autopairs.completion.cmp"
+
+  cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+
+end
 
 local has_words_before = function()
   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -145,3 +165,4 @@ cmp.setup {
   }
 }
 
+autopairs()

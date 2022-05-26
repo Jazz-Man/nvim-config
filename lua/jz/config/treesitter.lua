@@ -104,6 +104,9 @@ if treesitter then
     },
     playground = {
       enable = true
+    },
+    autotag = {
+      enable = true,
     }
   }
 

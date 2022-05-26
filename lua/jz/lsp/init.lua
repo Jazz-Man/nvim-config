@@ -27,12 +27,14 @@ local capabilities = require 'jz.lsp.capabilities'
 handlers["textDocument/hover"] = vim.lsp.with(handlers.hover, { border = 'rounded' })
 -- handlers['textDocument/signatureHelp'] = vim.lsp.with(handlers.signature_help, { border = 'rounded' })
 
-handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-  underline = true,
-  virtual_text = true,
-  signs = true,
-  update_in_insert = false
-})
+handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics,
+  {
+    underline = true,
+    virtual_text = true,
+    signs = true,
+    update_in_insert = true
+  })
 
 
 
@@ -83,4 +85,3 @@ for server, config in pairs(servers) do
   lspconfig[server].setup(config)
 
 end
-

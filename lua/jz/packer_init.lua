@@ -88,6 +88,8 @@ return packer.startup(function(use)
     config = "require('jz.config.statusline')"
   }
 
+  use { "mrjones2014/smart-splits.nvim" }
+
   use {
     "akinsho/bufferline.nvim",
     after = "nvim-web-devicons",
@@ -96,7 +98,6 @@ return packer.startup(function(use)
 
   use {
     "Shatur/neovim-session-manager",
-    -- module = "session_manager",
     config = function()
       require('session_manager').setup({})
     end,
@@ -109,7 +110,6 @@ return packer.startup(function(use)
     config = "require('jz.config.blankline')"
   }
 
-  -- use { "RishabhRD/popfix" }
 
   -- Go Language
   use { "crispgm/nvim-go", config = "require ('jz.config.go')", ft = { "go" } }
@@ -122,11 +122,17 @@ return packer.startup(function(use)
     requires = {
       "jose-elias-alvarez/null-ls.nvim",
       "jose-elias-alvarez/nvim-lsp-ts-utils",
-      "ray-x/lsp_signature.nvim"
+      "ray-x/lsp_signature.nvim",
     },
     after    = { 'nvim-lspconfig' }
   }
 
+  use {
+    "folke/lsp-colors.nvim",
+    config = function()
+      require("lsp-colors").setup({})
+    end
+  }
   -- Autocompletion & snippets
   use {
     "rafamadriz/friendly-snippets",
@@ -158,7 +164,8 @@ return packer.startup(function(use)
       "hrsh7th/cmp-nvim-lsp-signature-help", -- nvim-cmp source for displaying function signatures with the current parameter emphasized:
       "hrsh7th/cmp-omni", -- nvim-cmp source for omnifunc.
       "ray-x/cmp-treesitter", -- nvim-cmp source for treesitter nodes.
-      "onsails/lspkind-nvim" -- This tiny plugin adds vscode-like pictograms to neovim built-in lsp
+      "onsails/lspkind-nvim", -- This tiny plugin adds vscode-like pictograms to neovim built-in lsp
+      "windwp/nvim-autopairs"
     },
   }
 
@@ -187,7 +194,8 @@ return packer.startup(function(use)
     requires = {
       { "nvim-treesitter/nvim-treesitter-refactor", after = { 'nvim-treesitter' } },
       { "nvim-treesitter/nvim-treesitter-textobjects", after = { 'nvim-treesitter' } },
-      { "JoosepAlviste/nvim-ts-context-commentstring", after = { 'nvim-treesitter' } }
+      { "JoosepAlviste/nvim-ts-context-commentstring", after = { 'nvim-treesitter' } },
+      { "windwp/nvim-ts-autotag", after = { 'nvim-treesitter' } }
     }
   }
 

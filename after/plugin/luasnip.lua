@@ -3,7 +3,6 @@ if not res then
   return
 end
 
-local utils = require 'jz.utils'
 
 
 require("luasnip.loaders.from_vscode").lazy_load()
