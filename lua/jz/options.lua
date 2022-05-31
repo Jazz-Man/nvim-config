@@ -88,13 +88,20 @@ local global_config = {
   -----------------------------------------------------------
   -- Dirs
   -----------------------------------------------------------
-  directory = utils.cache_dir .. "swag/", -- List of directory names for the swap file, separated with commas.
-  undodir = utils.cache_dir .. "undo/",
+  directory = utils.dir_path("swag"), -- List of directory names for the swap file, separated with commas.
+  undodir = utils.dir_path("undo"),
   undofile = true,
-  backupdir = utils.cache_dir .. "backup/",
-  viewdir = utils.cache_dir .. "view/",
-  backupskip = "/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*,*/shm/*,/private/var/*,.vault.vim",
-  spellfile = utils.cache_dir .. "spell/en.uft-8.add",
+  backupdir = utils.dir_path('backup'),
+  viewdir = utils.dir_path("view"),
+  backupskip = {
+    "/tmp/*",
+    "$TMPDIR/*",
+    "$TMP/*",
+    "$TEMP/*",
+    "*/shm/*",
+    "/private/var/*",
+    ".vault.vim"
+  },
 
   -----------------------------------------------------------
   -- Search
@@ -161,34 +168,17 @@ local window_config = {
   -----------------------------------------------------------
   -- Neovim UI
   -----------------------------------------------------------
-  number = true, -- Show line number
+  -- number = true, -- Show line number
   numberwidth = 2,
   relativenumber = false,
   linebreak = true, -- Wrap on word boundary
   breakindentopt = "shift:2,min:20",
   colorcolumn = "120",
   signcolumn = "yes:1", -- When and how to draw the signcolumn.
-  -- conceallevel = 2, -- Determine how text with the "conceal" syntax attribute :syn-conceal is shown
-  -- concealcursor = "niv", -- Sets the modes in which text in the cursor line can also be concealed.
-  -- winblend = 10, -- Enables pseudo-transparency for a floating window.
-
-  -----------------------------------------------------------
-  -- Fold config
-  -----------------------------------------------------------
-  foldenable = true,
-  foldmethod = "indent"
 
 }
 
 
-if utils.is_mac then
-  vim.g.clipboard = {
-    name = "macOS-clipboard",
-    copy = { ["+"] = "pbcopy", ["*"] = "pbcopy" },
-    paste = { ["+"] = "pbpaste", ["*"] = "pbpaste" },
-    cache_enabled = 0
-  }
-end
 
 for name, value in pairs(global_config) do
   vim.opt[name] = value

@@ -1,83 +1,114 @@
-if not pcall(require, "telescope") then
-  return
+local telescope = require("telescope")
+-- local previewers = require("telescope.previewers")
+-- local Job = require("plenary.job")
+local actions = require "telescope.actions"
+local themes = require "telescope.themes"
+-- local utils = require "jz.utils"
+
+
+local horizontal_preview_width = function(_, cols, _)
+  if cols > 200 then
+    return math.floor(cols * 0.6)
+  else
+    return math.floor(cols * 0.5)
+  end
 end
 
 
-local actions = require "telescope.actions"
-local themes = require "telescope.themes"
-local utils = require "jz.utils"
-
-require("telescope").setup {
+telescope.setup {
   defaults = {
 
-    prompt_prefix = " ",
-    selection_caret = " ",
     path_display = { "smart" },
+    layout_strategy = "flex",
+    file_ignore_patterns = {
+      "node_modules",
+      "vendor",
+      ".pyc"
+    },
+    layout_config = {
+      prompt_position = "top",
+      width = 0.9,
+      horizontal = {
+        preview_width = horizontal_preview_width,
+      },
+      vertical = {
+        -- width_padding = 0.05,
+        -- height_padding = 1,
+        width = 0.75,
+        height = 0.85,
+        preview_height = 0.4,
+        mirror = true,
+      },
+    },
+    sorting_strategy = "ascending",
+    selection_strategy = "closest",
 
-    -- mappings = {
-    --   i = {
-    --     ["<C-n>"] = actions.cycle_history_next,
-    --     ["<C-p>"] = actions.cycle_history_prev,
+    dynamic_preview_title = true,
 
-    --     ["<C-j>"] = actions.move_selection_next,
-    --     ["<C-k>"] = actions.move_selection_previous,
+    mappings = {
+      i = {
+        ["<C-n>"] = actions.cycle_history_next,
+        ["<C-p>"] = actions.cycle_history_prev,
 
-    --     ["<C-c>"] = actions.close,
+        ["<C-j>"] = actions.move_selection_next,
+        ["<C-k>"] = actions.move_selection_previous,
 
-    --     ["<Down>"] = actions.move_selection_next,
-    --     ["<Up>"] = actions.move_selection_previous,
+        ["<C-c>"] = actions.close,
 
-    --     ["<CR>"] = actions.select_default,
-    --     ["<C-x>"] = actions.select_horizontal,
-    --     ["<C-v>"] = actions.select_vertical,
-    --     ["<C-t>"] = actions.select_tab,
+        ["<Down>"] = actions.move_selection_next,
+        ["<Up>"] = actions.move_selection_previous,
 
-    --     ["<C-u>"] = actions.preview_scrolling_up,
-    --     ["<C-d>"] = actions.preview_scrolling_down,
+        ["<CR>"] = actions.select_default,
+        ["<C-x>"] = actions.select_horizontal,
+        ["<C-v>"] = actions.select_vertical,
+        ["<C-t>"] = actions.select_tab,
 
-    --     ["<PageUp>"] = actions.results_scrolling_up,
-    --     ["<PageDown>"] = actions.results_scrolling_down,
+        ["<C-u>"] = actions.preview_scrolling_up,
+        ["<C-d>"] = actions.preview_scrolling_down,
 
-    --     ["<Tab>"] = actions.toggle_selection + actions.move_selection_worse,
-    --     ["<S-Tab>"] = actions.toggle_selection + actions.move_selection_better,
-    --     ["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
-    --     ["<M-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
-    --     ["<C-l>"] = actions.complete_tag,
-    --     ["<C-_>"] = actions.which_key, -- keys from pressing <C-/>
-    --   },
+        ["<PageUp>"] = actions.results_scrolling_up,
+        ["<PageDown>"] = actions.results_scrolling_down,
 
-    --   n = {
-    --     ["<esc>"] = actions.close,
-    --     ["<CR>"] = actions.select_default,
-    --     ["<C-x>"] = actions.select_horizontal,
-    --     ["<C-v>"] = actions.select_vertical,
-    --     ["<C-t>"] = actions.select_tab,
+        ["<Tab>"] = actions.toggle_selection + actions.move_selection_worse,
+        ["<S-Tab>"] = actions.toggle_selection + actions.move_selection_better,
+        ["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
+        ["<M-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+        ["<C-l>"] = actions.complete_tag,
+        ["<C-_>"] = actions.which_key, -- keys from pressing <C-/>
+      },
 
-    --     ["<Tab>"] = actions.toggle_selection + actions.move_selection_worse,
-    --     ["<S-Tab>"] = actions.toggle_selection + actions.move_selection_better,
-    --     ["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
-    --     ["<M-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+      n = {
+        ["<esc>"] = actions.close,
+        ["<CR>"] = actions.select_default,
+        ["<C-x>"] = actions.select_horizontal,
+        ["<C-v>"] = actions.select_vertical,
+        ["<C-t>"] = actions.select_tab,
 
-    --     ["j"] = actions.move_selection_next,
-    --     ["k"] = actions.move_selection_previous,
-    --     ["H"] = actions.move_to_top,
-    --     ["M"] = actions.move_to_middle,
-    --     ["L"] = actions.move_to_bottom,
+        ["<Tab>"] = actions.toggle_selection + actions.move_selection_worse,
+        ["<S-Tab>"] = actions.toggle_selection + actions.move_selection_better,
+        ["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
+        ["<M-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
 
-    --     ["<Down>"] = actions.move_selection_next,
-    --     ["<Up>"] = actions.move_selection_previous,
-    --     ["gg"] = actions.move_to_top,
-    --     ["G"] = actions.move_to_bottom,
+        ["j"] = actions.move_selection_next,
+        ["k"] = actions.move_selection_previous,
+        ["H"] = actions.move_to_top,
+        ["M"] = actions.move_to_middle,
+        ["L"] = actions.move_to_bottom,
 
-    --     ["<C-u>"] = actions.preview_scrolling_up,
-    --     ["<C-d>"] = actions.preview_scrolling_down,
+        ["<Down>"] = actions.move_selection_next,
+        ["<Up>"] = actions.move_selection_previous,
+        ["gg"] = actions.move_to_top,
+        ["G"] = actions.move_to_bottom,
 
-    --     ["<PageUp>"] = actions.results_scrolling_up,
-    --     ["<PageDown>"] = actions.results_scrolling_down,
+        ["<C-u>"] = actions.preview_scrolling_up,
+        ["<C-d>"] = actions.preview_scrolling_down,
 
-    --     ["?"] = actions.which_key,
-    --   },
-    -- },
+        ["<PageUp>"] = actions.results_scrolling_up,
+        ["<PageDown>"] = actions.results_scrolling_down,
+
+        ["?"] = actions.which_key,
+      },
+    },
   },
   pickers = {
     -- Default configuration for builtin pickers goes here:
@@ -140,10 +171,6 @@ function M.find_files(opts)
       "--follow",
       "--exclude=.git",
       "--strip-cwd-prefix"
-    },
-    file_ignore_patterns = {
-      "node_modules",
-      ".pyc"
     },
   }, opts)
   require("telescope.builtin").fd(opts)

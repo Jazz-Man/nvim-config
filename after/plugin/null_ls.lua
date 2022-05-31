@@ -5,7 +5,7 @@ if not res then
 end
 
 
-local on_attach = require 'jz.lsp.on_attach'
+-- local on_attach = require 'jz.lsp.on_attach'
 
 
 local null_fmt = null_ls.builtins.formatting
@@ -14,7 +14,7 @@ local null_act = null_ls.builtins.code_actions
 
 null_ls.setup {
   debug = false,
-  on_attach = on_attach.on_attach,
+  -- on_attach = on_attach.on_attach,
   sources = {
     null_act.refactoring,
     null_act.shellcheck,

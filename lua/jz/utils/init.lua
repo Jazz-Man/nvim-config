@@ -1,15 +1,15 @@
+
 ---@class MapConfig
 ---@field public silent boolean|nil
 ---@field public buffer number|boolean|nil
 ---@field public replace_keycodes boolean|nil
 
 
-local lazy = require 'lazy'
 
 local M = {}
 
+local lazy = require 'lazy'
 local home = os.getenv("HOME")
-local path_sep = M.is_windows and "\\" or "/"
 
 
 M.require_on_index = lazy.require_on_index
@@ -19,22 +19,50 @@ M.require_on_exported_call = lazy.require_on_exported_call
 
 function M.load_variables()
   M.is_mac = jit.os == "OSX"
-  M.is_linux = jit.os == "Linux"
-  M.is_windows = jit.os == "Windows"
-  M.vim_path = home .. path_sep .. ".config" .. path_sep .. "nvim"
-  M.cache_dir = home .. path_sep .. ".cache" .. path_sep .. "vim" ..
-      path_sep
-  M.modules_dir = M.vim_path .. path_sep .. "modules"
-  M.snippet_dir = M.vim_path .. path_sep .. "snippets"
-  M.template_dir = M.vim_path .. path_sep .. "template"
-  M.path_sep = path_sep
+  M.vim_path = vim.fn.stdpath("config")
+  M.cache_dir = vim.fn.stdpath("cache")
+  M.state_dir = vim.fn.stdpath("state")
+  M.modules_dir = M.dir_path("modules", "config")
+  M.snippet_dir = M.dir_path("snippets", "config")
   M.home = home
 end
 
---- Check if a directory exists in this path
-function M.isdir(path)
-  -- "/" works on both Unix and Windows
-  return M.exists(path .. "/")
+-- Find the proper directory separator depending
+-- on lua installation or OS.
+local function dir_separator()
+  return vim.fn.has "win32" == 1 and "\\" or "/"
+
+end
+
+---comment
+---@param path string
+---@param what any
+---@return string
+function M.dir_path(path, what)
+
+  if what == nil then
+    what = "state"
+  end
+
+  local _path = vim.fn.expand(path)
+
+  if _path ~= '://' then
+
+    return
+  end
+
+
+  local sep = dir_separator()
+
+  local vim_dir = vim.fn.stdpath(what)
+
+  local dir = string.format("%s%s%s", vim_dir, sep, path)
+
+  if vim.fn.isdirectory(dir) ~= 0 then
+    vim.fn.mkdir(dir, "p", "0755")
+  end
+
+  return dir
 end
 
 -- check index in table
@@ -120,6 +148,18 @@ function M.autocommand(definitions)
   end
 end
 
+function M.clear_augroup(name)
+
+  local exists, _ = pcall(vim.api.nvim_get_autocmds, { group = name })
+
+  if not exists then
+    return
+  end
+
+  vim.api.nvim_clear_autocmds { group = name }
+
+end
+
 function M.log(msg, hl, name)
   name = name or "Neovim"
   hl = hl or "Todo"
@@ -134,12 +174,12 @@ end
 
 ---@param msg any
 ---@param name string
-function M.error(msg, name) 
-  vim.notify(msg, vim.log.levels.ERROR, { title = name }) 
+function M.error(msg, name)
+  vim.notify(msg, vim.log.levels.ERROR, { title = name })
 end
 
-function M.info(msg, name) 
-  vim.notify(msg, vim.log.levels.INFO, { title = name }) 
+function M.info(msg, name)
+  vim.notify(msg, vim.log.levels.INFO, { title = name })
 end
 
 ---@param ... string|function

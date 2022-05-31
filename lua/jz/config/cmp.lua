@@ -10,27 +10,38 @@ vim.opt.completeopt = { "menu", "menuone", "noselect" } -- Autocomplete options
 vim.opt.shortmess:append "c"
 
 local utils = require 'jz.utils'
+local icons = require("jz.config.icons")
 
 local luasnip = utils.require_on_exported_call("luasnip")
 
-local function autopairs()
+local function cmp_autopairs()
 
-  local status_ok, autopairs = pcall(require, "nvim-autopairs")
 
-  if not status_ok then
+  local ok, autopairs = pcall(require, "nvim-autopairs")
+
+  if not ok then
     return
   end
 
   autopairs.setup {
-    fast_wrap = {},
+    -- fast_wrap = {},
+    check_ts = true,
+    ts_config = {
+      lua = { 'string' },
+      javascript = { 'string', 'template_string' },
+    },
     map_c_h = true,
     map_c_w = true,
-    disable_filetype = { "TelescopePrompt", "vim" },
+    disable_filetype = { "TelescopePrompt", "vim", "guihua", "guihua_rust", "clap_input" },
   }
 
-  local cmp_autopairs = require "nvim-autopairs.completion.cmp"
 
-  cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+
+  cmp.event:on(
+    "confirm_done",
+    require("nvim-autopairs.completion.cmp").on_confirm_done()
+  )
+
 
 end
 
@@ -42,6 +53,21 @@ local has_words_before = function()
       :match("%s") == nil
 end
 
+local sources = {
+
+  { name = "nvim_lsp" },
+  { name = 'omni' },
+  { name = "luasnip" },
+  { name = 'nvim_lsp_signature_help' },
+  { name = 'treesitter' },
+  { name = "buffer" },
+  { name = "path" }
+}
+
+if vim.o.ft == "lua" then
+  table.insert(sources, { name = "nvim_lua" })
+end
+
 
 cmp.setup {
   snippet = {
@@ -49,6 +75,7 @@ cmp.setup {
       require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
     end
   },
+
   mapping = cmp.mapping.preset.insert({
     ["<C-e>"] = cmp.mapping {
       i = cmp.mapping.abort(),
@@ -100,28 +127,13 @@ cmp.setup {
 
   }),
   formatting = {
-    format = require("lspkind").cmp_format {
-      with_text = true,
-      maxwidth = 55,
-      menu = {
-        buffer = "[buf]",
-        nvim_lsp = "[LSP]",
-        nvim_lua = "[api]",
-        path = "[path]",
-        vsnip = "[snip]"
-      }
-    }
+    format = function(_, vim_item)
+      vim_item.kind = string.format("%s %s", icons.lspkind[vim_item.kind], vim_item.kind)
+
+      return vim_item
+    end,
   },
-  sources = cmp.config.sources({
-    { name = "nvim_lsp" },
-    { name = 'omni' },
-    { name = "luasnip" },
-    { name = 'nvim_lsp_signature_help' },
-    { name = 'nvim_lua' },
-    { name = 'treesitter' },
-    { name = "buffer" },
-    { name = "path" }
-  }),
+  sources = cmp.config.sources(sources),
 
   sorting = {
     comparators = {
@@ -165,4 +177,4 @@ cmp.setup {
   }
 }
 
-autopairs()
+cmp_autopairs()

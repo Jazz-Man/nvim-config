@@ -1,7 +1,3 @@
-local runtime_path = vim.split(package.path, ';')
-table.insert(runtime_path, "lua/?.lua")
-table.insert(runtime_path, "lua/?/init.lua")
-
 local cssLintSettings = {
   compatibleVendorPrefixes = "ignore",
   vendorPrefix = "warning",
@@ -12,11 +8,46 @@ local cssLintSettings = {
 
 local cssLSSetting = { validate = true, lint = cssLintSettings }
 
+-- lua setup
+local library = {}
+
+local function add(lib)
+  for _, p in pairs(vim.fn.expand(lib, false, true)) do
+    p = vim.loop.fs_realpath(p)
+    if p then
+      library[p] = true
+    end
+  end
+end
+
+-- add runtime
+add('$VIMRUNTIME')
+
+-- add your config
+add(vim.fn.stdpath('config'))
+
+library[vim.fn.expand('$VIMRUNTIME/lua')] = true
+library[vim.fn.expand('$VIMRUNTIME/lua/vim')] = true
+library[vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true
+
+local luadevcfg = {
+  library = {
+    vimruntime = true, -- runtime path
+    types = true, -- full signature, docs and completion of vim.api, vim.treesitter, vim.lsp and others
+    plugins = true,
+  },
+  runtime_path = true,
+}
+
+local luadev = {}
+
+local ok, l = pcall(require, 'lua-dev')
+if ok and l then
+  luadev = l.setup(luadevcfg)
+end
+
+
 local servers = {
-  awk_ls = {},
-  bashls = {},
-  sqls = {},
-  dockerls = {},
   cssls = {
     filetypes = { "css", "scss", "less", "sass" },
     settings = {
@@ -24,67 +55,6 @@ local servers = {
       scss = cssLSSetting,
       less = cssLSSetting,
       sass = cssLSSetting
-    }
-  },
-  html = {},
-  diagnosticls = {
-    filetypes = {
-      "javascript",
-      "javascriptreact",
-      "typescript",
-      "typescriptreact",
-      "css",
-      "scss"
-    },
-    init_options = {
-      linters = {
-        eslint = {
-          command = "eslint",
-          rootPatterns = { ".git" },
-          debounce = 100,
-          args = {
-            "--stdin", "--stdin-filename", "%filepath", "--format",
-            "json"
-          },
-          sourceName = "eslint",
-          parseJson = {
-            errorsRoot = "[0].messages",
-            line = "line",
-            column = "column",
-            endLine = "endLine",
-            endColumn = "endColumn",
-            message = "[eslint] ${message} [${ruleId}]",
-            security = "severity"
-          },
-          securities = { [2] = "error", [1] = "warning" }
-        }
-      },
-      filetypes = {
-        javascript = "eslint",
-        javascriptreact = "eslint",
-        typescript = "eslint",
-        typescriptreact = "eslint"
-      },
-      formatters = {
-        prettierEslint = {
-          command = "prettier-eslint",
-          args = { "--stdin" },
-          rootPatterns = { ".git" }
-        },
-        prettier = {
-          command = "prettier",
-          args = { "--stdin-filepath", "%filename" }
-        }
-      },
-      formatFiletypes = {
-        css = "prettier",
-        javascript = "prettierEslint",
-        javascriptreact = "prettierEslint",
-        json = "prettier",
-        scss = "prettier",
-        typescript = "prettierEslint",
-        typescriptreact = "prettierEslint"
-      }
     }
   },
   jsonls = {
@@ -141,8 +111,6 @@ local servers = {
       }
     }
   },
-  gopls = {},
-  vimls = {},
   yamlls = {
     settings = {
       yaml = {
@@ -159,17 +127,14 @@ local servers = {
       }
     }
   },
-  tsserver = {},
   sumneko_lua = {
     settings = {
       Lua = {
         runtime = {
-          -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
           version = 'LuaJIT',
-          -- Setup your lua path
-          path = runtime_path
         },
         diagnostics = {
+          enable = true,
           -- Get the language server to recognize the `vim` global
           globals = {
             "vim",
@@ -179,7 +144,9 @@ local servers = {
         },
         workspace = {
           -- Make the server aware of Neovim runtime files
-          library = vim.api.nvim_get_runtime_file('', true)
+          library = library,
+          maxPreload = 2000,
+          preloadFileSize = 40000,
         },
         -- Do not send telemetry data containing a randomized but unique identifier
         telemetry = { enable = false }
@@ -234,5 +201,8 @@ local servers = {
     }
   }
 }
+
+servers.sumneko_lua = vim.tbl_deep_extend('force', luadev, servers.sumneko_lua)
+
 
 return servers
