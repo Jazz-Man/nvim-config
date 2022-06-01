@@ -4,7 +4,6 @@
 --    impatient.enable_profile()
 -- end
 --
-
 require 'jz.globals'
 require 'jz.options'
 

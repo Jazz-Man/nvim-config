@@ -1,37 +1,38 @@
-
 ---@module "jz.utils"
 local util = require 'jz.utils'
 
-
 util.nmap('<leader><leader>x', ':call rd#save_and_exec()<CR>')
 
-
 --- Comments
-util.nmap('<leader>/', '<CMD>lua require("Comment.api").toggle_current_linewise()<CR>')
-util.vmap('<leader>/', "<ESC><cmd>lua require('Comment.api').toggle_linewise_op(vim.fn.visualmode())<CR>")
-
+util.nmap(
+  '<leader>/', '<CMD>lua require("Comment.api").toggle_current_linewise()<CR>'
+)
+util.vmap(
+  '<leader>/',
+  '<ESC><cmd>lua require(\'Comment.api\').toggle_linewise_op(vim.fn.visualmode())<CR>'
+)
 
 -- toggle in terminal mode
 
-util.map({ 't', 'n' }, '<A-i>', function()
-  require("nvterm.terminal").toggle "float"
-end)
+util.map(
+  {'t', 'n'}, '<A-i>', function() require('nvterm.terminal').toggle 'float' end
+)
 
-util.map({ 't', 'n' }, '<A-h>', function()
-  require("nvterm.terminal").toggle "horizontal"
-end)
+util.map(
+  {'t', 'n'}, '<A-h>',
+  function() require('nvterm.terminal').toggle 'horizontal' end
+)
 
-util.map({ 't', 'n' }, '<A-v>', function()
-  require("nvterm.terminal").toggle "vertical"
-end)
+util.map(
+  {'t', 'n'}, '<A-v>',
+  function() require('nvterm.terminal').toggle 'vertical' end
+)
 
-util.nmap('<leader>h', function()
-  require("nvterm.terminal").new "horizontal"
-end)
+util.nmap(
+  '<leader>h', function() require('nvterm.terminal').new 'horizontal' end
+)
 
-util.nmap('<leader>v', function()
-  require("nvterm.terminal").new "vertical"
-end)
+util.nmap('<leader>v', function() require('nvterm.terminal').new 'vertical' end)
 
 -- Remap for dealing with word wrap
 -- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'",
