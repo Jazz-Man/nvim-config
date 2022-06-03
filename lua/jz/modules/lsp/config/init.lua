@@ -1,19 +1,23 @@
 local conf = {}
 
-conf.lsp_installer = function()
-
-    local status_ok, lsp_installer = pcall(require, 'nvim-lsp-installer')
-    if not status_ok then return end
-
-    lsp_installer.setup({ensure_installed = {'sumneko_lua'}})
-end
-
 conf.lspconfig = function()
 
-    conf.lsp_installer()
+    require('nvim-lsp-installer').setup(
+      {
+          automatic_installation = true, -- automatically detect which servers to install (based on which servers are set up via lspconfig)
+          ensure_installed = {'sumneko_lua'},
+          ui = {
+              icons = {
+                  server_installed = '✓',
+                  server_pending = '➜',
+                  server_uninstalled = '✗'
+              }
+          }
+      }
+    )
 
     -- local servers = require 'jz.modules.lsp.config.serverconf'
-    local lsp_manager = require 'jz.modules.lsp.config.manager'
+    -- local lsp_manager = require 'jz.modules.lsp.config.manager'
 
     -- local lsp_utils = require 'jz.modules.lsp.config.utils'
 
@@ -21,44 +25,61 @@ conf.lspconfig = function()
 
     -- for server, config in pairs(servers) do lsp_manager.setup(server, config) end
 
-    lsp_manager.setup('awk_ls')
-    lsp_manager.setup('bashls')
-    lsp_manager.setup('dockerls')
-    lsp_manager.setup('html')
-    lsp_manager.setup('vimls')
+    -- lsp_manager.setup('awk_ls')
+    -- lsp_manager.setup('bashls')
+    -- lsp_manager.setup('dockerls')
+    -- lsp_manager.setup('html')
+    -- lsp_manager.setup('vimls')
     -- conf.lua_lsp()
     -- conf.php_lsp()
     -- conf.jsonls_lsp()
+    
+end
 
-    -- lsp_manager.setup_null_ls()
+conf.null_ls = function()
+    local lsp_manager = require 'jz.modules.lsp.config.manager'
+    local null_ls = require 'null-ls'
 
-    -- local null_ls_ok, null_ls = pcall(require, 'null-ls')
+    local formatting = null_ls.builtins.formatting
+    local diagnostics = null_ls.builtins.diagnostics
+    local code_actions = null_ls.builtins.code_actions
+    local completion = null_ls.builtins.completion
 
-    -- if null_ls_ok then
+    null_ls.setup(
+      {
+          debug = true,
+          log = {enable = true, level = 'warn', use_console = 'async'},
+          on_attach = lsp_manager.common_on_attach,
+          on_init = lsp_manager.common_on_init,
+          on_exit = lsp_manager.common_on_exit,
+          sources = {
+              code_actions.refactoring,
+              code_actions.shellcheck,
 
-    --     local formatting = null_ls.builtins.formatting
-    --     local diagnostics = null_ls.builtins.diagnostics
-    --     local code_actions = null_ls.builtins.code_actions
-    --     local completion = null_ls.builtins.completion
+              completion.spell,
+              completion.tags,
 
-    --     local sources = {
-    --         -- completion.luasnip,
-    --         code_actions.refactoring,
-    --         completion.spell,
-    --         completion.tags,
-    --         diagnostics.trail_space,
-    --         diagnostics.luacheck
-    --     }
+              diagnostics.trail_space,
+              diagnostics.luacheck,
+              diagnostics.shellcheck,
+              diagnostics.sqlfluff,
 
-    --     null_ls.setup(
-    --       {
-    --           debug = true,
-    --           log = {enable = true, level = 'warn', use_console = 'async'},
-    --           sources = sources
-    --       }
-    --     )
-    -- end
+              diagnostics.php,
+              diagnostics.psalm,
+              diagnostics.phpstan,
+              diagnostics.phpmd,
 
+              formatting.lua_format.with(
+                {extra_args = {'-c', '~/.config/luaformatter/config.yaml'}}
+              ),
+
+              formatting.shfmt,
+              formatting.jq,
+              formatting.sqlfluff,
+              formatting.phpcsfixer
+          }
+      }
+    )
 end
 
 conf.jsonls_lsp = function()

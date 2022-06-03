@@ -92,15 +92,20 @@
 return function(use)
     
     local conf = require 'jz.modules.lsp.config'
-    
+
     use {
-        'neovim/nvim-lspconfig',
-        event = 'BufRead',
-        -- config = [[require 'jz.lsp']],
-        requires = {
-            {'williamboman/nvim-lsp-installer', after = 'nvim-lspconfig'},
-            {'jose-elias-alvarez/null-ls.nvim', after = 'nvim-lspconfig'},
-            {'ray-x/lsp_signature.nvim', after = 'nvim-lspconfig'}
-        }
+        "williamboman/nvim-lsp-installer",
+        {
+            "neovim/nvim-lspconfig",
+            event = 'BufRead',
+            config = conf.lspconfig,
+        },
+        {
+            'jose-elias-alvarez/null-ls.nvim', 
+            after = 'nvim-lspconfig',
+            config = conf.null_ls,
+        },
+        {'ray-x/lsp_signature.nvim', after = 'nvim-lspconfig'}
     }
+
 end

@@ -52,7 +52,7 @@ return packer.startup(
 
       use 'norcalli/nvim_utils'
 
-      use 'tjdevries/lazy.nvim'
+    --   use 'tjdevries/lazy.nvim'
 
     --   use 'nathom/filetype.nvim'
 
