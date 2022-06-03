@@ -53,4 +53,4 @@ _G.prequire = function(...)
 end
 
 
-R('nvim_utils')
+-- R('nvim_utils')

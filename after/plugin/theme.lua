@@ -6,7 +6,7 @@ local sonokai_options = {
 }
 
 for option, value in pairs(sonokai_options) do
-  nvim.g[option] = value
+  vim.g[option] = value
 end
 
-nvim.command("colorscheme sonokai")
+vim.cmd("colorscheme sonokai")

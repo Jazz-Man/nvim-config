@@ -232,7 +232,7 @@ for _, provider in pairs(providers) do
 end
 
 -- Map leader to <space>
--- vim.api.nvim_set_keymap('', '<Space>', '<Nop>', { noremap = true, silent=true})
+vim.api.nvim_set_keymap('', '<Space>', '<Nop>', { noremap = true, silent=true})
 vim.g.mapleader      = ' '
 vim.g.maplocalleader = ' '
 

@@ -8,13 +8,13 @@
 
 local M = {}
 
-local lazy = require 'lazy'
+-- local lazy = require 'lazy'
 local home = os.getenv("HOME")
 
 
-M.require_on_index = lazy.require_on_index
-M.require_on_module_call = lazy.require_on_module_call
-M.require_on_exported_call = lazy.require_on_exported_call
+-- M.require_on_index = lazy.require_on_index
+-- M.require_on_module_call = lazy.require_on_module_call
+-- M.require_on_exported_call = lazy.require_on_exported_call
 
 
 function M.load_variables()
