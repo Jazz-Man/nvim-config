@@ -1,29 +1,35 @@
--- local ui = {}
--- local conf = require 'jz.modules.ui.config'
+return function( use )
+    local conf = require 'jz.modules.ui.config'
 
--- ui['sainnhe/sonokai'] = {config = conf.sonokai}
+    use {'sainnhe/sonokai', config = conf.sonokai}
 
--- ui['norcalli/nvim-colorizer.lua'] = {event = 'BufRead', config = conf.colorizer}
+    use 'folke/lsp-colors.nvim'
 
--- ui['kyazdani42/nvim-web-devicons'] = {event = 'VimEnter', config = conf.devicon}
+    use {
+        'norcalli/nvim-colorizer.lua',
+        event = 'BufRead', 
+        config = conf.colorizer
+    }
 
--- ui['nvim-lualine/lualine.nvim'] =
---   {after = 'nvim-web-devicons', config = conf.lualine}
+    use {
+        'kyazdani42/nvim-web-devicons',
+        event = 'VimEnter', 
+        config = conf.devicon
+    }
 
--- ui['akinsho/bufferline.nvim'] = {
---     after = 'nvim-web-devicons',
---     config = conf.bufferline,
---     event = 'UIEnter',
---     opt = true
--- }
+    use {
+        'nvim-lualine/lualine.nvim',
+        after = 'nvim-web-devicons',
+        config = conf.lualine
+    }
 
--- ui['lukas-reineke/indent-blankline.nvim'] = {
---   event = 'BufRead',
---   config = conf.blankline,
--- }
+    use {'mrjones2014/smart-splits.nvim'}
 
-
-
-return function(use)
-  
+    use {
+        'akinsho/bufferline.nvim',
+        after = 'nvim-web-devicons',
+        config = conf.bufferline,
+        event = 'UIEnter',
+        opt = true
+    }
 end

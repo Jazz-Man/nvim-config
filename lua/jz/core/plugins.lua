@@ -54,7 +54,7 @@ return packer.startup(
 
       use 'tjdevries/lazy.nvim'
 
-      use 'nathom/filetype.nvim'
+    --   use 'nathom/filetype.nvim'
 
       use({'nvim-lua/plenary.nvim'})
 
@@ -69,43 +69,11 @@ return packer.startup(
           keys = {'gc', 'gl'}
       }
 
-      -- UI
+    --   use {'rmagatti/auto-session', config = 'require(\'jz.config.sessions\')'}
 
-      use 'sainnhe/sonokai'
-
-      use 'folke/lsp-colors.nvim'
-
-      use {
-          'norcalli/nvim-colorizer.lua',
-          config = 'require(\'jz.config.colorizer\')',
-          event = 'BufRead'
-      }
-
-      use {
-          'kyazdani42/nvim-web-devicons',
-          config = function()
-              require('nvim-web-devicons').setup({default = true})
-          end,
-          event = 'VimEnter'
-      }
-
-      use {
-          'nvim-lualine/lualine.nvim',
-          after = 'nvim-web-devicons',
-          config = 'require(\'jz.config.statusline\')'
-      }
-
-      use {'mrjones2014/smart-splits.nvim'}
-
-      use {
-          'akinsho/bufferline.nvim',
-          after = 'nvim-web-devicons',
-          config = 'require(\'jz.config.bufferline\')',
-          event = 'UIEnter',
-          opt = true
-      }
-
-      use {'rmagatti/auto-session', config = 'require(\'jz.config.sessions\')'}
+      for _, modules in ipairs(require('jz.modules')) do
+            modules(use)
+    end
 
       --- EDITOR Start
       use {
