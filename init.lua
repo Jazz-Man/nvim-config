@@ -7,5 +7,3 @@
 require 'jz.globals'
 -- require 'jz.options'
 require 'jz.core'
-
-require 'jz.packer_init'
