@@ -17,19 +17,17 @@ conf.lspconfig = function()
     )
 
     -- local servers = require 'jz.modules.lsp.config.serverconf'
-    -- local lsp_manager = require 'jz.modules.lsp.config.manager'
+    local lsp_manager = require 'jz.modules.lsp.config.manager'
 
     local lsp_utils = require 'jz.modules.lsp.config.utils'
 
     lsp_utils.setup_handlers()
 
-    -- for server, config in pairs(servers) do lsp_manager.setup(server, config) end
-
-    -- lsp_manager.setup('awk_ls')
-    -- lsp_manager.setup('bashls')
-    -- lsp_manager.setup('dockerls')
-    -- lsp_manager.setup('html')
-    -- lsp_manager.setup('vimls')
+    lsp_manager.setup('awk_ls')
+    lsp_manager.setup('bashls')
+    lsp_manager.setup('dockerls')
+    lsp_manager.setup('html')
+    lsp_manager.setup('vimls')
     -- conf.php_lsp()
 
 end
@@ -58,9 +56,7 @@ conf.null_ls = function()
           sources = {
               code_actions.refactoring,
               code_actions.shellcheck,
-              code_actions.eslint_d.with({
-                prefer_local = 'node_modules/.bin'
-              }),
+              code_actions.eslint_d.with({prefer_local = 'node_modules/.bin'}),
 
               completion.spell,
               completion.tags,
@@ -73,9 +69,7 @@ conf.null_ls = function()
               diagnostics.psalm,
               diagnostics.phpstan,
               diagnostics.phpmd,
-              diagnostics.eslint_d.with({
-                  prefer_local = 'node_modules/.bin'
-                }),
+              diagnostics.eslint_d.with({prefer_local = 'node_modules/.bin'}),
 
               formatting.lua_format.with(
                 {
@@ -115,6 +109,38 @@ conf.jsonls_lsp = function()
     )
 end
 
+conf.yaml_lsp = function()
+    local lsp_manager = require 'jz.modules.lsp.config.manager'
+
+    require('telescope').load_extension('yaml_schema')
+
+    local cfg = require('yaml-companion').setup(
+                  {
+          builtin_matchers = {kubernetes = {enabled = true}},
+          lspconfig = {
+              flags = {debounce_text_changes = 150},
+              settings = {
+                  redhat = {telemetry = {enabled = false}},
+                  yaml = {
+                      format = {enable = true},
+                      hover = true,
+                      schemaDownload = {enable = true},
+                      schemaStore = {
+                          enable = true,
+                          url = 'https://www.schemastore.org/api/json/catalog.json'
+                      },
+                      trace = {server = 'debug'},
+                      validate = true
+                  }
+              },
+              single_file_support = true
+          }
+      }
+                )
+
+    lsp_manager.setup('yamlls', cfg)
+
+end
 conf.ts_lsp = function()
 
     local lsp_manager = require 'jz.modules.lsp.config.manager'
@@ -489,13 +515,12 @@ conf.cmp = function()
         {name = 'omni'},
         {name = 'luasnip'},
         {name = 'nvim_lsp_signature_help'},
-        {name = 'nvim_lua'},
         {name = 'treesitter'},
         {name = 'buffer'},
         {name = 'path'}
     }
 
-    -- if vim.o.ft == 'lua' then table.insert(sources, {name = 'nvim_lua'}) end
+    if vim.o.ft == 'lua' then table.insert(sources, {name = 'nvim_lua'}) end
 
     if vim.tbl_contains({'sql', 'mysql', 'plsql'}, vim.o.ft) then
 
@@ -508,8 +533,6 @@ conf.cmp = function()
                 require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
             end
         },
-
-        completion = {completeopt = 'menu,menuone,noinsert'},
 
         mapping = cmp.mapping.preset.insert(
           {

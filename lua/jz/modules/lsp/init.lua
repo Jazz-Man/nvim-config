@@ -44,6 +44,17 @@ return function( use )
     }
 
     use {
+        'someone-stole-my-name/yaml-companion.nvim',
+        wants = 'nvim-lspconfig',
+        ft = {'yaml', 'yaml.docker-compose', 'yml'},
+        requires = {
+            'nvim-lua/plenary.nvim',
+            'nvim-telescope/telescope.nvim',
+        },
+        config = conf.yaml_lsp
+    }
+
+    use {
         'nanotee/sqls.nvim',
         config = conf.sql_lsp,
         ft = {'sql', 'mysql', 'plsql'},
@@ -72,7 +83,7 @@ return function( use )
             'typescript.tsx'
         },
         wants = 'nvim-lspconfig',
-        config = conf.ts_lsp,
+        config = conf.ts_lsp
     }
 
     use {

@@ -23,8 +23,6 @@ return function( use )
         config = conf.lualine
     }
 
-    use {'mrjones2014/smart-splits.nvim'}
-
     use {
         'akinsho/bufferline.nvim',
         after = 'nvim-web-devicons',
