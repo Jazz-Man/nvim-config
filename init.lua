@@ -4,6 +4,6 @@
 --    impatient.enable_profile()
 -- end
 --
-require "jz.globals"
+require 'jz.globals'
 -- require 'jz.options'
 require 'jz.core'

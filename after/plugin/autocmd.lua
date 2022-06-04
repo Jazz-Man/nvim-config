@@ -71,7 +71,8 @@ local autocmd = {
             options = {
                 callback = function()
                     vim.highlight.on_yank({timeout = 100})
-                end
+                end,
+                pattern = '*',
 
             }
         }

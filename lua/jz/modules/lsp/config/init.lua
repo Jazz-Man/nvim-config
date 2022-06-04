@@ -19,9 +19,9 @@ conf.lspconfig = function()
     -- local servers = require 'jz.modules.lsp.config.serverconf'
     -- local lsp_manager = require 'jz.modules.lsp.config.manager'
 
-    -- local lsp_utils = require 'jz.modules.lsp.config.utils'
+    local lsp_utils = require 'jz.modules.lsp.config.utils'
 
-    -- lsp_utils.setup_handlers()
+    lsp_utils.setup_handlers()
 
     -- for server, config in pairs(servers) do lsp_manager.setup(server, config) end
 
@@ -30,15 +30,18 @@ conf.lspconfig = function()
     -- lsp_manager.setup('dockerls')
     -- lsp_manager.setup('html')
     -- lsp_manager.setup('vimls')
-    -- conf.lua_lsp()
     -- conf.php_lsp()
-    -- conf.jsonls_lsp()
-    
+
 end
+
+conf.lsp_signature = function() require'lsp_signature'.setup({}) end
+
+conf.illuminate = function() vim.g.Illuminate_ftblacklist = {'nerdtree'} end
 
 conf.null_ls = function()
     local lsp_manager = require 'jz.modules.lsp.config.manager'
     local null_ls = require 'null-ls'
+    local utils = require 'jz.utils'
 
     local formatting = null_ls.builtins.formatting
     local diagnostics = null_ls.builtins.diagnostics
@@ -55,6 +58,9 @@ conf.null_ls = function()
           sources = {
               code_actions.refactoring,
               code_actions.shellcheck,
+              code_actions.eslint_d.with({
+                prefer_local = 'node_modules/.bin'
+              }),
 
               completion.spell,
               completion.tags,
@@ -63,20 +69,30 @@ conf.null_ls = function()
               diagnostics.luacheck,
               diagnostics.shellcheck,
               diagnostics.sqlfluff,
-
               diagnostics.php,
               diagnostics.psalm,
               diagnostics.phpstan,
               diagnostics.phpmd,
+              diagnostics.eslint_d.with({
+                  prefer_local = 'node_modules/.bin'
+                }),
 
               formatting.lua_format.with(
-                {extra_args = {'-c', '~/.config/luaformatter/config.yaml'}}
+                {
+                    extra_args = {
+                        '-c',
+                        string.format(
+                          '%s/.config/luaformatter/config.yaml', utils.home
+                        )
+                    }
+                }
               ),
 
               formatting.shfmt,
               formatting.jq,
               formatting.sqlfluff,
-              formatting.phpcsfixer
+              formatting.phpcsfixer,
+              formatting.prettier
           }
       }
     )
@@ -91,65 +107,8 @@ conf.jsonls_lsp = function()
           init_options = {provideFormatter = false},
           settings = {
               json = {
-                  schemas = {
-                      {
-                          description = 'TypeScript compiler configuration file',
-                          fileMatch = {'tsconfig.json', 'tsconfig.*.json'},
-                          url = 'http://json.schemastore.org/tsconfig'
-                      },
-                      {
-                          description = 'Babel configuration',
-                          fileMatch = {
-                              '.babelrc.json',
-                              '.babelrc',
-                              'babel.config.json'
-                          },
-                          url = 'http://json.schemastore.org/lerna'
-                      },
-                      {
-                          description = 'ESLint config',
-                          fileMatch = {'.eslintrc.json', '.eslintrc'},
-                          url = 'http://json.schemastore.org/eslintrc'
-                      },
-                      {
-                          description = 'Prettier config',
-                          fileMatch = {
-                              '.prettierrc',
-                              '.prettierrc.json',
-                              'prettier.config.json'
-                          },
-                          url = 'http://json.schemastore.org/prettierrc'
-                      },
-                      {
-                          description = 'Vercel Now config',
-                          fileMatch = {'now.json'},
-                          url = 'http://json.schemastore.org/now'
-                      },
-                      {
-                          description = 'Stylelint config',
-                          fileMatch = {
-                              '.stylelintrc',
-                              '.stylelintrc.json',
-                              'stylelint.config.json'
-                          },
-                          url = 'http://json.schemastore.org/stylelintrc'
-                      },
-                      {
-                          description = 'NPM package.json files',
-                          fileMatch = {'package.json'},
-                          url = 'https://json.schemastore.org/package'
-                      },
-                      {
-                          description = 'PHP Package',
-                          fileMatch = {'composer.json'},
-                          url = 'https://json.schemastore.org/composer'
-                      },
-                      {
-                          description = 'JSHint configuration files',
-                          fileMatch = {'.jshintrc'},
-                          url = 'https://json.schemastore.org/jshintrc'
-                      }
-                  }
+                  schemas = require('schemastore').json.schemas(),
+                  validate = {enable = true}
               }
           }
       }
@@ -224,17 +183,6 @@ conf.ts_lsp = function()
               utils.nmap('gi', ':TSLspImportAll<CR>', options)
           end
 
-      }
-    )
-
-    local null_ls = require('null-ls')
-    null_ls.setup(
-      {
-          sources = {
-              null_ls.builtins.diagnostics.eslint, -- eslint or eslint_d
-              null_ls.builtins.code_actions.eslint, -- eslint or eslint_d
-              null_ls.builtins.formatting.prettier -- prettier, eslint, eslint_d, or prettierd
-          }
       }
     )
 end
@@ -675,6 +623,7 @@ conf.cmp = function()
 end
 
 conf.nvim_go = function()
+    local lsp_manager = require 'jz.modules.lsp.config.manager'
     local go = require 'go'
 
     go.setup {
@@ -688,7 +637,7 @@ conf.nvim_go = function()
         -- linter_flags: e.g., {revive = {'-config', '/path/to/config.yml'}}
         linter_flags = {},
         -- lint_prompt_style: qf (quickfix), vt (virtual text)
-        lint_prompt_style = 'qf',
+        lint_prompt_style = 'vt',
         -- formatter: goimports, gofmt, gofumpt
         formatter = 'goimports',
         -- test flags: -count=1 will disable cache
@@ -714,6 +663,45 @@ conf.nvim_go = function()
     go.config.update_tool(
       'quicktype', function( tool ) tool.pkg_mgr = 'yarn' end
     )
+
+    lsp_manager.setup(
+      'gopls', {
+          settings = {
+              gopls = {
+                  analyses = {
+                      unusedparams = true,
+                      unreachable = false,
+                      fieldalignment = true,
+                      nilness = true,
+                      shadow = true,
+                      unusedwrite = true,
+                      useany = true
+                  },
+                  codelenses = {
+                      generate = true,
+                      gc_details = true,
+                      test = true,
+                      tidy = true,
+                      upgrade_dependency = true,
+                      regenerate_cgo = true
+                  },
+                  annotations = {
+                      bounds = true,
+                      escape = true,
+                      inline = true,
+                      ['nil'] = true
+                  },
+                  staticcheck = true,
+                  usePlaceholders = true,
+                  completeUnimported = true,
+                  hoverKind = 'Structured',
+                  experimentalUseInvalidMetadata = true,
+                  experimentalPostfixCompletions = true
+              }
+          }
+      }
+    )
+
 end
 
 return conf

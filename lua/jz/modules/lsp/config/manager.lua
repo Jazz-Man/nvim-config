@@ -12,15 +12,24 @@ function M.common_on_exit( _, _ )
 
 end
 
+local function lsp_highlight_document(client)
+    -- Set autocommands conditional on server_capabilities
+      local status_ok, illuminate = pcall(require, "illuminate")
+      if not status_ok then
+        return
+      end
+      illuminate.on_attach(client)
+    -- end
+  end
+
 function M.common_on_attach( client, bufnr )
 
     client.server_capabilities.documentHighlightProvider = true
     client.server_capabilities.documentFormattingProvider = true
 
     lsp_keymap.setup(client, bufnr)
-    lsp_utils.setup_document_highlight(client, bufnr)
+    lsp_highlight_document(client)
     lsp_utils.setup_codelens_refresh(client, bufnr)
-    lsp_utils.lsp_signature(client, bufnr)
 
     vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
@@ -66,7 +75,10 @@ local function resolve_config( server_config )
         on_exit = M.common_on_exit,
         capabilities = common_capabilities(),
         autostart = true,
-        flags = {debounce_text_changes = 50}
+        flags = {
+            debounce_text_changes = 50,
+            allow_incremental_sync = true
+        }
     }
 
     if server_config.on_attach then

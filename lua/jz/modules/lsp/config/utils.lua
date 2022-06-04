@@ -3,32 +3,6 @@ local M = {}
 local utils = require 'jz.utils'
 local handlers = vim.lsp.handlers
 
-function M.setup_document_highlight( client, bufnr )
-    if client.server_capabilities.documenthighlightprovider then
-
-        utils.autocommand(
-          {
-              lsp_document_highlight = {
-                  {
-                      event = {'CursorHold', 'CursorHoldI'},
-                      options = {
-                          buffer = bufnr,
-                          callback = vim.lsp.buf.document_highlight
-                      }
-                  },
-                  {
-                      event = {'CursorMoved', 'CursorMovedI'},
-                      options = {
-                          buffer = bufnr,
-                          callback = vim.lsp.buf.clear_references
-                      }
-                  }
-              }
-          }
-        )
-    end
-
-end
 
 function M.setup_handlers()
 
@@ -103,33 +77,6 @@ function M.setup_codelens_refresh( client, bufnr )
       }
     )
 
-end
-
-function M.lsp_signature( _, bufnr )
-
-    local status_ok, lsp_signature = pcall(require, 'lsp_signature')
-
-    if not status_ok then return end
-
-    lsp_signature.on_attach(
-      {
-          bind = true,
-          doc_lines = 0,
-          floating_window = true,
-          fix_pos = true,
-          hint_enable = true,
-          hint_prefix = ' ',
-          hint_scheme = 'String',
-          hi_parameter = 'Search',
-          max_height = 22,
-          max_width = 120, -- max_width of signature floating_window, line will be wrapped if exceed max_width
-          handler_opts = {
-              border = 'single' -- double, single, shadow, none
-          },
-          zindex = 200, -- by default it will be on top of all floating windows, set to 50 send it to bottom
-          padding = '' -- character to pad on left and right of signature can be ' ', or '|'  etc
-      }, bufnr
-    )
 end
 
 ---filter passed to vim.lsp.buf.format

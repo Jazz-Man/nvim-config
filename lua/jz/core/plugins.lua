@@ -146,75 +146,6 @@ return packer.startup(
       }
       --- EDITOR End
 
-      --- Language Start
-
-    --   use {
-    --       'crispgm/nvim-go',
-    --       config = 'require (\'jz.config.go\')',
-    --       ft = {'go', 'gomod'}
-    --   }
-
-    --   use {'nanotee/sqls.nvim', ft = {'sql', 'pgsql'}}
-
-    --   use {'folke/lua-dev.nvim', ft = {'lua'}}
-
-    --   use {
-    --       'jose-elias-alvarez/nvim-lsp-ts-utils',
-    --       ft = {'typescriptreact', 'typescript'}
-
-    --   }
-
-      --- Language End
-
-      --- LSP Start
-
-    --   use {
-    --       'kristijanhusak/vim-dadbod-completion',
-    --       event = 'InsertEnter',
-    --       ft = {'sql'},
-    --       setup = function()
-    --           vim.cmd(
-    --             [[autocmd FileType sql setlocal omnifunc=vim_dadbod_completion#omni]]
-    --           )
-    --       end
-    --   }
-
-    --   use {
-    --       'neovim/nvim-lspconfig',
-    --       event = 'BufRead',
-    --       config = [[require 'jz.lsp']],
-    --       requires = {
-    --           {'williamboman/nvim-lsp-installer', after = 'nvim-lspconfig'},
-    --           {'jose-elias-alvarez/null-ls.nvim', after = 'nvim-lspconfig'},
-    --           {'ray-x/lsp_signature.nvim', after = 'nvim-lspconfig'}
-    --       }
-    --   }
-
-    --   use {
-    --       'L3MON4D3/LuaSnip',
-    --       config = [[ require 'jz.config.luasnip' ]],
-    --       event = 'InsertEnter',
-    --       requires = {{'rafamadriz/friendly-snippets', event = 'InsertEnter'}}
-    --   }
-
-    --   use {
-    --       'hrsh7th/nvim-cmp',
-    --       config = 'require(\'jz.config.cmp\')',
-    --       after = {'LuaSnip'},
-    --       -- The completion plugin
-    --       requires = {
-    --           {'hrsh7th/cmp-buffer', after = 'nvim-cmp', opt = true},
-    --           {'hrsh7th/cmp-path', after = 'nvim-cmp', opt = true},
-    --           {'saadparwaiz1/cmp_luasnip', after = {'nvim-cmp', 'LuaSnip'}},
-    --           {'hrsh7th/cmp-nvim-lsp', after = 'nvim-cmp', opt = true},
-    --           {'hrsh7th/cmp-nvim-lua', after = 'nvim-cmp', ft = {'lua'}},
-    --           {'hrsh7th/cmp-nvim-lsp-document-symbol', after = 'nvim-cmp', opt = true},
-    --           {'hrsh7th/cmp-nvim-lsp-signature-help', after = 'nvim-cmp', opt = true},
-    --           {'hrsh7th/cmp-omni', after = 'nvim-cmp', opt = true},
-    --           {'ray-x/cmp-treesitter', after = 'nvim-cmp', opt = true},
-    --           {'windwp/nvim-autopairs', after = 'nvim-cmp', opt = true}
-    --       }
-    --   }
 
     --   use {
     --       'nvim-telescope/telescope.nvim',
@@ -232,27 +163,27 @@ return packer.startup(
     --   }
       --- LSP End
 
-    --   use {
-    --       'nvim-treesitter/nvim-treesitter',
-    --       config = 'require(\'jz.config.treesitter\')',
-    --       run = ':TSUpdate',
-    --       event = {'BufRead', 'BufNewFile'},
-    --       requires = {
-    --           {
-    --               'nvim-treesitter/nvim-treesitter-refactor',
-    --               after = {'nvim-treesitter'}
-    --           },
-    --           {
-    --               'nvim-treesitter/nvim-treesitter-textobjects',
-    --               after = {'nvim-treesitter'}
-    --           },
-    --           {
-    --               'JoosepAlviste/nvim-ts-context-commentstring',
-    --               after = {'nvim-treesitter'}
-    --           },
-    --           {'windwp/nvim-ts-autotag', after = {'nvim-treesitter'}}
-    --       }
-    --   }
+      use {
+          'nvim-treesitter/nvim-treesitter',
+          config = 'require(\'jz.config.treesitter\')',
+          run = ':TSUpdate',
+          event = {'BufRead', 'BufNewFile'},
+          requires = {
+              {
+                  'nvim-treesitter/nvim-treesitter-refactor',
+                  after = {'nvim-treesitter'}
+              },
+              {
+                  'nvim-treesitter/nvim-treesitter-textobjects',
+                  after = {'nvim-treesitter'}
+              },
+              {
+                  'JoosepAlviste/nvim-ts-context-commentstring',
+                  after = {'nvim-treesitter'}
+              },
+              {'windwp/nvim-ts-autotag', after = {'nvim-treesitter'}}
+          }
+      }
 
     --   use {
     --       'ThePrimeagen/refactoring.nvim',
