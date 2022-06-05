@@ -4,7 +4,7 @@ local conf = require('jz.modules.tools.config')
 return function( use )
     local conf = require('jz.modules.tools.config')
 
-    -- use {'rmagatti/auto-session', config = conf.sessions}
+    use {'rmagatti/auto-session', config = conf.sessions}
 
     use {'dstein64/vim-startuptime', cmd = 'StartupTime'}
 
