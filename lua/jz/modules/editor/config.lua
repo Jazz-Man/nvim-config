@@ -146,28 +146,7 @@ config.treesitter = function()
 
 end
 
-config.ts_autotag_filetypes = {
-  'html',
-  'javascript',
-  'typescript',
-  'javascriptreact',
-  'typescriptreact',
-  'svelte',
-  'vue',
-  'tsx',
-  'jsx',
-  'rescript',
-  'xml',
-  'php',
-  'markdown',
-  'glimmer',
-  'handlebars',
-  'hbs'
-}
-
-config.ts_autotag = function()
-  require('nvim-ts-autotag').setup({ filetypes = config.ts_autotag_filetypes })
-end
+config.ts_autotag = function() require('nvim-ts-autotag').setup({}) end
 
 config.nvim_gomove = function()
   require('gomove').setup {
