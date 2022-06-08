@@ -6,15 +6,11 @@ local autocmd = {
   no_cursorline_in_insert_mode = {
     {
       event = { 'InsertLeave', 'WinEnter', 'BufEnter' },
-      options = { callback = function()
-        opt_local.cursorline = true
-      end }
+      options = { callback = function() opt_local.cursorline = true end }
     },
     {
       event = { 'InsertEnter', 'WinLeave', 'BufLeave' },
-      options = { callback = function()
-        opt_local.cursorline = false
-      end }
+      options = { callback = function() opt_local.cursorline = false end }
     }
   },
 
@@ -45,7 +41,10 @@ local autocmd = {
     }
   },
   auto_resize = {
-    { event = 'VimResized', options = { pattern = '*', command = 'tabdo wincmd =' } }
+    {
+      event = 'VimResized',
+      options = { pattern = '*', command = 'tabdo wincmd =' }
+    }
   },
   terminal_settings = {
     {
@@ -59,11 +58,10 @@ local autocmd = {
     },
     { event = 'CmdLineEnter', options = { command = 'set nosmartcase' } },
     { event = 'CmdLineLeave', options = { command = 'set smartcase' } },
-    { event = 'CmdlineEnter', options = {
-      pattern = '/,\\?',
-      command = ':set hlsearch'
-
-    } },
+    {
+      event = 'CmdlineEnter',
+      options = { pattern = '/,\\?', command = ':set hlsearch' }
+    },
     {
       event = 'CmdlineLeave',
       options = { pattern = '/,\\?', command = ':set nohlsearch' }
@@ -87,24 +85,11 @@ local autocmd = {
       }
     }
   },
-  lsp_format_on_save = {
-    {
-      event = 'BufWritePre',
-      options = {
-        -- pattern = opts.pattern,
-        callback = function()
-          require('jz.modules.lsp.config.utils').format {}
-        end
-      }
-    }
-  },
   yank = {
     {
       event = 'TextYankPost',
       options = {
-        callback = function()
-          vim.highlight.on_yank({ timeout = 100 })
-        end,
+        callback = function() vim.highlight.on_yank({ timeout = 100 }) end,
         pattern = '*'
 
       }
