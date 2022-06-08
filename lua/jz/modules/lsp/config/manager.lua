@@ -24,7 +24,9 @@ function M.common_on_attach(client, bufnr)
   client.server_capabilities.documentHighlightProvider = true
   client.server_capabilities.documentFormattingProvider = true
 
-  require 'lsp-format'.on_attach(client)
+  local lsp_format_ok, lsp_format = pcall(require, 'lsp-format')
+
+  if lsp_format_ok then lsp_format.on_attach(client) end
 
   lsp_keymap.setup(client, bufnr)
   lsp_highlight_document(client)
