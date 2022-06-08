@@ -50,8 +50,8 @@ return function(use)
   use {
     'windwp/nvim-ts-autotag',
     config = conf.ts_autotag,
-    wants = 'nvim-treesitter',
-    ft = conf.ts_autotag_filetypes
+    after = 'nvim-treesitter',
+    -- ft = conf.ts_autotag_filetypes
   }
 
   use {
