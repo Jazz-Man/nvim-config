@@ -23,6 +23,17 @@ return function(use)
       'ray-x/lsp_signature.nvim',
       after = 'nvim-lspconfig',
       config = conf.lsp_signature
+    },
+    {
+      'RishabhRD/nvim-lsputils',
+      after = 'nvim-lspconfig',
+      config = conf.lsputils,
+      requires = { 'RishabhRD/popfix' }
+    },
+    {
+      'lukas-reineke/lsp-format.nvim',
+      after = 'nvim-lspconfig',
+      config = conf.lsp_format
     }
   }
 
@@ -117,5 +128,12 @@ return function(use)
     'simrat39/symbols-outline.nvim',
     config = conf.symbols_outline,
     cmd = { 'SymbolsOutline', 'SymbolsOutlineOpen', 'SymbolsOutlineClose' }
+  }
+
+  use {
+    'folke/trouble.nvim',
+    requires = 'kyazdani42/nvim-web-devicons',
+    config = conf.trouble,
+    cmd = { 'Trouble', 'TroubleClose', 'TroubleToggle', 'TroubleRefresh' }
   }
 end

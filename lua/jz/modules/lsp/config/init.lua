@@ -16,10 +16,10 @@ conf.lspconfig = function()
     }
   )
 
-  -- local servers = require 'jz.modules.lsp.config.serverconf'
   local lsp_manager = require 'jz.modules.lsp.config.manager'
 
   local lsp_utils = require 'jz.modules.lsp.config.utils'
+  local servers = require('jz.modules.lsp.config.serverconf')
 
   lsp_utils.setup_handlers()
 
@@ -28,8 +28,93 @@ conf.lspconfig = function()
   lsp_manager.setup('dockerls')
   lsp_manager.setup('html')
   lsp_manager.setup('vimls')
-  -- conf.php_lsp()
+  lsp_manager.setup(
+    'lemminx', {
+    settings = {
+      xml = {
+        trace = { server = 'verbose' },
+        format = { enabled = true },
+        validation = {
+          noGrammar = 'hint',
+          schema = true,
+          enabled = true,
+          resolveExternalEntities = true
+        }
+      }
+    }
+  }
+  )
+  lsp_manager.setup('intelephense', servers.php_lsp())
+  lsp_manager.setup('cssmodules_ls', servers.cssmodules_lsp())
 
+  lsp_manager.setup('cssls', servers.css_lsp())
+end
+
+conf.lsp_format = function() require('lsp-format').setup {} end
+
+conf.lsputils = function()
+
+  vim.lsp.handlers['textDocument/codeAction'] = require 'lsputil.codeAction'.code_action_handler
+  vim.lsp.handlers['textDocument/references'] = require 'lsputil.locations'.references_handler
+  vim.lsp.handlers['textDocument/definition'] = require 'lsputil.locations'.definition_handler
+  vim.lsp.handlers['textDocument/declaration'] = require 'lsputil.locations'.declaration_handler
+  vim.lsp.handlers['textDocument/typeDefinition'] = require 'lsputil.locations'.typeDefinition_handler
+  vim.lsp.handlers['textDocument/implementation'] = require 'lsputil.locations'.implementation_handler
+  vim.lsp.handlers['textDocument/documentSymbol'] = require 'lsputil.symbols'.document_handler
+  vim.lsp.handlers['workspace/symbol'] = require 'lsputil.symbols'.workspace_handler
+end
+
+conf.trouble = function()
+
+  local icons = require 'jz.config.icons'
+
+  require('trouble').setup {
+    position = 'right', -- position of the list can be: bottom, top, left, right
+    height = 10, -- height of the trouble list when position is top or bottom
+    width = 50, -- width of the list when position is left or right
+    icons = true, -- use devicons for filenames
+    mode = 'document_diagnostics', -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
+    fold_open = '', -- icon used for open folds
+    fold_closed = '', -- icon used for closed folds
+    group = true, -- group results by file
+    padding = true, -- add an extra new line on top of the list
+    action_keys = { -- key mappings for actions in the trouble list
+      -- map to {} to remove a mapping, for example:
+      -- close = {},
+      close = 'q', -- close the list
+      cancel = '<esc>', -- cancel the preview and get back to your last window / buffer / cursor
+      refresh = 'r', -- manually refresh
+      jump = { '<cr>', '<tab>' }, -- jump to the diagnostic or open / close folds
+      open_split = { '<c-x>' }, -- open buffer in new split
+      open_vsplit = { '<c-v>' }, -- open buffer in new vsplit
+      open_tab = { '<c-t>' }, -- open buffer in new tab
+      jump_close = { 'o' }, -- jump to the diagnostic and close the list
+      toggle_mode = 'm', -- toggle between "workspace" and "document" diagnostics mode
+      toggle_preview = 'P', -- toggle auto_preview
+      hover = 'K', -- opens a small popup with the full multiline message
+      preview = 'p', -- preview the diagnostic location
+      close_folds = { 'zM', 'zm' }, -- close all folds
+      open_folds = { 'zR', 'zr' }, -- open all folds
+      toggle_fold = { 'zA', 'za' }, -- toggle fold of current file
+      previous = 'k', -- preview item
+      next = 'j' -- next item
+    },
+    indent_lines = true, -- add an indent guide below the fold icons
+    auto_open = false, -- automatically open the list when you have diagnostics
+    auto_close = false, -- automatically close the list when you have no diagnostics
+    auto_preview = true, -- automatically preview the location of the diagnostic. <esc> to close preview and go back to last window
+    auto_fold = false, -- automatically fold a file trouble list at creation
+    auto_jump = { 'lsp_definitions' }, -- for the given modes, automatically jump if there is only a single result
+    signs = {
+      -- icons / text used for a diagnostic
+      error = icons.lsp.error,
+      warning = icons.lsp.warn,
+      hint = icons.lsp.hint,
+      information = icons.lsp.info,
+      other = '﫠'
+    },
+    use_diagnostic_signs = true -- enabling this will use the signs defined in your lsp client
+  }
 end
 
 conf.lsp_signature = function() require 'lsp_signature'.setup({}) end
@@ -66,10 +151,36 @@ conf.null_ls = function()
         diagnostics.shellcheck,
         diagnostics.sqlfluff,
         diagnostics.php,
-        diagnostics.psalm,
-        diagnostics.phpstan,
-        diagnostics.phpmd,
-        diagnostics.eslint_d.with({ prefer_local = 'node_modules/.bin' }),
+        diagnostics.psalm.with(
+          {
+
+            -- method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
+            -- prefer_local = 'vendor/bin',
+            condition = function(nl_utils)
+              return nl_utils.root_has_file({ 'psalm.xml' })
+            end
+          }
+        ),
+        diagnostics.phpstan.with(
+          {
+            prefer_local = 'vendor/bin',
+            condition = function(nl_utils)
+              return nl_utils.root_has_file(
+                { 'phpstan.neon', 'phpstan.neon.dist' }
+              )
+
+            end
+          }
+        ),
+        diagnostics.phpmd.with(
+          {
+            prefer_local = 'vendor/bin',
+            condition = function(nl_utils)
+              return nl_utils.root_has_file({ 'phpmd.ruleset.xml' })
+            end
+          }
+        ),
+        -- diagnostics.eslint_d.with({ prefer_local = 'node_modules/.bin' }),
 
         formatting.lua_format.with(
           {
@@ -94,121 +205,27 @@ conf.jsonls_lsp = function()
 
   local lsp_manager = require 'jz.modules.lsp.config.manager'
 
-  lsp_manager.setup(
-    'jsonls', {
-    init_options = { provideFormatter = false },
-    settings = {
-      json = {
-        schemas = require('schemastore').json.schemas(),
-        validate = { enable = true }
-      }
-    }
-  }
-  )
+  local servers = require('jz.modules.lsp.config.serverconf')
+  lsp_manager.setup('jsonls', servers.json_lsp())
 end
 
 conf.yaml_lsp = function()
   local lsp_manager = require 'jz.modules.lsp.config.manager'
 
+  local servers = require('jz.modules.lsp.config.serverconf')
   require('telescope').load_extension('yaml_schema')
 
-  local cfg = require('yaml-companion').setup(
-    {
-      builtin_matchers = { kubernetes = { enabled = true } },
-      lspconfig = {
-        flags = { debounce_text_changes = 150 },
-        settings = {
-          redhat = { telemetry = { enabled = false } },
-          yaml = {
-            format = { enable = true },
-            hover = true,
-            schemaDownload = { enable = true },
-            schemaStore = {
-              enable = true,
-              url = 'https://www.schemastore.org/api/json/catalog.json'
-            },
-            trace = { server = 'debug' },
-            validate = true
-          }
-        },
-        single_file_support = true
-      }
-    }
-  )
-
-  lsp_manager.setup('yamlls', cfg)
+  lsp_manager.setup('yamlls', servers.yaml_lsp())
 
 end
+
 conf.ts_lsp = function()
 
   local lsp_manager = require 'jz.modules.lsp.config.manager'
-  local ts_utils = require('nvim-lsp-ts-utils')
-  local utils = require 'jz.utils'
 
-  lsp_manager.setup(
-    'tsserver', {
-    init_options = ts_utils.init_options,
-    on_attach = function(client, bufnr)
-      ts_utils.setup(
-        {
-          debug = false,
-          disable_commands = false,
-          enable_import_on_completion = false,
+  local servers = require('jz.modules.lsp.config.serverconf')
 
-          -- import all
-          import_all_timeout = 5000, -- ms
-          -- lower numbers = higher priority
-          import_all_priorities = {
-            same_file = 1, -- add to existing import statement
-            local_files = 2, -- git files or files with relative path markers
-            buffer_content = 3, -- loaded buffer content
-            buffers = 4 -- loaded buffer names
-          },
-          import_all_scan_buffers = 100,
-          import_all_select_source = false,
-          -- if false will avoid organizing imports
-          always_organize_imports = true,
-
-          -- filter diagnostics
-          filter_out_diagnostics_by_severity = {},
-          filter_out_diagnostics_by_code = {},
-
-          -- inlay hints
-          auto_inlay_hints = true,
-          inlay_hints_highlight = 'Comment',
-          inlay_hints_priority = 200, -- priority of the hint extmarks
-          inlay_hints_throttle = 150, -- throttle the inlay hint request
-          inlay_hints_format = { -- format options for individual hint kind
-            Type = {},
-            Parameter = {},
-            Enum = {}
-            -- Example format customization for `Type` kind:
-            -- Type = {
-            --     highlight = "Comment",
-            --     text = function(text)
-            --         return "->" .. text:sub(2)
-            --     end,
-            -- },
-          },
-
-          -- update imports on file move
-          update_imports_on_move = false,
-          require_confirmation_on_move = false,
-          watch_dir = nil
-        }
-      )
-
-      -- required to fix code action ranges and filter diagnostics
-      ts_utils.setup_client(client)
-
-      local options = { buffer = bufnr }
-      utils.nmap('gs', ':TSLspOrganize<CR>', options)
-      utils.nmap('gr', ':TSLspRenameFile<CR>', options)
-      utils.nmap('gi', ':TSLspImportAll<CR>', options)
-    end
-
-  }
-  )
+  lsp_manager.setup('tsserver', servers.ts_lsp())
 end
 
 conf.sql_lsp = function()
@@ -223,199 +240,6 @@ conf.sql_lsp = function()
   }
   )
 
-end
-
-conf.php_lsp = function()
-
-  local lsp_manager = require 'jz.modules.lsp.config.manager'
-
-  local config = {
-
-    init_options = { clearCache = true, licenceKey = '0054ZN3IW58J59M' },
-    settings = {
-      intelephense = {
-        completion = {
-          insertUseDeclaration = true,
-          fullyQualifyGlobalConstantsAndFunctions = true,
-          triggerParameterHints = true,
-          maxItems = 100
-        },
-        format = { enable = false, braces = 'psr12' },
-        phpdoc = { textFormat = 'snippet', useFullyQualifiedNames = true },
-        stubs = {
-          'amqp',
-          'apache',
-          'apcu',
-          'bcmath',
-          'blackfire',
-          'bz2',
-          'calendar',
-          'cassandra',
-          'com_dotnet',
-          'Core',
-          'couchbase',
-          'crypto',
-          'ctype',
-          'cubrid',
-          'curl',
-          'date',
-          'dba',
-          'decimal',
-          'dom',
-          'ds',
-          'enchant',
-          'Ev',
-          'event',
-          'exif',
-          'fann',
-          'FFI',
-          'ffmpeg',
-          'fileinfo',
-          'filter',
-          'fpm',
-          'ftp',
-          'gd',
-          'gearman',
-          'geoip',
-          'geos',
-          'gettext',
-          'gmagick',
-          'gmp',
-          'gnupg',
-          'grpc',
-          'hash',
-          'http',
-          'ibm_db2',
-          'iconv',
-          'igbinary',
-          'imagick',
-          'imap',
-          'inotify',
-          'interbase',
-          'intl',
-          'json',
-          'judy',
-          'ldap',
-          'leveldb',
-          'libevent',
-          'libsodium',
-          'libxml',
-          'lua',
-          'lzf',
-          'mailparse',
-          'mapscript',
-          'mbstring',
-          'mcrypt',
-          'memcache',
-          'memcached',
-          'meminfo',
-          'meta',
-          'ming',
-          'mongo',
-          'mongodb',
-          'mosquitto-php',
-          'mqseries',
-          'msgpack',
-          'mssql',
-          'mysql',
-          'mysql_xdevapi',
-          'mysqli',
-          'ncurses',
-          'newrelic',
-          'oauth',
-          'oci8',
-          'odbc',
-          'openssl',
-          'parallel',
-          'Parle',
-          'pcntl',
-          'pcov',
-          'pcre',
-          'pdflib',
-          'PDO',
-          'pdo_ibm',
-          'pdo_mysql',
-          'pdo_pgsql',
-          'pdo_sqlite',
-          'pgsql',
-          'Phar',
-          'phpdbg',
-          'posix',
-          'pspell',
-          'pthreads',
-          'radius',
-          'rar',
-          'rdkafka',
-          'readline',
-          'recode',
-          'redis',
-          'Reflection',
-          'regex',
-          'rpminfo',
-          'rrd',
-          'SaxonC',
-          'session',
-          'shmop',
-          'SimpleXML',
-          'snmp',
-          'soap',
-          'sockets',
-          'sodium',
-          'solr',
-          'SPL',
-          'SplType',
-          'SQLite',
-          'sqlite3',
-          'sqlsrv',
-          'ssh2',
-          'standard',
-          'stats',
-          'stomp',
-          'suhosin',
-          'superglobals',
-          'svn',
-          'sybase',
-          'sync',
-          'sysvmsg',
-          'sysvsem',
-          'sysvshm',
-          'tidy',
-          'tokenizer',
-          'uopz',
-          'uv',
-          'v8js',
-          'wddx',
-          'win32service',
-          'winbinder',
-          'wincache',
-          'wordpress',
-          'xcache',
-          'xdebug',
-          'xhprof',
-          'xml',
-          'xmlreader',
-          'xmlrpc',
-          'xmlwriter',
-          'xsl',
-          'xxtea',
-          'yaf',
-          'yaml',
-          'yar',
-          'zend',
-          'Zend OPcache',
-          'ZendCache',
-          'ZendDebugger',
-          'ZendUtils',
-          'zip',
-          'zlib',
-          'zmq',
-          'zookeeper'
-        }
-      }
-    }
-  }
-
-  lsp_manager.setup('intelephense', config)
 end
 
 conf.lua_lsp = function()
@@ -512,6 +336,7 @@ conf.cmp = function()
   local sources = {
 
     { name = 'nvim_lsp' },
+    { name = 'nvim_lua' },
     { name = 'omni' },
     { name = 'luasnip' },
     { name = 'nvim_lsp_signature_help' },
@@ -519,8 +344,6 @@ conf.cmp = function()
     { name = 'buffer' },
     { name = 'path' }
   }
-
-  if vim.o.ft == 'lua' then table.insert(sources, { name = 'nvim_lua' }) end
 
   if vim.tbl_contains({ 'sql', 'mysql', 'plsql' }, vim.o.ft) then
 
