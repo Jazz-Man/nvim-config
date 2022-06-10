@@ -1,6 +1,7 @@
 return function(use)
   local conf = require 'jz.modules.editor.config'
 
+  use { 'tpope/vim-unimpaired' }
   use { 'numToStr/Comment.nvim', config = conf.comment }
 
   use { 'mrjones2014/smart-splits.nvim', config = conf.splits }
@@ -28,7 +29,6 @@ return function(use)
       '<M-C-RightMouse>',
       '<Leader>'
     },
-
     cmd = { 'VMDebug', 'VMClear', 'VMLive' },
     config = conf.multi
   }
@@ -39,7 +39,7 @@ return function(use)
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
     config = conf.treesitter,
-    event = { 'BufRead', 'BufNewFile' },
+    event = { 'BufReadPre', 'BufNewFile', 'BufWinEnter' },
     requires = {
       { 'nvim-treesitter/nvim-treesitter-textobjects', after = 'nvim-treesitter' },
       { 'nvim-treesitter/nvim-treesitter-refactor', after = 'nvim-treesitter' },
@@ -50,7 +50,7 @@ return function(use)
   use {
     'windwp/nvim-ts-autotag',
     config = conf.ts_autotag,
-    after = 'nvim-treesitter',
+    after = 'nvim-treesitter'
     -- ft = conf.ts_autotag_filetypes
   }
 
@@ -78,5 +78,12 @@ return function(use)
     'lukas-reineke/indent-blankline.nvim',
     event = 'BufRead',
     config = conf.blankline
+  }
+
+  use {
+    'SmiteshP/nvim-gps',
+    event = { 'BufReadPre', 'BufNewFile', 'BufWinEnter' },
+    config = conf.nvim_gps,
+    requires = 'nvim-treesitter/nvim-treesitter'
   }
 end

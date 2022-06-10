@@ -43,6 +43,19 @@ function M.common_on_attach(client, bufnr)
     vim.b.lsp_virtual_text_mode = 'SignsVirtualText'
   end
 
+  vim.api.nvim_create_autocmd(
+    'CursorHold', {
+    buffer = bufnr,
+    callback = function()
+      local opts = {
+        focusable = false,
+        close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }
+      }
+      vim.diagnostic.open_float(nil, opts)
+    end
+  }
+  )
+
 end
 
 function M.common_on_init(client, _)

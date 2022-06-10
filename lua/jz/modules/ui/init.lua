@@ -1,25 +1,32 @@
-return function( use )
+return function(use)
     local conf = require 'jz.modules.ui.config'
 
-    use {'sainnhe/sonokai', config = conf.sonokai}
+    use { 'sainnhe/sonokai', config = conf.sonokai }
 
     use 'folke/lsp-colors.nvim'
 
     use {
         'norcalli/nvim-colorizer.lua',
-        event = 'BufRead', 
+        event = 'BufRead',
         config = conf.colorizer
     }
 
     use {
         'kyazdani42/nvim-web-devicons',
-        event = 'VimEnter', 
+        event = 'VimEnter',
         config = conf.devicon
     }
 
     use {
+        'kyazdani42/nvim-tree.lua',
+        cmd = { 'NvimTreeToggle', 'NvimTreeOpen' },
+        config = conf.nvim_tree,
+        requires = { 'kyazdani42/nvim-web-devicons' }
+    }
+
+    use {
         'nvim-lualine/lualine.nvim',
-        after = 'nvim-web-devicons',
+        after = { 'nvim-web-devicons', 'nvim-gps' },
         config = conf.lualine
     }
 

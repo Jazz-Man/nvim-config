@@ -4,25 +4,23 @@ local utils = require 'jz.utils'
 
 function M.setup(client, bufnr)
 
-  local k_options = { buffer = bufnr }
+  local bufopts = { buffer = bufnr }
 
-  utils.nmap('K', vim.lsp.buf.hover, k_options)
-  utils.nmap('gs', vim.lsp.buf.signature_help, k_options)
+  utils.nmap('gD', vim.lsp.buf.declaration, bufopts)
+  utils.nmap('gd', vim.lsp.buf.definition, bufopts)
+  utils.nmap('K', vim.lsp.buf.hover, bufopts)
+  utils.nmap('gi', vim.lsp.buf.implementation, bufopts)
 
-  -- utils.map_tele('n', 'gr', 'lsp_references', nil, bufnr)
-  -- utils.map_tele('n', 'gd', 'lsp_definitions', nil, bufnr)
-  -- utils.map_tele('n', 'gt', 'lsp_type_definition', nil, bufnr)
+  utils.nmap('gs', vim.lsp.buf.signature_help, bufopts)
 
-  -- utils.map_tele('n', 'gi', 'lsp_implementations', nil, bufnr)
-  -- utils.map_tele('n', 'g0', 'lsp_document_symbols', nil, bufnr)
-  -- utils.map_tele('n', 'gW', 'lsp_workspace_symbols', nil, bufnr)
+  utils.nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
+  utils.nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
 
-  -- utils.map_tele('n', 'gD', 'diagnostics', {bufnr = bufnr})
+  utils.nmap('<leader>ci', vim.lsp.buf.incoming_calls, bufopts)
+  utils.nmap('<leader>co', vim.lsp.buf.outgoing_calls, bufopts)
 
-  utils.nmap('<leader>af', vim.lsp.buf.code_action, k_options)
-  utils.vmap('<leader>af', vim.lsp.buf.range_code_action, k_options)
-  utils.nmap('<Leader>de', vim.lsp.buf.declaration, k_options)
-  utils.nmap('<leader>rn', vim.lsp.buf.rename, k_options)
+  utils.nmap('<leader>ca', vim.lsp.buf.code_action, bufopts)
+  utils.vmap('<leader>ca', vim.lsp.buf.range_code_action, bufopts)
 
   if client.server_capabilities.documentFormattingProvider then
     utils.nmap('<leader>f', vim.lsp.buf.format)

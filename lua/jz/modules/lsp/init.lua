@@ -25,12 +25,6 @@ return function(use)
       config = conf.lsp_signature
     },
     {
-      'RishabhRD/nvim-lsputils',
-      after = 'nvim-lspconfig',
-      config = conf.lsputils,
-      requires = { 'RishabhRD/popfix' }
-    },
-    {
       'lukas-reineke/lsp-format.nvim',
       after = 'nvim-lspconfig',
       config = conf.lsp_format

@@ -1,21 +1,19 @@
 local config = {}
 
--- local utils = require 'jz.utils'
-
 config.sessions = function()
 
     local utils = require 'jz.utils'
 
     require('auto-session').setup(
-      {
-          log_level = 'info',
-          auto_session_enable_last_session = false,
-          auto_session_root_dir = utils.dir_path('sessions', 'data'),
-          auto_session_enabled = true,
-          auto_save_enabled = nil,
-          auto_restore_enabled = nil,
-          auto_session_suppress_dirs = nil
-      }
+        {
+            log_level = 'info',
+            auto_session_enable_last_session = false,
+            auto_session_root_dir = utils.dir_path('sessions', 'data'),
+            auto_session_enabled = true,
+            auto_save_enabled = nil,
+            auto_restore_enabled = nil,
+            auto_session_suppress_dirs = nil
+        }
     )
 
 end
@@ -35,11 +33,11 @@ config.nvterm = function()
                     height = 0.4,
                     border = 'single'
                 },
-                horizontal = {location = 'rightbelow', split_ratio = 0.3},
-                vertical = {location = 'rightbelow', split_ratio = 0.5}
+                horizontal = { location = 'rightbelow', split_ratio = 0.3 },
+                vertical = { location = 'rightbelow', split_ratio = 0.5 }
             }
         },
-        behavior = {close_on_exit = true, auto_insert = true},
+        behavior = { close_on_exit = true, auto_insert = true },
         enable_new_mappings = true
     }
 
@@ -60,8 +58,8 @@ config.telescope = function()
             prompt_prefix = '🔭 ',
             selection_caret = '→ ',
             layout_config = {
-                horizontal = {prompt_position = 'bottom', results_width = 0.6},
-                vertical = {mirror = false}
+                horizontal = { prompt_position = 'bottom', results_width = 0.6 },
+                vertical = { mirror = false }
             },
             file_previewer = previewers.vim_buffer_cat.new,
             grep_previewer = previewers.vim_buffer_vimgrep.new,
@@ -69,13 +67,13 @@ config.telescope = function()
             file_sorter = sorters.get_fuzzy_file,
             file_ignore_patterns = {},
             generic_sorter = sorters.get_generic_fuzzy_sorter,
-            path_display = {'absolute'},
+            path_display = { 'absolute' },
             winblend = 0,
             border = {},
-            borderchars = {'─', '│', '─', '│', '╭', '╮', '╯', '╰'},
+            borderchars = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
             color_devicons = true,
             use_less = true,
-            set_env = {['COLORTERM'] = 'truecolor'},
+            set_env = { ['COLORTERM'] = 'truecolor' },
 
             mappings = {
                 i = {
@@ -101,13 +99,10 @@ config.telescope = function()
                     ['<PageUp>'] = actions.results_scrolling_up,
                     ['<PageDown>'] = actions.results_scrolling_down,
 
-                    ['<Tab>'] = actions.toggle_selection +
-                      actions.move_selection_worse,
-                    ['<S-Tab>'] = actions.toggle_selection +
-                      actions.move_selection_better,
+                    ['<Tab>'] = actions.toggle_selection + actions.move_selection_worse,
+                    ['<S-Tab>'] = actions.toggle_selection + actions.move_selection_better,
                     ['<C-q>'] = actions.send_to_qflist + actions.open_qflist,
-                    ['<M-q>'] = actions.send_selected_to_qflist +
-                      actions.open_qflist,
+                    ['<M-q>'] = actions.send_selected_to_qflist + actions.open_qflist,
                     ['<C-l>'] = actions.complete_tag,
                     ['<C-_>'] = actions.which_key -- keys from pressing <C-/>
                 },
@@ -119,13 +114,10 @@ config.telescope = function()
                     ['<C-v>'] = actions.select_vertical,
                     ['<C-t>'] = actions.select_tab,
 
-                    ['<Tab>'] = actions.toggle_selection +
-                      actions.move_selection_worse,
-                    ['<S-Tab>'] = actions.toggle_selection +
-                      actions.move_selection_better,
+                    ['<Tab>'] = actions.toggle_selection + actions.move_selection_worse,
+                    ['<S-Tab>'] = actions.toggle_selection + actions.move_selection_better,
                     ['<C-q>'] = actions.send_to_qflist + actions.open_qflist,
-                    ['<M-q>'] = actions.send_selected_to_qflist +
-                      actions.open_qflist,
+                    ['<M-q>'] = actions.send_selected_to_qflist + actions.open_qflist,
 
                     ['j'] = actions.move_selection_next,
                     ['k'] = actions.move_selection_previous,
@@ -158,7 +150,7 @@ config.telescope = function()
             -- builtin picker
         },
         extensions = {
-            ['ui-select'] = {themes.get_cursor()},
+            ['ui-select'] = { themes.get_cursor() },
             fzf = {
                 fuzzy = true, -- false will only do exact matching
                 override_generic_sorter = true, -- override the generic sorter
@@ -166,7 +158,7 @@ config.telescope = function()
                 case_mode = 'smart_case' -- or "ignore_case" or "respect_case"
                 -- the default case_mode is "smart_case"
             },
-            project = {theme = 'dropdown'}
+            project = { theme = 'dropdown' }
         }
     }
 

@@ -201,4 +201,21 @@ config.blankline = function()
 end
 config.refactoring = function() require('refactoring').setup({}) end
 
+config.nvim_gps = function()
+
+  local icons = require 'jz.config.icons'
+
+  require('nvim-gps').setup(
+    {
+      icons = {
+        ['class-name'] = icons.lspkind.Class, -- Classes and class-like objects
+        ['function-name'] = icons.lspkind.Function, -- Functions
+        ['method-name'] = icons.lspkind.Method -- Methods (functions inside class-like objects)
+      },
+      separator = ' > '
+    }
+  )
+
+end
+
 return config

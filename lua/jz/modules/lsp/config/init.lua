@@ -52,18 +52,6 @@ end
 
 conf.lsp_format = function() require('lsp-format').setup {} end
 
-conf.lsputils = function()
-
-  vim.lsp.handlers['textDocument/codeAction'] = require 'lsputil.codeAction'.code_action_handler
-  vim.lsp.handlers['textDocument/references'] = require 'lsputil.locations'.references_handler
-  vim.lsp.handlers['textDocument/definition'] = require 'lsputil.locations'.definition_handler
-  vim.lsp.handlers['textDocument/declaration'] = require 'lsputil.locations'.declaration_handler
-  vim.lsp.handlers['textDocument/typeDefinition'] = require 'lsputil.locations'.typeDefinition_handler
-  vim.lsp.handlers['textDocument/implementation'] = require 'lsputil.locations'.implementation_handler
-  vim.lsp.handlers['textDocument/documentSymbol'] = require 'lsputil.symbols'.document_handler
-  vim.lsp.handlers['workspace/symbol'] = require 'lsputil.symbols'.workspace_handler
-end
-
 conf.trouble = function()
 
   local icons = require 'jz.config.icons'
@@ -117,7 +105,13 @@ conf.trouble = function()
   }
 end
 
-conf.lsp_signature = function() require 'lsp_signature'.setup({}) end
+conf.lsp_signature = function()
+
+  local icons = require 'jz.config.icons'
+  require 'lsp_signature'.setup(
+    { hint_enable = true, hint_prefix = icons.lsp.hint, auto_close_after = 2 }
+  )
+end
 
 conf.illuminate = function() vim.g.Illuminate_ftblacklist = { 'nerdtree' } end
 
@@ -548,6 +542,8 @@ conf.nvim_go = function()
 end
 
 conf.symbols_outline = function()
+  local icons = require 'jz.config.icons'
+
   vim.g.symbols_outline = {
 
     highlight_hovered_item = true,
@@ -576,15 +572,15 @@ conf.symbols_outline = function()
     lsp_blacklist = {},
     symbol_blacklist = {},
     symbols = {
-      File = { icon = '', hl = 'TSURI' },
+      File = { icon = icons.icons.file, hl = 'TSURI' },
       Module = { icon = '', hl = 'TSNamespace' },
       Namespace = { icon = '', hl = 'TSNamespace' },
-      Package = { icon = '', hl = 'TSNamespace' },
-      Class = { icon = '𝓒', hl = 'TSType' },
+      Package = { icon = icons.icons.package, hl = 'TSNamespace' },
+      Class = { icon = icons.lspkind.Class, hl = 'TSType' },
       Method = { icon = 'ƒ', hl = 'TSMethod' },
       Property = { icon = '', hl = 'TSMethod' },
       Field = { icon = '', hl = 'TSField' },
-      Constructor = { icon = '', hl = 'TSConstructor' },
+      Constructor = { icon = icons.lspkind.Constructor, hl = 'TSConstructor' },
       Enum = { icon = 'ℰ', hl = 'TSType' },
       Interface = { icon = 'ﰮ', hl = 'TSType' },
       Function = { icon = '', hl = 'TSFunction' },

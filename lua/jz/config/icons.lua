@@ -83,7 +83,7 @@ M.icons = {
     text = '',
     method = '',
     func = '',
-    constructor = '',
+    constructor = '',
     field = '',
     variable = '',
     class = '',
@@ -98,7 +98,7 @@ M.icons = {
     file = '',
     reference = '',
     enumMember = '',
-    constant = '',
+    constant = '',
     struct = '',
     event = '',
     operator = '',
@@ -136,7 +136,34 @@ M.icons = {
     right = ''
 }
 
--- lsp sign            ﮻           ﯭ                ﳀ    
+local symbols = {
+    File = { icon = '', hl = 'TSURI' },
+    Module = { icon = '', hl = 'TSNamespace' },
+    Namespace = { icon = '', hl = 'TSNamespace' },
+    Package = { icon = '', hl = 'TSNamespace' },
+    Class = { icon = '𝓒', hl = 'TSType' },
+    Method = { icon = 'ƒ', hl = 'TSMethod' },
+    Property = { icon = '', hl = 'TSMethod' },
+    Field = { icon = '', hl = 'TSField' },
+    Constructor = { icon = '', hl = 'TSConstructor' },
+    Enum = { icon = 'ℰ', hl = 'TSType' },
+    Interface = { icon = 'ﰮ', hl = 'TSType' },
+    Function = { icon = '', hl = 'TSFunction' },
+    Variable = { icon = '', hl = 'TSConstant' },
+    Constant = { icon = '', hl = 'TSConstant' },
+    String = { icon = '𝓐', hl = 'TSString' },
+    Number = { icon = '#', hl = 'TSNumber' },
+    Boolean = { icon = '⊨', hl = 'TSBoolean' },
+    Array = { icon = '', hl = 'TSConstant' },
+    Object = { icon = '⦿', hl = 'TSType' },
+    Key = { icon = '🔐', hl = 'TSType' },
+    Null = { icon = 'NULL', hl = 'TSType' },
+    EnumMember = { icon = '', hl = 'TSField' },
+    Struct = { icon = '𝓢', hl = 'TSType' },
+    Event = { icon = '🗲', hl = 'TSType' },
+    Operator = { icon = '+', hl = 'TSOperator' },
+    TypeParameter = { icon = '𝙏', hl = 'TSParameter' }
+}
 
 M.lspkind = {
     Text = M.icons.abc,
@@ -174,7 +201,7 @@ M.lsp = {
 
 }
 
-M.signature = {hint_prefix = M.lsp.info}
+M.signature = { hint_prefix = M.lsp.info }
 
 M.border = {}
 
