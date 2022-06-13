@@ -34,20 +34,6 @@ config.lualine = function()
 
     local icons = require 'jz.config.icons'
 
-    local gps = require('nvim-gps')
-
-    local extend_sections = { lualine_a = { 'filetype' } }
-
-    local dapui = {
-        sections = extend_sections,
-        filetypes = {
-            ['dapui_scopes'] = 'DAP Scopes',
-            ['dapui_stacks'] = 'DAP Stacks',
-            ['dapui_breakpoints'] = 'DAP Breakpoints',
-            ['dapui_watches'] = 'DAP Watches'
-        }
-    }
-
     require('lualine').setup {
         options = {
             icons_enabled = true,
@@ -74,8 +60,8 @@ config.lualine = function()
                 }
             },
             lualine_c = {
-                { 'filename' },
-                { gps.get_location, cond = gps.is_available }
+                { 'filename' }
+                -- { gps.get_location, cond = gps.is_available }
             },
             lualine_x = { 'encoding', 'fileformat', 'filetype' },
             lualine_y = { 'progress' },
@@ -90,7 +76,7 @@ config.lualine = function()
             lualine_z = {}
         },
         tabline = {},
-        extensions = { 'quickfix', 'nerdtree', dapui }
+        extensions = { 'quickfix', 'nerdtree' }
     }
 
 end
@@ -99,28 +85,72 @@ config.bufferline = function()
 
     local icons = require('jz.config.icons')
 
-    require('bufferline').setup(
-        {
-            offsets = { { filetype = 'NvimTree', text = 'File Explorer', padding = 1 } },
+    local groups = require('bufferline.groups')
+
+    require('bufferline').setup {
+        options = {
+
+            offsets = {
+                {
+                    filetype = 'NvimTree',
+                    text = function() return vim.fn.getcwd() end,
+                    highlight = 'Directory',
+                    text_align = 'left'
+                }
+            },
             buffer_close_icon = icons.icons.close,
             modified_icon = icons.icons.circle,
             close_icon = icons.icons.error,
-            show_close_icon = false,
+            show_close_icon = true,
             left_trunc_marker = icons.icons.left,
             right_trunc_marker = icons.icons.right,
+
             max_name_length = 14,
             max_prefix_length = 13,
             tab_size = 20,
             show_tab_indicators = true,
+            show_buffer_default_icon = true,
+            show_buffer_icons = true,
             enforce_regular_tabs = false,
             view = 'multiwindow',
             show_buffer_close_icons = true,
-            separator_style = 'thin',
+            separator_style = 'thick',
             always_show_bufferline = true,
+
             diagnostics = false,
-            themable = true
+            themable = true,
+
+            groups = {
+                options = {
+                    toggle_hidden_on_enter = true -- when you re-enter a hidden group this options re-opens that group so the buffer is visible
+                },
+                items = {
+                    {
+                        name = 'Tests', -- Mandatory
+                        highlight = { gui = 'underline', guisp = 'blue' }, -- Optional
+                        priority = 2, -- determines where it will appear relative to other groups (Optional)
+                        icon = '', -- Optional
+                        matcher = function(buf) -- Mandatory
+                            return buf.name:match('%_test') or buf.name:match('%_spec')
+                        end
+                    },
+                    {
+                        name = 'Docs',
+                        highlight = { gui = 'undercurl', guisp = 'green' },
+                        auto_close = false, -- whether or not close this group if it doesn't contain the current buffer
+                        matcher = function(buf)
+                            return buf.name:match('%.md') or buf.name:match('%.txt')
+                        end,
+                        separator = { -- Optional
+                            style = require('bufferline.groups').separator.tab
+                        }
+                    },
+                    groups.builtin.ungrouped, -- the ungrouped buffers will be in the middle of the grouped ones
+                    groups.builtin.pinned:with({ icon = '' })
+                }
+            }
         }
-    )
+    }
 
 end
 
@@ -139,6 +169,7 @@ config.blankline = function()
             'TelescopeResults',
             'nvchad_cheatsheet',
             'lsp-installer',
+            'NvimTree',
             ''
         },
         buftype_exclude = { 'terminal' },
@@ -151,45 +182,38 @@ end
 
 config.nvim_tree = function()
 
-    local icons = require 'jz.config.icons'
-
-    require('nvim-tree').setup(
-        {
-            disable_netrw = true,
-            hijack_netrw = true,
-            open_on_setup = false,
-            ignore_ft_on_setup = {},
-            open_on_tab = false,
-            hijack_cursor = true,
-            update_cwd = false,
-            update_to_buf_dir = { enable = true, auto_open = true },
-            diagnostics = {
-                enable = true,
-                icons = {
-                    hint = icons.lsp.hint,
-                    info = icons.lsp.info,
-                    warning = icons.lsp.warn,
-                    error = icons.lsp.error
-                }
-            },
-            update_focused_file = { enable = true, update_cwd = true, ignore_list = {} },
-            system_open = { cmd = nil, args = {} },
-            filters = { dotfiles = false, custom = {} },
-            git = { enable = true, ignore = true, timeout = 500 },
-            view = {
-                width = 30,
-                height = 30,
-                hide_root_folder = false,
-                side = 'left',
-                auto_resize = false,
-                mappings = { custom_only = false, list = {} },
-                number = false,
-                relativenumber = false,
-                signcolumn = 'yes'
-            },
-            trash = { cmd = 'trash', require_confirm = true }
-        }
-    )
+    require('nvim-tree').setup {
+        disable_netrw = true,
+        hijack_netrw = true,
+        open_on_setup = false,
+        ignore_ft_on_setup = {},
+        open_on_tab = true,
+        hijack_cursor = true,
+        update_cwd = false,
+        update_to_buf_dir = { enable = true, auto_open = true },
+        diagnostics = { enable = false },
+        update_focused_file = {
+            enable = true,
+            update_cwd = true,
+            ignore_list = { '.git', 'node_modules', '.cache' }
+        },
+        system_open = { cmd = nil, args = {} },
+        filters = { dotfiles = false, custom = {} },
+        git = { enable = true, ignore = true, timeout = 500 },
+        view = {
+            width = 30,
+            height = 30,
+            hide_root_folder = false,
+            side = 'left',
+            auto_resize = false,
+            mappings = { custom_only = false, list = {} },
+            number = false,
+            relativenumber = false,
+            signcolumn = 'yes'
+        },
+        trash = { cmd = 'trash', require_confirm = true },
+        filesystem_watchers = { enable = false, interval = 100 }
+    }
 
 end
 

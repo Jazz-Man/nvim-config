@@ -1,3 +1,4 @@
+--- TODO https://www.vi-improved.org/vim-tips/
 local present, impatient = pcall(require, 'impatient')
 
 if present then

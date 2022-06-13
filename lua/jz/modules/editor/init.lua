@@ -1,37 +1,7 @@
 return function(use)
   local conf = require 'jz.modules.editor.config'
 
-  use { 'tpope/vim-unimpaired' }
   use { 'numToStr/Comment.nvim', config = conf.comment }
-
-  use { 'mrjones2014/smart-splits.nvim', config = conf.splits }
-
-  use {
-    'mg979/vim-visual-multi',
-    keys = {
-      '<Ctrl>',
-      '<M>',
-      '<C-n>',
-      '<C-n>',
-      '<M-n>',
-      '<S-Down>',
-      '<S-Up>',
-      '<M-Left>',
-      '<M-i>',
-      '<M-Right>',
-      '<M-D>',
-      '<M-Down>',
-      '<C-d>',
-      '<C-Down>',
-      '<S-Right>',
-      '<C-LeftMouse>',
-      '<M-LeftMouse>',
-      '<M-C-RightMouse>',
-      '<Leader>'
-    },
-    cmd = { 'VMDebug', 'VMClear', 'VMLive' },
-    config = conf.multi
-  }
 
   use { 'tpope/vim-surround', event = 'InsertEnter' }
 
@@ -39,11 +9,15 @@ return function(use)
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
     config = conf.treesitter,
-    event = { 'BufReadPre', 'BufNewFile', 'BufWinEnter' },
     requires = {
       { 'nvim-treesitter/nvim-treesitter-textobjects', after = 'nvim-treesitter' },
       { 'nvim-treesitter/nvim-treesitter-refactor', after = 'nvim-treesitter' },
-      { 'JoosepAlviste/nvim-ts-context-commentstring', after = 'nvim-treesitter' }
+      { 'JoosepAlviste/nvim-ts-context-commentstring', after = 'nvim-treesitter' },
+      {
+        'nvim-treesitter/playground',
+        after = 'nvim-treesitter',
+        cmd = 'TSPlayground'
+      }
     }
   }
 
@@ -61,11 +35,7 @@ return function(use)
     after = 'nvim-treesitter'
   }
 
-  use {
-    'booperlv/nvim-gomove',
-    event = { 'CursorMoved', 'CursorMovedI' },
-    config = conf.nvim_gomove
-  }
+  use { 'booperlv/nvim-gomove', config = conf.nvim_gomove }
 
   use {
     'mbbill/undotree',
@@ -80,10 +50,4 @@ return function(use)
     config = conf.blankline
   }
 
-  use {
-    'SmiteshP/nvim-gps',
-    event = { 'BufReadPre', 'BufNewFile', 'BufWinEnter' },
-    config = conf.nvim_gps,
-    requires = 'nvim-treesitter/nvim-treesitter'
-  }
 end

@@ -19,14 +19,13 @@ return function(use)
 
     use {
         'kyazdani42/nvim-tree.lua',
-        cmd = { 'NvimTreeToggle', 'NvimTreeOpen' },
         config = conf.nvim_tree,
         requires = { 'kyazdani42/nvim-web-devicons' }
     }
 
     use {
         'nvim-lualine/lualine.nvim',
-        after = { 'nvim-web-devicons', 'nvim-gps' },
+        after = { 'nvim-web-devicons' },
         config = conf.lualine
     }
 

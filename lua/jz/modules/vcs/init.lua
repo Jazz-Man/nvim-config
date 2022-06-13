@@ -11,14 +11,11 @@ return function(use)
   use {
     'lewis6991/gitsigns.nvim',
     requires = 'nvim-lua/plenary.nvim',
-    event = { 'BufRead' },
+    event = {
+      'BufRead'
+      -- "BufReadPre",
+    },
     config = conf.gitsigns
-  }
-
-  use {
-    'f-person/git-blame.nvim',
-    event = { 'BufRead' },
-    config = conf.git_blame
   }
 
   use {
@@ -30,7 +27,7 @@ return function(use)
       'DiffviewToggleFiles',
       'DiffviewRefresh'
     },
-    requires = 'nvim-lua/plenary.nvim',
+    requires = { 'nvim-lua/plenary.nvim', 'kyazdani42/nvim-web-devicons' },
     config = conf.diffview
   }
 end

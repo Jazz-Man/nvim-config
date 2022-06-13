@@ -1,6 +1,11 @@
 return function(use)
   local conf = require('jz.modules.tools.config')
 
+  --- Please Vim, stop with these swap file messages. Just switch to the correct window!
+  use 'gioele/vim-autoswap'
+
+  use 'Iron-E/nvim-libmodal'
+
   use { 'tpope/vim-sensible' }
 
   use { 'tpope/vim-sleuth' }
@@ -22,7 +27,10 @@ return function(use)
     requires = {
       'nvim-telescope/telescope-project.nvim',
       'nvim-telescope/telescope-ui-select.nvim',
-      { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' },
+      {
+        'nvim-telescope/telescope-fzf-native.nvim',
+        run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
+      },
       {
         'nvim-telescope/telescope-frecency.nvim',
         requires = { 'tami5/sqlite.lua' }

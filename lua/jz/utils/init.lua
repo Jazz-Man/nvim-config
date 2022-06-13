@@ -4,6 +4,7 @@
 ---@field public replace_keycodes boolean|nil
 local M = {}
 
+local fmt = string.format
 -- | String value           | Help page     | Affected modes                           | Vimscript equivalent |
 -- | ---------------------- | ------------- | ---------------------------------------- | -------------------- |
 -- | `''` (an empty string) | `mapmode-nvo` | Normal, Visual, Select, Operator-pending | `:map`               |
@@ -78,7 +79,7 @@ function M.map(mode, lhs, rhs, opts, defaults)
         'force', { silent = true }, defaults or {}, opts or {}
     )
 
-    return vim.keymap.set(mode, lhs, rhs, opts)
+    vim.keymap.set(mode, lhs, rhs, opts)
 end
 
 ---@param lhs string
@@ -111,6 +112,11 @@ function M.omap(lhs, rhs, opts) M.map('o', lhs, rhs, opts) end
 ---@param opts MapConfig|nil
 function M.smap(lhs, rhs, opts) M.map('s', lhs, rhs, opts) end
 
+---@param lhs string
+---@param rhs string|function
+---@param opts MapConfig|nil
+function M.cmap(lhs, rhs, opts) M.map('c', lhs, rhs, opts) end
+
 ---@param definitions table
 function M.autocommand(definitions)
     for group_name, definition in pairs(definitions) do
@@ -139,6 +145,42 @@ function M.clear_augroup(name)
 
 end
 
+---Keep your cursor position during some actions
+---@param arguments string
+function M.preserve(arguments)
+    local cmd = fmt('keepjumps keeppatterns execute %q', arguments)
+    -- local original_cursor = vim.fn.winsaveview()
+    local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+    vim.api.nvim_command(cmd)
+    local lastline = vim.fn.line('$')
+    -- vim.fn.winrestview(original_cursor)
+    if line > lastline then line = lastline end
+    vim.api.nvim_win_set_cursor(0, { line, col })
+end
+
+---enter a mode.
+---@param name string the name of the mode.
+---@param instruction function|string|table a Lua function, keymap dictionary, Vimscript command.
+---@param supress_exit boolean|nil
+function M.mode_enter(name, instruction, supress_exit)
+    local ok, libmodal = pcall(require, 'libmodal')
+    if not ok then return end
+
+    libmodal.mode.enter(name, instruction, supress_exit)
+end
+
+---enter a prompt.
+---@param name string the name of the prompt
+---@param instruction function|table<string, function|string> what to do with user input
+---@param user_completions table<string>|nil a list of possible inputs, provided by the user
+function M.prompt_enter(name, instruction, user_completions)
+
+    local ok, libmodal = pcall(require, 'libmodal')
+    if not ok then return end
+
+    libmodal.prompt.enter(name, instruction, user_completions)
+end
+
 function M.log(msg, hl, name)
     name = name or 'Neovim'
     hl = hl or 'Todo'
@@ -159,55 +201,6 @@ end
 
 function M.info(msg, name)
     vim.notify(msg, vim.log.levels.INFO, { title = name })
-end
-
----@param ... string|function
----@return table
-function M.map_cmd(...)
-    return {
-        ('<Cmd>%s<CR>'):format(table.concat(vim.tbl_flatten { ... }, ' ')),
-        noremap = true
-    }
-end
-
----@param option any
----@param silent boolean
-function M.toggle(option, silent)
-    local info = vim.api.nvim_get_option_info(option)
-    local scopes = { buf = 'bo', win = 'wo', global = 'o' }
-    local scope = scopes[info.scope]
-    local options = vim[scope]
-    options[option] = not options[option]
-    if silent ~= true then
-        if options[option] then
-            M.info('enabled vim.' .. scope .. '.' .. option, 'Toggle')
-        else
-            M.warn('disabled vim.' .. scope .. '.' .. option, 'Toggle')
-        end
-    end
-end
-
-function M.map_set(...)
-    return {
-        ('<Cmd>silent set %s<CR>'):format(table.concat(vim.tbl_flatten { ... }, ' ')),
-        noremap = true
-    }
-end
-
-function M.toggle_settings(...)
-    local parts = {}
-    for _, setting in ipairs(vim.tbl_flatten { ... }) do
-        table.insert(parts, ('%s! %s?'):format(setting, setting))
-    end
-    return parts
-end
-
-function M.map_toggle_settings(...)
-    local parts = {}
-    for _, setting in ipairs(vim.tbl_flatten { ... }) do
-        table.insert(parts, ('%s! %s?'):format(setting, setting))
-    end
-    return M.map_set(parts)
 end
 
 TelescopeMapArgs = TelescopeMapArgs or {}

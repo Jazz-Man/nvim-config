@@ -1,5 +1,7 @@
 local conf = {}
 
+local fmt = string.format
+
 conf.lspconfig = function()
 
   require('nvim-lsp-installer').setup(
@@ -127,7 +129,7 @@ conf.null_ls = function()
 
   null_ls.setup(
     {
-      debug = true,
+      debug = false,
       log = { enable = true, level = 'warn', use_console = 'async' },
       on_attach = lsp_manager.common_on_attach,
       on_init = lsp_manager.common_on_init,
@@ -136,6 +138,7 @@ conf.null_ls = function()
         code_actions.refactoring,
         code_actions.shellcheck,
         code_actions.eslint_d.with({ prefer_local = 'node_modules/.bin' }),
+        code_actions.gitsigns,
 
         completion.spell,
         completion.tags,
@@ -411,51 +414,20 @@ conf.cmp = function()
     ),
     formatting = {
       format = function(_, vim_item)
-        vim_item.kind = string.format(
-          '%s %s', icons.lspkind[vim_item.kind], vim_item.kind
-        )
+
+        local kind = vim_item.kind
+
+        if vim.tbl_contains(icons.lspkind, kind) then
+          local _icon = icons.lspkind[vim_item.kind]
+
+          vim_item.kind = fmt('%s %s', _icon, kind)
+        end
 
         return vim_item
       end
     },
     sources = cmp.config.sources(sources),
 
-    sorting = {
-      comparators = {
-        function(entry1, entry2)
-          local types = require 'cmp.types'
-          local kind1 = entry1:get_kind()
-          local kind2 = entry2:get_kind()
-          if kind1 ~= kind2 then
-            if kind1 == types.lsp.CompletionItemKind.Text then
-              return false
-            end
-            if kind2 == types.lsp.CompletionItemKind.Text then
-              return true
-            end
-          end
-          local score1 = entry1.completion_item.score
-          local score2 = entry2.completion_item.score
-          if score1 and score2 then
-            local diff = score1 - score2
-            if diff < 0 then
-              return false
-            elseif diff > 0 then
-              return true
-            end
-          end
-        end,
-
-        -- The built-in comparators:
-        cmp.config.compare.offset,
-        cmp.config.compare.exact,
-        cmp.config.compare.score,
-        cmp.config.compare.kind,
-        cmp.config.compare.sort_text,
-        cmp.config.compare.length,
-        cmp.config.compare.order
-      }
-    },
     experimental = { native_menu = false, ghost_text = true }
   }
 

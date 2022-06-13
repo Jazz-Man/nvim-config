@@ -11,7 +11,7 @@ function M.setup_handlers()
 
   local config = {
 
-    virtual_text = { prefix = icons.icons.warningCircle },
+    virtual_text = { prefix = icons.icons.warningCircle, source = true },
     update_in_insert = false,
     underline = true,
     severity_sort = true,

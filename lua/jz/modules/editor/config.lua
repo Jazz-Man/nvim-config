@@ -5,68 +5,45 @@ config.comment = function()
   require('Comment').setup {
     padding = true, -- Add a space b/w comment and the line
     sticky = true, -- Whether the cursor should stay at its position
-    toggler = {
-      -- Linewise toggle current line using C-/
-      line = '<C-_>',
-      -- Blockwise toggle current line using C-\
-      block = '<C-\\>'
-    },
-    mapping = { basic = true, extra = false, extended = false }
+    ignore = '^$',
+    mapping = { basic = false, extra = false, extended = false }
   }
-
-end
-
-config.splits = function()
-  require('smart-splits').setup {
-    -- Ignored filetypes (only while resizing)
-    ignored_filetypes = { 'nofile', 'quickfix', 'prompt' },
-    -- Ignored buffer types (only while resizing)
-    ignored_buftypes = { 'NvimTree' },
-    -- when moving cursor between splits left or right,
-    -- place the cursor on the same row of the *screen*
-    -- regardless of line numbers. False by default.
-    -- Can be overridden via function parameter, see Usage.
-    move_cursor_same_row = false,
-    -- key to exit persistent resize mode
-    resize_mode_quit_key = '<ESC>',
-    -- set to true to silence the notifications
-    -- when entering/exiting persistent resize mode
-    resize_mode_silent = false
-  }
-
-end
-
-config.multi = function()
-  vim.g.VM_mouse_mappings = 1
-  vim.g.VM_silent_exit = 1
-  vim.g.VM_show_warnings = 0
-  vim.g.VM_default_mappings = 1
-
-  vim.g.VM_maps = {}
-  vim.g.VM_maps['Find Under'] = '<C-n>'
-  vim.g.VM_maps['Find Subword Under'] = '<C-n>'
-  vim.g.VM_maps['Select All'] = '<C-M-n>'
-  vim.g.VM_maps['Seek Next'] = 'n'
-  vim.g.VM_maps['Seek Prev'] = 'N'
-  vim.g.VM_maps['Undo'] = 'u'
-  vim.g.VM_maps['Redo'] = '<C-r>'
-  vim.g.VM_maps['Remove Region'] = '<cr>'
-  vim.g.VM_maps['Add Cursor Down'] = '<M-Down>'
-  vim.g.VM_maps['Add Cursor Up'] = '<M-Up>'
-  vim.g.VM_maps['Mouse Cursor'] = '<M-LeftMouse>'
-  vim.g.VM_maps['Mouse Word'] = '<M-RightMouse>'
-  vim.g.VM_maps['Add Cursor At Pos'] = '<M-i>'
 
 end
 
 config.treesitter = function()
-  local treesitter = require 'nvim-treesitter.configs'
 
-  vim.wo.foldmethod = 'expr'
-  vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+  local treesitter = require 'nvim-treesitter'
+  local query = require 'nvim-treesitter.query'
 
-  treesitter.setup {
+  local foldmethod_backups = {}
+  local foldexpr_backups = {}
+
+  treesitter.define_modules(
+    {
+      folding = {
+        enable = true,
+        attach = function(bufnr)
+          -- Fold settings are actually window based...
+          foldmethod_backups[bufnr] = vim.wo.foldmethod
+          foldexpr_backups[bufnr] = vim.wo.foldexpr
+          vim.wo.foldmethod = 'expr'
+          vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
+        end,
+        detach = function(bufnr)
+          vim.wo.foldmethod = foldmethod_backups[bufnr]
+          vim.wo.foldexpr = foldexpr_backups[bufnr]
+          foldmethod_backups[bufnr] = nil
+          foldexpr_backups[bufnr] = nil
+        end,
+        is_supported = query.has_folds
+      }
+    }
+  )
+
+  require 'nvim-treesitter.configs'.setup {
     ensure_installed = 'all',
+    sync_install = false,
     highlight = {
       enable = true, -- false will disable the whole extension
       additional_vim_regex_highlighting = false
@@ -131,14 +108,7 @@ config.treesitter = function()
           ['[]'] = '@class.outer'
         }
       },
-      lsp_interop = {
-        enable = true,
-        border = 'single',
-        peek_definition_code = {
-          ['<leader>df'] = '@function.outer',
-          ['<leader>dF'] = '@class.outer'
-        }
-      }
+      lsp_interop = { enable = true, border = 'single' }
     },
     playground = { enable = true },
     autopairs = { enable = true }
@@ -151,7 +121,7 @@ config.ts_autotag = function() require('nvim-ts-autotag').setup({}) end
 config.nvim_gomove = function()
   require('gomove').setup {
     -- whether or not to map default key bindings, (true/false)
-    -- map_defaults = true,
+    map_defaults = false
     -- whether or not to reindent lines moved vertically (true/false)
     -- reindent = true,
     -- whether or not to undojoin same direction moves (true/false)
@@ -200,22 +170,5 @@ config.blankline = function()
   )
 end
 config.refactoring = function() require('refactoring').setup({}) end
-
-config.nvim_gps = function()
-
-  local icons = require 'jz.config.icons'
-
-  require('nvim-gps').setup(
-    {
-      icons = {
-        ['class-name'] = icons.lspkind.Class, -- Classes and class-like objects
-        ['function-name'] = icons.lspkind.Function, -- Functions
-        ['method-name'] = icons.lspkind.Method -- Methods (functions inside class-like objects)
-      },
-      separator = ' > '
-    }
-  )
-
-end
 
 return config
