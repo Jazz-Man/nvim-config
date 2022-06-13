@@ -1,11 +1,11 @@
--- local present, impatient = pcall(require, "impatient")
---
--- if present then
---    impatient.enable_profile()
--- end
---
+--- TODO https://www.vi-improved.org/vim-tips/
+local present, impatient = pcall(require, 'impatient')
+
+if present then
+  impatient.enable_profile()
+else
+  vim.notify(impatient)
+end
 
 require 'jz.globals'
-require 'jz.options'
-
-require 'jz.packer_init'
+require 'jz.core'
