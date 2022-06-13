@@ -1,3 +1,11 @@
-vim.o.termguicolors = true
+--- TODO https://www.vi-improved.org/vim-tips/
+local present, impatient = pcall(require, 'impatient')
 
-require('init')
+if present then
+  impatient.enable_profile()
+else
+  vim.notify(impatient)
+end
+
+require 'jz.globals'
+require 'jz.core'
