@@ -4,9 +4,6 @@ local opt_local = vim.opt_local
 
 local autocmd = {
 
-  -- init_project = {
-  --   { event = 'VimEnter', options = { pattern = '*', command = ':Vexplore' } }
-  -- },
   no_cursorline_in_insert_mode = {
     {
       event = { 'InsertLeave', 'WinEnter', 'BufEnter' },
