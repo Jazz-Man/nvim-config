@@ -30,7 +30,7 @@ config.nvterm = function()
                     row = 0.3,
                     col = 0.25,
                     width = 0.5,
-                    height = 0.4,
+                    height = 0.3,
                     border = 'single'
                 },
                 horizontal = { location = 'rightbelow', split_ratio = 0.3 },

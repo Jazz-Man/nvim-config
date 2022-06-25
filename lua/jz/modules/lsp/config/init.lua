@@ -2,7 +2,7 @@ local conf = {}
 
 local fmt = string.format
 
-conf.lspconfig = function()
+function conf.lspconfig()
 
   require('nvim-lsp-installer').setup(
     {
@@ -32,27 +32,25 @@ conf.lspconfig = function()
   lsp_manager.setup('vimls')
   lsp_manager.setup(
     'lemminx', {
-    settings = {
-      xml = {
-        trace = { server = 'verbose' },
-        format = { enabled = true },
-        validation = {
-          noGrammar = 'hint',
-          schema = true,
-          enabled = true,
-          resolveExternalEntities = true
+      settings = {
+        xml = {
+          trace = { server = 'verbose' },
+          format = { enabled = true },
+          validation = {
+            noGrammar = 'hint',
+            schema = true,
+            enabled = true,
+            resolveExternalEntities = true
+          }
         }
       }
     }
-  }
   )
   lsp_manager.setup('intelephense', servers.php_lsp())
   lsp_manager.setup('cssmodules_ls', servers.cssmodules_lsp())
 
   lsp_manager.setup('cssls', servers.css_lsp())
 end
-
-conf.lsp_format = function() require('lsp-format').setup {} end
 
 conf.trouble = function()
 
@@ -110,38 +108,46 @@ end
 conf.lsp_signature = function()
 
   local icons = require 'jz.config.icons'
-  require 'lsp_signature'.setup(
+  require'lsp_signature'.setup(
     { hint_enable = true, hint_prefix = icons.lsp.hint, auto_close_after = 2 }
   )
 end
 
-conf.illuminate = function() vim.g.Illuminate_ftblacklist = { 'nerdtree' } end
-
 conf.null_ls = function()
-  local lsp_manager = require 'jz.modules.lsp.config.manager'
+  local au = require 'jz.utils.autocmd'
   local null_ls = require 'null-ls'
   local utils = require 'jz.utils'
 
   local formatting = null_ls.builtins.formatting
   local diagnostics = null_ls.builtins.diagnostics
   local code_actions = null_ls.builtins.code_actions
-  local completion = null_ls.builtins.completion
 
   null_ls.setup(
     {
       debug = false,
       log = { enable = true, level = 'warn', use_console = 'async' },
-      on_attach = lsp_manager.common_on_attach,
-      on_init = lsp_manager.common_on_init,
-      on_exit = lsp_manager.common_on_exit,
+      on_attach = function( _, bufnr )
+        au:au():desc('Format on save'):group('LspAutoFormat')
+          :event('BufWritePre'):buffer(
+            bufnr
+          ):callback(
+            function()
+
+              vim.lsp.buf.format {
+                bufnr = bufnr,
+                filter = function( lsp_client )
+                  return lsp_client.name == 'null-ls'
+                end
+              }
+            end
+          )
+      end,
       sources = {
         code_actions.refactoring,
         code_actions.shellcheck,
         code_actions.eslint_d.with({ prefer_local = 'node_modules/.bin' }),
         code_actions.gitsigns,
-
-        completion.spell,
-        completion.tags,
+        code_actions.gitrebase,
 
         diagnostics.trail_space,
         diagnostics.luacheck,
@@ -153,7 +159,7 @@ conf.null_ls = function()
 
             -- method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
             -- prefer_local = 'vendor/bin',
-            condition = function(nl_utils)
+            condition = function( nl_utils )
               return nl_utils.root_has_file({ 'psalm.xml' })
             end
           }
@@ -161,10 +167,10 @@ conf.null_ls = function()
         diagnostics.phpstan.with(
           {
             prefer_local = 'vendor/bin',
-            condition = function(nl_utils)
+            condition = function( nl_utils )
               return nl_utils.root_has_file(
-                { 'phpstan.neon', 'phpstan.neon.dist' }
-              )
+                       { 'phpstan.neon', 'phpstan.neon.dist' }
+                     )
 
             end
           }
@@ -172,7 +178,7 @@ conf.null_ls = function()
         diagnostics.phpmd.with(
           {
             prefer_local = 'vendor/bin',
-            condition = function(nl_utils)
+            condition = function( nl_utils )
               return nl_utils.root_has_file({ 'phpmd.ruleset.xml' })
             end
           }
@@ -231,10 +237,10 @@ conf.sql_lsp = function()
 
   lsp_manager.setup(
     'sqls', {
-    on_attach = function(client, bufnr)
-      require('sqls').on_attach(client, bufnr)
-    end
-  }
+      on_attach = function( client, bufnr )
+        require('sqls').on_attach(client, bufnr)
+      end
+    }
   )
 
 end
@@ -262,7 +268,25 @@ conf.lua_lsp = function()
           enable = true,
           -- Get the language server to recognize the `vim` global
           globals = { 'vim', 'nvim', 'RELOAD' }
-        }
+        },
+        hint = {
+          arrayIndex = 'Auto',
+          await = true,
+          enable = true,
+          paramName = 'All',
+          paramType = true,
+          setType = true
+        },
+        hover = {
+          enable = true,
+          enumsLimit = 5,
+          expandAlias = true,
+          previewFields = 50,
+          viewNumber = true,
+          viewString = true,
+          viewStringMax = 1000
+        },
+        semantic = { annotation = true, enable = true }
       }
     }
   }
@@ -326,20 +350,20 @@ conf.cmp = function()
   local has_words_before = function()
     local line, col = unpack(vim.api.nvim_win_get_cursor(0))
     return col ~= 0 and
-        vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col)
-        :match('%s') == nil
+             vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col)
+               :match('%s') == nil
   end
 
   local sources = {
 
     { name = 'nvim_lsp' },
+    { name = 'treesitter' },
+    { name = 'luasnip' },
     { name = 'nvim_lua' },
     { name = 'omni' },
-    { name = 'luasnip' },
     { name = 'nvim_lsp_signature_help' },
-    { name = 'treesitter' },
-    { name = 'buffer' },
-    { name = 'path' }
+    { name = 'path' },
+    { name = 'buffer' }
   }
 
   if vim.tbl_contains({ 'sql', 'mysql', 'plsql' }, vim.o.ft) then
@@ -349,11 +373,19 @@ conf.cmp = function()
 
   cmp.setup {
     snippet = {
-      expand = function(args)
+      expand = function( args )
         require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
       end
     },
 
+    completion = {
+      completeopt = 'menu,menuone,noselect',
+      get_trigger_characters = function( trigger_characters )
+        return vim.tbl_filter(
+                 function( char ) return char ~= ' ' end, trigger_characters
+               )
+      end
+    },
     mapping = cmp.mapping.preset.insert(
       {
         ['<C-e>'] = cmp.mapping {
@@ -380,7 +412,7 @@ conf.cmp = function()
 
         --- Compilation by tab
         ['<tab>'] = cmp.mapping(
-          function(fallback)
+          function( fallback )
 
             if cmp.visible() then
               cmp.select_next_item()
@@ -398,7 +430,7 @@ conf.cmp = function()
         ),
 
         ['<S-Tab>'] = cmp.mapping(
-          function(fallback)
+          function( fallback )
             if cmp.visible() then
               cmp.select_prev_item()
             elseif luasnip.jumpable(-1) then
@@ -413,7 +445,7 @@ conf.cmp = function()
       }
     ),
     formatting = {
-      format = function(_, vim_item)
+      format = function( _, vim_item )
 
         local kind = vim_item.kind
 
@@ -471,44 +503,44 @@ conf.nvim_go = function()
     quick_type_flags = { '--just-types' }
   }
 
-  go.config.update_tool('quicktype', function(tool) tool.pkg_mgr = 'yarn' end)
+  go.config.update_tool('quicktype', function( tool ) tool.pkg_mgr = 'yarn' end)
 
   lsp_manager.setup(
     'gopls', {
-    settings = {
-      gopls = {
-        analyses = {
-          unusedparams = true,
-          unreachable = false,
-          fieldalignment = true,
-          nilness = true,
-          shadow = true,
-          unusedwrite = true,
-          useany = true
-        },
-        codelenses = {
-          generate = true,
-          gc_details = true,
-          test = true,
-          tidy = true,
-          upgrade_dependency = true,
-          regenerate_cgo = true
-        },
-        annotations = {
-          bounds = true,
-          escape = true,
-          inline = true,
-          ['nil'] = true
-        },
-        staticcheck = true,
-        usePlaceholders = true,
-        completeUnimported = true,
-        hoverKind = 'Structured',
-        experimentalUseInvalidMetadata = true,
-        experimentalPostfixCompletions = true
+      settings = {
+        gopls = {
+          analyses = {
+            unusedparams = true,
+            unreachable = false,
+            fieldalignment = true,
+            nilness = true,
+            shadow = true,
+            unusedwrite = true,
+            useany = true
+          },
+          codelenses = {
+            generate = true,
+            gc_details = true,
+            test = true,
+            tidy = true,
+            upgrade_dependency = true,
+            regenerate_cgo = true
+          },
+          annotations = {
+            bounds = true,
+            escape = true,
+            inline = true,
+            ['nil'] = true
+          },
+          staticcheck = true,
+          usePlaceholders = true,
+          completeUnimported = true,
+          hoverKind = 'Structured',
+          experimentalUseInvalidMetadata = true,
+          experimentalPostfixCompletions = true
+        }
       }
     }
-  }
   )
 
 end
@@ -519,14 +551,14 @@ conf.symbols_outline = function()
   vim.g.symbols_outline = {
 
     highlight_hovered_item = true,
-    show_guides = true,
+    show_guides = false,
     position = 'right',
     border = 'single',
     relative_width = true,
     width = 25,
     auto_close = false,
     auto_preview = true,
-    show_numbers = false,
+    show_numbers = true,
     show_relative_numbers = false,
     show_symbol_details = true,
     preview_bg_highlight = 'Pmenu',

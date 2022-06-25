@@ -1,4 +1,4 @@
-return function(use)
+return function( use )
 
   local conf = require 'jz.modules.lsp.config'
 
@@ -15,19 +15,9 @@ return function(use)
       config = conf.null_ls
     },
     {
-      'RRethy/vim-illuminate',
-      after = 'nvim-lspconfig',
-      config = conf.illuminate
-    },
-    {
       'ray-x/lsp_signature.nvim',
       after = 'nvim-lspconfig',
       config = conf.lsp_signature
-    },
-    {
-      'lukas-reineke/lsp-format.nvim',
-      after = 'nvim-lspconfig',
-      config = conf.lsp_format
     }
   }
 
@@ -127,7 +117,7 @@ return function(use)
   use {
     'folke/trouble.nvim',
     requires = 'kyazdani42/nvim-web-devicons',
-    config = conf.trouble,
-    cmd = { 'Trouble', 'TroubleClose', 'TroubleToggle', 'TroubleRefresh' }
+    config = conf.trouble
+    -- cmd = { 'Trouble', 'TroubleClose', 'TroubleToggle', 'TroubleRefresh' }
   }
 end

@@ -67,7 +67,7 @@ end
 function M.ts_lsp()
 
   local ts_utils = require('nvim-lsp-ts-utils')
-  local utils = require 'jz.utils'
+  -- local utils = require 'jz.utils'
 
   local init_options = vim.tbl_deep_extend(
     'force', ts_utils.init_options, {
@@ -150,10 +150,10 @@ function M.ts_lsp()
       -- required to fix code action ranges and filter diagnostics
       ts_utils.setup_client(client)
 
-      local options = { buffer = bufnr }
-      utils.nmap('gs', ':TSLspOrganize<CR>', options)
-      utils.nmap('gr', ':TSLspRenameFile<CR>', options)
-      utils.nmap('gi', ':TSLspImportAll<CR>', options)
+      -- local options = { buffer = bufnr }
+      -- utils.nmap('gs', ':TSLspOrganize<CR>', options)
+      -- utils.nmap('gr', ':TSLspRenameFile<CR>', options)
+      -- utils.nmap('gi', ':TSLspImportAll<CR>', options)
     end
 
   }

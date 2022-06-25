@@ -36,8 +36,8 @@ local global_config = {
   shada = { '!', '\'300', '<50', '@100', 's10', 'h' },
   textwidth = 100, -- Maximum width of text that is being inserted.
 
-  errorbells = true,
-  visualbell = true,
+  errorbells = false,
+  visualbell = false,
 
   -----------------------------------------------------------
   -- Encoding and File formatt
@@ -217,8 +217,7 @@ local global_config = {
   -----------------------------------------------------------
   -- Completion
   -----------------------------------------------------------
-  wildmode = 'full',
-  dictionary = opt.dictionary + { '/usr/share/dict/words' }
+  wildmode = 'full'
 
 }
 
@@ -310,11 +309,11 @@ for _, provider in pairs(providers) do g[fmt('loaded_%s_provider', provider)] = 
 end
 
 -- Map leader to <space>
-vim.api.nvim_set_keymap(
-  '', '<Space>', '<Nop>', { noremap = true, silent = true }
-)
+-- vim.api.nvim_set_keymap(
+--   '', '<Space>', '<Nop>', { noremap = true, silent = true }
+-- )
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.maplocalleader = ','
 
 if fn.executable('rg') then
   -- if ripgrep installed, use that as a grepper

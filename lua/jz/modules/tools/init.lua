@@ -4,8 +4,6 @@ return function(use)
   --- Please Vim, stop with these swap file messages. Just switch to the correct window!
   use 'gioele/vim-autoswap'
 
-  use 'Iron-E/nvim-libmodal'
-
   use { 'tpope/vim-sensible' }
 
   use { 'tpope/vim-sleuth' }
