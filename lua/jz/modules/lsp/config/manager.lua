@@ -1,22 +1,14 @@
 local M = {}
 
-local lsp_utils = require 'jz.modules.lsp.config.utils'
-local lsp_keymap = require 'jz.modules.lsp.config.keymap'
-local utils = require('jz.utils')
 local extend = vim.tbl_deep_extend
+local au = require 'jz.utils.autocmd'
 
 function M.common_on_exit(_, _)
 
-  utils.clear_augroup('lsp_document_highlight')
-  utils.clear_augroup('lsp_code_lens_refresh')
+  au:clean('lsp_document_highlight')
 
-end
+  au:clean('lsp_code_lens_refresh')
 
-local function lsp_highlight_document(client)
-  -- Set autocommands conditional on server_capabilities
-  local status_ok, illuminate = pcall(require, 'illuminate')
-  if not status_ok then return end
-  illuminate.on_attach(client)
 end
 
 function M.common_on_attach(client, bufnr)
@@ -24,36 +16,57 @@ function M.common_on_attach(client, bufnr)
   client.server_capabilities.documentHighlightProvider = true
   client.server_capabilities.documentFormattingProvider = true
 
-  local lsp_format_ok, lsp_format = pcall(require, 'lsp-format')
-
-  if lsp_format_ok then lsp_format.on_attach(client) end
-
-  lsp_keymap.setup(client, bufnr)
-  lsp_highlight_document(client)
-  lsp_utils.setup_codelens_refresh(client, bufnr)
-
   vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
-  -- Per buffer LSP indicators control
-  if vim.b.lsp_virtual_text_enabled == nil then
-    vim.b.lsp_virtual_text_enabled = true
-  end
+  au:au_group(
+    { buffer = bufnr, group = 'lsp_document_highlight' }, function()
 
-  if vim.b.lsp_virtual_text_mode == nil then
-    vim.b.lsp_virtual_text_mode = 'SignsVirtualText'
-  end
+    au:au():event({ 'CursorHold', 'CursorHoldI' }):callback(
+      vim.lsp.buf.document_highlight
+    )
+    au:au():event({ 'CursorMoved', 'CursorMovedI' }):callback(
+      vim.lsp.buf.clear_references
+    )
 
-  vim.api.nvim_create_autocmd(
-    'CursorHold', {
-    buffer = bufnr,
-    callback = function()
-      local opts = {
-        focusable = false,
-        close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }
-      }
-      vim.diagnostic.open_float(nil, opts)
+  end
+  )
+
+  local codelens_ok, codelens_supported = pcall(
+    function()
+      return client.supports_method 'textDocument/codeLens'
     end
-  }
+  )
+
+
+  if codelens_ok and codelens_supported then
+
+    au:au():group('lsp_code_lens_refresh'):event({ 'BufEnter', 'InsertLeave' })
+        :callback(
+          vim.lsp.codelens.refresh
+        )
+
+  end
+  au:au_group(
+    { buffer = bufnr, group = 'lsp_config', desc = 'LSP' }, function()
+
+    au:au():desc('Show diagnostic'):event({ 'CursorHold', 'CursorHoldI' })
+        :callback(
+          function()
+
+            local opts = {
+              focusable = false,
+              close_events = {
+                'BufLeave',
+                'CursorMoved',
+                'InsertEnter',
+                'FocusLost'
+              }
+            }
+            vim.diagnostic.open_float(nil, opts)
+          end
+        )
+
+  end
   )
 
 end
@@ -146,7 +159,6 @@ end
 function M.setup(server_name, server_config)
 
   local lspconfig = require 'lspconfig'
-  -- local null_ls_ok, null_ls = pcall(require, 'null-ls')
 
   vim.validate { name = { server_name, 'string' } }
 

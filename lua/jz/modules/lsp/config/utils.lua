@@ -1,6 +1,5 @@
 local M = {}
 
-local utils = require 'jz.utils'
 local handlers = vim.lsp.handlers
 
 function M.setup_handlers()
@@ -49,30 +48,6 @@ function M.setup_handlers()
   )
 end
 
-function M.setup_codelens_refresh(client, bufnr)
-  local status_ok, codelens_supported = pcall(
-    function()
-      return client.supports_method 'textDocument/codeLens'
-    end
-  )
-  if not status_ok or not codelens_supported then return end
 
-  utils.autocommand(
-    {
-      lsp_code_lens_refresh = {
-        {
-          event = { 'BufEnter', 'InsertLeave' },
-          options = {
-            group = 'lsp_code_lens_refresh',
-            buffer = bufnr,
-            callback = vim.lsp.codelens.refresh
-
-          }
-        }
-      }
-    }
-  )
-
-end
 
 return M

@@ -5,26 +5,28 @@ else
     reloader = plenary_reload.reload_module
 end
 
-P = function( v )
+P = function(v)
     print(vim.inspect(v))
     return v
 end
 
-RELOAD = function( ... ) return reloader(...) end
+RELOAD = function(...) return reloader(...) end
 
 ---@param name string
-R = function( name )
+R = function(name)
     RELOAD(name)
     return require(name)
 end
 
-_G.dump = function( ... ) print(vim.inspect(...)) end
+_G.dump = function(...)
+    for _, v in ipairs { ... } do print(vim.inspect(v, { depth = math.huge })) end
+end
 
-_G.profile = function( cmd, times )
+_G.profile = function(cmd, times)
     times = times or 100
     local args = {}
     if type(cmd) == 'string' then
-        args = {cmd}
+        args = { cmd }
         cmd = vim.cmd
     end
     local start = vim.loop.hrtime()
@@ -32,8 +34,8 @@ _G.profile = function( cmd, times )
         local ok = pcall(cmd, unpack(args))
         if not ok then
             error(
-              'Command failed: ' .. tostring(ok) .. ' ' ..
-                vim.inspect({cmd = cmd, args = args})
+                'Command failed: ' .. tostring(ok) .. ' ' ..
+                vim.inspect({ cmd = cmd, args = args })
             )
         end
     end
@@ -43,12 +45,11 @@ end
 ---comment
 ---@param ... string
 ---@return nil|table
-_G.prequire = function( ... )
+_G.prequire = function(...)
 
     local status, lib = pcall(require, ...)
     if status then return lib end
     return nil
 end
-
 
 -- R('nvim_utils')

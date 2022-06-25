@@ -85,8 +85,6 @@ config.bufferline = function()
 
     local icons = require('jz.config.icons')
 
-    local groups = require('bufferline.groups')
-
     require('bufferline').setup {
         options = {
 
@@ -108,45 +106,40 @@ config.bufferline = function()
             max_name_length = 14,
             max_prefix_length = 13,
             tab_size = 20,
+
             show_tab_indicators = true,
             show_buffer_default_icon = true,
             show_buffer_icons = true,
             enforce_regular_tabs = false,
             view = 'multiwindow',
             show_buffer_close_icons = true,
-            separator_style = 'thick',
+
+            separator_style = 'thin',
             always_show_bufferline = true,
 
             diagnostics = false,
             themable = true,
-
+            numbers = 'buffer_id',
             groups = {
                 options = {
                     toggle_hidden_on_enter = true -- when you re-enter a hidden group this options re-opens that group so the buffer is visible
                 },
                 items = {
                     {
-                        name = 'Tests', -- Mandatory
-                        highlight = { gui = 'underline', guisp = 'blue' }, -- Optional
-                        priority = 2, -- determines where it will appear relative to other groups (Optional)
-                        icon = '', -- Optional
+                        name = 'tests', -- Mandatory
                         matcher = function(buf) -- Mandatory
                             return buf.name:match('%_test') or buf.name:match('%_spec')
                         end
                     },
                     {
-                        name = 'Docs',
-                        highlight = { gui = 'undercurl', guisp = 'green' },
+                        name = 'docs',
                         auto_close = false, -- whether or not close this group if it doesn't contain the current buffer
                         matcher = function(buf)
                             return buf.name:match('%.md') or buf.name:match('%.txt')
-                        end,
-                        separator = { -- Optional
-                            style = require('bufferline.groups').separator.tab
-                        }
+                        end
                     },
-                    groups.builtin.ungrouped, -- the ungrouped buffers will be in the middle of the grouped ones
-                    groups.builtin.pinned:with({ icon = '' })
+                    require('bufferline.groups').builtin.ungrouped, -- the ungrouped buffers will be in the middle of the grouped ones
+                    require('bufferline.groups').builtin.pinned:with({ icon = '' })
                 }
             }
         }
