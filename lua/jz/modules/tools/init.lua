@@ -1,4 +1,4 @@
-return function(use)
+return function( use )
   local conf = require('jz.modules.tools.config')
 
   --- Please Vim, stop with these swap file messages. Just switch to the correct window!

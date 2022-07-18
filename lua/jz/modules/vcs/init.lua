@@ -1,4 +1,4 @@
-return function(use)
+return function( use )
   local conf = require 'jz.modules.vcs.config'
 
   use {
@@ -11,10 +11,6 @@ return function(use)
   use {
     'lewis6991/gitsigns.nvim',
     requires = 'nvim-lua/plenary.nvim',
-    event = {
-      'BufRead'
-      -- "BufReadPre",
-    },
     config = conf.gitsigns
   }
 

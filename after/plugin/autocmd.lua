@@ -1,101 +1,45 @@
-local utils = require 'jz.utils'
+local au = require 'jz.utils.autocmd'
 
 local opt_local = vim.opt_local
 
-local autocmd = {
+au:au_group(
+  { group = 'no_cursorline_in_insert_mode' }, function()
+    au:au():event({ 'InsertLeave', 'WinEnter', 'BufEnter' }):callback(
+      function() opt_local.cursorline = true end
+    )
 
-  no_cursorline_in_insert_mode = {
-    {
-      event = { 'InsertLeave', 'WinEnter', 'BufEnter' },
-      options = { callback = function() opt_local.cursorline = true end }
-    },
-    {
-      event = { 'InsertEnter', 'WinLeave', 'BufLeave' },
-      options = { callback = function() opt_local.cursorline = false end }
-    }
-  },
+    au:au():event({ 'InsertEnter', 'WinLeave', 'BufLeave' }):callback(
+      function() opt_local.cursorline = false end
+    )
+  end
+)
 
-  buffer_mappings = {
-    {
-      event = 'FileType',
-      options = {
-        pattern = {
-          'qf',
-          'help',
-          'man',
-          'floaterm',
-          'lspinfo',
-          'lsp-installer',
-          'null-ls-info'
-        },
-        command = 'nnoremap <silent> <buffer> q :close<CR>'
-      }
-    }
-  },
-  disable_undo = {
-    {
-      event = 'BufWritePre',
-      options = {
-        pattern = { '/tmp/*', 'COMMIT_EDITMSG', 'MERGE_MSG', '*.tmp', '*bak' },
-        callback = function() opt_local.undofile = false end
-      }
-    }
-  },
-  auto_resize = {
-    {
-      event = 'VimResized',
-      options = { pattern = '*', command = 'tabdo wincmd =' }
-    }
-  },
-  terminal_settings = {
-    {
-      event = 'TermOpen',
-      options = {
-        callback = function()
-          opt_local.bufhidden = 'hide'
-          opt_local.number = false
-        end
-      }
-    },
-    { event = 'CmdLineEnter', options = { command = 'set nosmartcase' } },
-    { event = 'CmdLineLeave', options = { command = 'set smartcase' } },
-    {
-      event = 'CmdlineEnter',
-      options = { pattern = '/,\\?', command = ':set hlsearch' }
-    },
-    {
-      event = 'CmdlineLeave',
-      options = { pattern = '/,\\?', command = ':set nohlsearch' }
-    }
-  },
-  packer_user_config = {
-    -- Autocommand that reloads neovim whenever you save the packer_init.lua file
-    {
-      event = 'BufWritePost',
-      options = {
-        pattern = 'packer_init.lua',
-        command = 'source <afile> | PackerSync'
-      }
-    },
-    {
-      event = 'BufWritePost',
-      options = {
-        pattern = { '$VIM_PATH/**', '!packer_init.lua' },
-        command = 'source $MYVIMRC | redraw',
-        nested = true
-      }
-    }
-  },
-  yank = {
-    {
-      event = 'TextYankPost',
-      options = {
-        callback = function() vim.highlight.on_yank({ timeout = 100 }) end,
-        pattern = '*'
+au:au():group('disable_undo'):event('BufWritePre'):pattern(
+  { '/tmp/*', 'COMMIT_EDITMSG', 'MERGE_MSG', '*.tmp', '*bak' }
+):callback(function() opt_local.undofile = false end)
 
-      }
-    }
-  }
-}
+au:au():group('yank'):pattern('*'):event('TextYankPost'):callback(
+  function() vim.highlight.on_yank({ timeout = 100 }) end
+)
 
-utils.autocommand(autocmd)
+au:au():group('auto_resize'):event('VimResized'):pattern('*'):command(
+  'tabdo wincmd ='
+)
+
+au:au_group(
+  { group = 'terminal_settings' }, function()
+
+    au:au():event('TermOpen'):callback(
+      function()
+        opt_local.bufhidden = 'hide'
+        opt_local.number = false
+      end
+    )
+
+    au:au():event('CmdLineEnter'):command('set nosmartcase')
+    au:au():event('CmdLineLeave'):command('set smartcase')
+    au:au():event('CmdLineEnter'):pattern([[/,\?]]):command(':set hlsearch')
+    au:au():event('CmdLineLeave'):pattern([[/,\?]]):command(':set nohlsearch')
+
+  end
+)
