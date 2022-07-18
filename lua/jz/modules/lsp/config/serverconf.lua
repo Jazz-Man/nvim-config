@@ -38,68 +38,66 @@ end
 
 function M.yaml_lsp()
 
-  return require('yaml-companion').setup(
-    {
-      builtin_matchers = { kubernetes = { enabled = true } },
-      lspconfig = {
-        flags = { debounce_text_changes = 150 },
-        settings = {
-          redhat = { telemetry = { enabled = false } },
-          yaml = {
-            format = { enable = true },
-            hover = true,
-            schemaDownload = { enable = true },
-            schemaStore = {
-              enable = true,
-              url = 'https://www.schemastore.org/api/json/catalog.json'
-            },
-            trace = { server = 'debug' },
-            validate = true
-          }
-        },
-        single_file_support = true
-      }
+  return require('yaml-companion').setup {
+    builtin_matchers = { kubernetes = { enabled = true } },
+    lspconfig = {
+      flags = { debounce_text_changes = 150 },
+      settings = {
+        redhat = { telemetry = { enabled = false } },
+        yaml = {
+          format = { enable = true },
+          hover = true,
+          schemaDownload = { enable = true },
+          schemaStore = {
+            enable = true,
+            url = 'https://www.schemastore.org/api/json/catalog.json'
+          },
+          trace = { server = 'debug' },
+          validate = true
+        }
+      },
+      single_file_support = true
     }
-  )
+  }
 
 end
 
 function M.ts_lsp()
 
   local ts_utils = require('nvim-lsp-ts-utils')
-  -- local utils = require 'jz.utils'
 
   local init_options = vim.tbl_deep_extend(
-    'force', ts_utils.init_options, {
-    npmLocation = '/usr/local/bin/npm',
-    preferences = {
-      jsxAttributeCompletionStyle = 'auto',
-      disableSuggestions = false,
-      quotePreference = 'auto',
-      includeCompletionsForModuleExports = true,
-      includeCompletionsForImportStatements = true,
-      includeCompletionsWithSnippetText = true,
-      includeCompletionsWithInsertText = true,
-      includeAutomaticOptionalChainCompletions = true,
-      includeCompletionsWithClassMemberSnippets = true,
-      allowIncompleteCompletions = true,
-      importModuleSpecifierEnding = 'auto',
-      allowTextChangesInNewFiles = true,
-      lazyConfiguredProjectsFromExternalProject = true,
-      providePrefixAndSuffixTextForRename = true,
-      provideRefactorNotApplicableReason = true,
-      allowRenameOfImportPath = true,
-      includePackageJsonAutoImports = true,
-      displayPartsForJSDoc = true,
-      generateReturnInDocTemplate = true
+                         'force', ts_utils.init_options, {
+      npmLocation = '/usr/local/bin/npm',
+      preferences = {
+        jsxAttributeCompletionStyle = 'auto',
+        disableSuggestions = false,
+        quotePreference = 'auto',
+        includeCompletionsForModuleExports = true,
+        includeCompletionsForImportStatements = true,
+        includeCompletionsWithSnippetText = true,
+        includeCompletionsWithInsertText = true,
+        includeAutomaticOptionalChainCompletions = true,
+        includeCompletionsWithClassMemberSnippets = true,
+        allowIncompleteCompletions = true,
+        importModuleSpecifierEnding = 'auto',
+        allowTextChangesInNewFiles = true,
+        lazyConfiguredProjectsFromExternalProject = true,
+        providePrefixAndSuffixTextForRename = true,
+        provideRefactorNotApplicableReason = true,
+        allowRenameOfImportPath = true,
+        includePackageJsonAutoImports = true,
+        displayPartsForJSDoc = true,
+        generateReturnInDocTemplate = true
+      }
     }
-  }
-  )
+
+                       )
 
   return {
     init_options = init_options,
     settings = {},
-    on_attach = function(client, bufnr)
+    on_attach = function( client, _ )
       ts_utils.setup {
         debug = false,
         disable_commands = false,

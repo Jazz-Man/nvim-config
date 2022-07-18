@@ -1,3 +1,5 @@
+local au = require 'jz.utils.autocmd'
+
 ---@class RhsOptions
 ---@field public noremap boolean|nil
 ---@field public remap boolean|nil
@@ -18,37 +20,38 @@
 ---@class GroupOptions
 ---@field prefix string|nil
 ---@field mode string|table|nil
----@field debug boolean
+---@field ft string|table
 ---@field options RhsOptions
+
 local keymap_options = {
-    silent = true,
-    expr = nil,
-    noremap = false,
-    remap = nil,
-    buffer = nil,
-    desc = nil
+  silent = true,
+  expr = nil,
+  noremap = false,
+  remap = nil,
+  buffer = nil,
+  desc = nil
 }
 
 local mode_list = {
-    map = '',
-    map_ic = '!',
-    nmap = 'n',
-    vmap = 'v',
-    smap = 's',
-    xmap = 'x',
-    omap = 'o',
-    imap = 'i',
-    lmap = 'l',
-    cmap = 'c',
-    tmap = 't'
+  map = '',
+  map_ic = '!',
+  nmap = 'n',
+  vmap = 'v',
+  smap = 's',
+  xmap = 'x',
+  omap = 'o',
+  imap = 'i',
+  lmap = 'l',
+  cmap = 'c',
+  tmap = 't'
 }
 
 local rhs = {}
 
 local M = {
 
-    group_mapper_active = false,
-    group_mapper_options = { prefix = nil, debug = false, buffer = nil, desc = nil }
+  active = false,
+  options = { prefix = nil, debug = false, buffer = nil, desc = nil, ft = nil }
 
 }
 
@@ -62,179 +65,176 @@ local fmt = string.format
 ---@param cmd_str string
 ---@param options CmdOptions|nil
 ---@return string
-function cmd:cmd(cmd_str, options)
+function cmd:cmd( cmd_str, options )
 
-    options = vim.tbl_deep_extend(
-        'force', { before = '', after = '' }, options or {}
-    )
+  options = vim.tbl_deep_extend(
+              'force', { before = '', after = '' }, options or {}
+            )
 
-    return fmt('%s<cmd>%s<cr>%s', options.before, cmd_str, options.after)
+  return fmt('%s<cmd>%s<cr>%s', options.before, cmd_str, options.after)
 
 end
 
 ---@param module string
 ---@param options string
 ---@return string|nil
-function cmd:lua(module, options)
-    return cmd:cmd(fmt('lua require"%s".%s', module, options))
+function cmd:lua( module, options )
+  return cmd:cmd(fmt('lua require"%s".%s', module, options))
 end
 
 ---@param cmd_str string
 ---@return string
-function cmd:plug(cmd_str) return fmt('<Plug>%s', cmd_str) end
+function cmd:plug( cmd_str ) return fmt('<Plug>%s', cmd_str) end
 
 ---@param cmd_str string
 ---@return string
-function cmd:cu(cmd_str) return cmd:cmd(cmd_str, { before = '<C-u>' }) end
+function cmd:cu( cmd_str ) return cmd:cmd(cmd_str, { before = '<C-u>' }) end
 
 ---@param module string
 ---@param options string
 ---@return string
-function cmd:treesitter(module, options)
-    return cmd:lua(fmt('nvim-treesitter.%s', module), options)
+function cmd:treesitter( module, options )
+  return cmd:lua(fmt('nvim-treesitter.%s', module), options)
 end
 
 ---@param module string
 ---@param options string
 ---@return string
-function cmd:treesitter_textobjects(module, options)
+function cmd:treesitter_textobjects( module, options )
 
-    return cmd:treesitter(fmt('textobjects.%s', module), options)
+  return cmd:treesitter(fmt('textobjects.%s', module), options)
 end
 
 ---@param module string
 ---@param options string
 ---@return string
-function cmd:treesitter_refactor(module, options)
+function cmd:treesitter_refactor( module, options )
 
-    return cmd:treesitter(fmt('refactor.%s', module), options)
+  return cmd:treesitter(fmt('refactor.%s', module), options)
 end
 
 ---@param options string
 ---@return string
-function cmd:comment(options) return cmd:lua('Comment.api', options) end
+function cmd:comment( options ) return cmd:lua('Comment.api', options) end
 
 ---@param toggle string
 ---@return string
-function cmd:comment_call(toggle)
+function cmd:comment_call( toggle )
 
-    return cmd:comment(fmt('call("toggle_%s_op")', toggle))
+  return cmd:comment(fmt('call("toggle_%s_op")', toggle))
 end
 
-function cmd:comment_toggle(toggle)
+function cmd:comment_toggle( toggle )
 
-    local toggle_cmd = fmt('toggle_%s_op(vim.fn.visualmode())', toggle)
+  local toggle_cmd = fmt('toggle_%s_op(vim.fn.visualmode())', toggle)
 
-    return fmt('<esc>%s', cmd:comment(toggle_cmd))
+  return fmt('<esc>%s', cmd:comment(toggle_cmd))
 end
 
-local mapper_options = function(option, default)
+local function mapper( option, default )
 
-    if M.group_mapper_active then
+  if M.active then
 
-        local cnf = M.group_mapper_options
+    local cnf = M.options
 
-        if option == 'prefix' and cnf.prefix then
+    if option == 'prefix' and cnf.prefix then
 
-            default = type(default) == 'table' and default or { default }
+      default = type(default) == 'table' and default or { default }
 
-            return vim.tbl_map(function(k) return cnf.prefix .. k end, default)
+      return vim.tbl_map(function( k ) return cnf.prefix .. k end, default)
 
-        end
-
-        if option == 'desc' and cnf.desc then
-            return fmt([[%s: %s]], cnf.desc, default)
-        end
-
-        if cnf[option] then return cnf[option] end
-
-        return default
     end
+
+    if option == 'desc' and cnf.desc then
+      return fmt([[%s: %s]], cnf.desc, default)
+    end
+
+    if cnf[option] then return cnf[option] end
+
     return default
+  end
+  return default
 end
 
 ---@param mode string|table
 ---@param map_option RhsOptions
 ---@return RhsClass
-function rhs:new(mode, map_option)
-    local instance = { mode = mode, keymap = nil, options = keymap_options }
+function rhs:new( mode, map_option )
+  local state = { mode = mode, keymap = nil, options = keymap_options }
 
-    instance.options = vim.tbl_deep_extend(
-        'force', instance.options, map_option or {}
-    )
+  state.options = vim.tbl_deep_extend('force', state.options, map_option or {})
 
-    if M.group_mapper_active then
+  if M.active then
 
-        local cnf = M.group_mapper_options
+    local cnf = M.options
 
-        if cnf.buffer then instance.options.buffer = cnf.buffer end
+    if cnf.buffer then state.options.buffer = cnf.buffer end
 
-    end
+  end
 
-    setmetatable(instance, self)
-    self.__index = self
-    return instance
+  setmetatable(state, self)
+  self.__index = self
+  return state
 end
 
 ---@param command string|function
-function rhs:c(command)
+function rhs:c( command )
 
-    if not self.keymap then return end
+  if not self.keymap then return end
 
-    local lhss = self.keymap
-    if type(lhss) ~= 'table' then lhss = { lhss } end
+  local lhss = self.keymap
+  if type(lhss) ~= 'table' then lhss = { lhss } end
 
-    for _, lhs in ipairs(lhss) do
+  for _, lhs in ipairs(lhss) do
 
-        vim.keymap.set(self.mode, lhs, command, self.options)
-    end
+    vim.keymap.set(self.mode, lhs, command, self.options)
+  end
 
 end
 
 ---@param key string|table
 ---@return RhsClass
-function rhs:k(key)
+function rhs:k( key )
 
-    -- if group_mapper.debug then dump(key) end
-    self.keymap = mapper_options('prefix', key)
+  self.keymap = mapper('prefix', key)
 
-    return self
+  return self
 end
 
 ---@param key string
 ---@return RhsClass
-function rhs:leader(key)
+function rhs:leader( key )
 
-    self.keymap = fmt([[<leader>%s]], key)
+  self.keymap = fmt([[<leader>%s]], key)
 
-    return self
+  return self
 end
 
 ---@param buffer number|boolean
 ---@return RhsClass
-function rhs:buffer(buffer)
-    self.options.buffer = mapper_options('buffer', buffer)
-    return self
+function rhs:buffer( buffer )
+  self.options.buffer = mapper('buffer', buffer)
+  return self
 
 end
 
 ---@return RhsClass
 function rhs:remap()
-    self.options.remap = mapper_options('remap', true)
-    return self
+  self.options.remap = mapper('remap', true)
+  return self
 end
 
 ---@return RhsClass
 function rhs:expr()
-    self.options.expr = mapper_options('expr', true)
-    return self
+  self.options.expr = mapper('expr', true)
+  return self
 end
 
 ---@param desc string
 ---@return RhsClass
-function rhs:desc(desc)
-    self.options.desc = mapper_options('desc', desc)
-    return self
+function rhs:desc( desc )
+  self.options.desc = mapper('desc', desc)
+  return self
 end
 
 local map = {}
@@ -244,11 +244,11 @@ local noremap_options = { noremap = true }
 ---@param mode string|table
 ---@param map_option RhsOptions|nil
 ---@return RhsClass
-function map:mode(mode, map_option) return rhs:new(mode, map_option) end
+function map:mode( mode, map_option ) return rhs:new(mode, map_option) end
 
 ---@param map_option RhsOptions|nil
 ---@return RhsClass
-function map:map(map_option) return map:mode(mode_list.map, map_option) end
+function map:map( map_option ) return map:mode(mode_list.map, map_option) end
 
 ---@return RhsClass
 function map:map_ic() return map:mode(mode_list.map_ic) end
@@ -312,19 +312,23 @@ function map:tnoremap() return map:mode(mode_list.tmap, noremap_options) end
 
 ---@param options GroupOptions
 ---@param fn function
-function map:group(options, fn)
+function map:group( options, fn )
 
-    M.group_mapper_active = true
+  M.active = true
 
-    local old_options = M.group_mapper_options
+  local old_options = M.options
 
-    M.group_mapper_options = vim.tbl_deep_extend(
-        'force', old_options, options or {}
-    )
+  M.options = vim.tbl_deep_extend('force', old_options, options or {})
 
+  if M.options.ft then
+
+    au:au():event('FileType'):pattern(M.options.ft):callback(fn)
+  else
     fn()
-    M.group_mapper_active = false
-    M.group_mapper_options = old_options
+  end
+
+  M.active = false
+  M.options = old_options
 
 end
 

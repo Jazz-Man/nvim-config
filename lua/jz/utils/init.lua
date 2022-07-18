@@ -5,7 +5,6 @@
 ---@class AutoCommand
 ---@field event string|table
 ---@field options AutoCommandOptions
-
 local M = {}
 
 local fmt = string.format
@@ -27,7 +26,7 @@ local fmt = string.format
 
 -- Find the proper directory separator depending
 -- on lua installation or OS.
----@return string
+
 local function dir_separator() return vim.fn.has 'win32' == 1 and '\\' or '/' end
 
 ---comment
@@ -51,43 +50,6 @@ function M.dir_path( path, what )
   if vim.fn.isdirectory(dir) ~= 0 then vim.fn.mkdir(dir, 'p', '0755') end
 
   return dir
-end
-
--- check index in table
----@param tab table
----@param idx string
----@return boolean
-function M.has_key( tab, idx )
-  for index, _ in pairs(tab) do if index == idx then return true end end
-  return false
-end
-
----@param definitions table
-function M.autocommand( definitions )
-  for group_name, definition in pairs(definitions) do
-    local group = vim.api.nvim_create_augroup(group_name, {})
-
-    for _, def in ipairs(definition) do
-
-      local opts = vim.tbl_deep_extend(
-                     'keep', { group = group }, def.options or {}
-                   )
-      vim.api.nvim_create_autocmd(def.event, opts)
-    end
-
-  end
-end
-
----Clear autogroup command
----@param name string
-function M.clear_augroup( name )
-
-  local exists, _ = pcall(vim.api.nvim_get_autocmds, { group = name })
-
-  if not exists then return end
-
-  vim.api.nvim_clear_autocmds { group = name }
-
 end
 
 ---Keep your cursor position during some actions

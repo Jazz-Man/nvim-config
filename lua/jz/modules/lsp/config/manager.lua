@@ -3,7 +3,19 @@ local M = {}
 local extend = vim.tbl_deep_extend
 local au = require 'jz.utils.autocmd'
 
-function M.common_on_exit(_, _)
+---@param client any
+---@param method string
+---@return boolean
+local function check_support( client, method )
+
+  local ok, supported = pcall(
+                          function() return client.supports_method(method) end
+                        )
+
+  return ok and supported
+end
+
+function M.common_on_exit( _, _ )
 
   au:clean('lsp_document_highlight')
 
@@ -11,45 +23,41 @@ function M.common_on_exit(_, _)
 
 end
 
-function M.common_on_attach(client, bufnr)
+function M.common_on_attach( client, bufnr )
 
-  client.server_capabilities.documentHighlightProvider = true
+  -- client.server_capabilities.documentHighlightProvider = true
   client.server_capabilities.documentFormattingProvider = true
 
   vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
-  au:au_group(
-    { buffer = bufnr, group = 'lsp_document_highlight' }, function()
+  if check_support(client, 'textDocument/documentHighlight') then
 
-    au:au():event({ 'CursorHold', 'CursorHoldI' }):callback(
-      vim.lsp.buf.document_highlight
-    )
-    au:au():event({ 'CursorMoved', 'CursorMovedI' }):callback(
-      vim.lsp.buf.clear_references
-    )
+    au:au_group(
+      { buffer = bufnr, group = 'lsp_document_highlight' }, function()
 
+        au:au():event({ 'CursorHold', 'CursorHoldI' }):callback(
+          vim.lsp.buf.document_highlight
+        )
+        au:au():event({ 'CursorMoved', 'CursorMovedI' }):callback(
+          vim.lsp.buf.clear_references
+        )
+
+      end
+    )
   end
-  )
 
-  local codelens_ok, codelens_supported = pcall(
-    function()
-      return client.supports_method 'textDocument/codeLens'
-    end
-  )
-
-
-  if codelens_ok and codelens_supported then
+  if check_support(client, 'textDocument/codeLens') then
 
     au:au():group('lsp_code_lens_refresh'):event({ 'BufEnter', 'InsertLeave' })
-        :callback(
-          vim.lsp.codelens.refresh
-        )
+      :callback(
+        vim.lsp.codelens.refresh
+      )
 
   end
   au:au_group(
     { buffer = bufnr, group = 'lsp_config', desc = 'LSP' }, function()
 
-    au:au():desc('Show diagnostic'):event({ 'CursorHold', 'CursorHoldI' })
+      au:au():desc('Show diagnostic'):event({ 'CursorHold', 'CursorHoldI' })
         :callback(
           function()
 
@@ -66,12 +74,12 @@ function M.common_on_attach(client, bufnr)
           end
         )
 
-  end
+    end
   )
 
 end
 
-function M.common_on_init(client, _)
+function M.common_on_init( client, _ )
 
   client.config.flags = client.config.flags or {}
   client.config.flags.allow_incremental_sync = true
@@ -94,7 +102,7 @@ end
 
 ---@param server_config table
 ---@return table
-local function resolve_config(server_config)
+local function resolve_config( server_config )
 
   local defaults = {
     on_attach = M.common_on_attach,
@@ -109,7 +117,7 @@ local function resolve_config(server_config)
 
     local old_on_attach = server_config.on_attach
 
-    defaults.on_attach = function(client, bufnr)
+    defaults.on_attach = function( client, bufnr )
 
       old_on_attach(client, bufnr)
       M.common_on_attach(client, bufnr)
@@ -119,7 +127,7 @@ local function resolve_config(server_config)
   if server_config.on_init then
     local old_on_init = server_config.on_init
 
-    defaults.on_init = function(client, bufnr)
+    defaults.on_init = function( client, bufnr )
       old_on_init(client, bufnr)
       M.common_on_init(client, bufnr)
     end
@@ -129,7 +137,7 @@ local function resolve_config(server_config)
 
     local old_on_exit = server_config.on_exit
 
-    defaults.on_exit = function(client, bufnr)
+    defaults.on_exit = function( client, bufnr )
       old_on_exit(client, bufnr)
       M.common_on_exit(client, bufnr)
     end
@@ -144,9 +152,9 @@ local function resolve_config(server_config)
   if server_config.capabilities then
 
     defaults.capabilities = extend(
-      'force', defaults.capabilities,
-      server_config.capabilities or {}
-    )
+                              'force', defaults.capabilities,
+                              server_config.capabilities or {}
+                            )
   end
 
   return defaults
@@ -156,7 +164,7 @@ end
 ---comment
 ---@param server_name string
 ---@param server_config table|nil
-function M.setup(server_name, server_config)
+function M.setup( server_name, server_config )
 
   local lspconfig = require 'lspconfig'
 

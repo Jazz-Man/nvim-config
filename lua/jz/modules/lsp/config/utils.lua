@@ -30,7 +30,7 @@ function M.setup_handlers()
       source = 'always',
       header = '',
       prefix = '',
-      format = function(d)
+      format = function( d )
         local t = vim.deepcopy(d)
         local code = d.code or (d.user_data and d.user_data.lsp.code)
         if code then
@@ -44,10 +44,9 @@ function M.setup_handlers()
   vim.diagnostic.config(config)
   handlers['textDocument/hover'] = vim.lsp.with(handlers.hover, lsp_float)
   handlers['textDocument/signatureHelp'] = vim.lsp.with(
-    handlers.signature_help, lsp_float
-  )
+                                             handlers.signature_help, lsp_float
+
+                                           )
 end
-
-
 
 return M

@@ -149,11 +149,13 @@ conf.null_ls = function()
         code_actions.gitsigns,
         code_actions.gitrebase,
 
+        diagnostics.codespell,
+        diagnostics.yamllint,
         diagnostics.trail_space,
-        diagnostics.luacheck,
         diagnostics.shellcheck,
         diagnostics.sqlfluff,
         diagnostics.php,
+        diagnostics.revive,
         diagnostics.psalm.with(
           {
 
@@ -198,7 +200,9 @@ conf.null_ls = function()
         formatting.jq,
         formatting.sqlfluff,
         formatting.phpcsfixer,
-        formatting.prettier
+        formatting.prettier,
+        formatting.codespell,
+        formatting.goimports
       }
     }
   )
@@ -268,25 +272,7 @@ conf.lua_lsp = function()
           enable = true,
           -- Get the language server to recognize the `vim` global
           globals = { 'vim', 'nvim', 'RELOAD' }
-        },
-        hint = {
-          arrayIndex = 'Auto',
-          await = true,
-          enable = true,
-          paramName = 'All',
-          paramType = true,
-          setType = true
-        },
-        hover = {
-          enable = true,
-          enumsLimit = 5,
-          expandAlias = true,
-          previewFields = 50,
-          viewNumber = true,
-          viewString = true,
-          viewStringMax = 1000
-        },
-        semantic = { annotation = true, enable = true }
+        }
       }
     }
   }
@@ -473,11 +459,10 @@ conf.nvim_go = function()
     -- notify: use nvim-notify
     notify = false,
     -- auto commands
-    auto_format = true,
-    auto_lint = true,
+    auto_format = false,
+    auto_lint = false,
     -- linters: revive, errcheck, staticcheck, golangci-lint
     linter = 'revive',
-    -- linter_flags: e.g., {revive = {'-config', '/path/to/config.yml'}}
     linter_flags = {},
     -- lint_prompt_style: qf (quickfix), vt (virtual text)
     lint_prompt_style = 'vt',
