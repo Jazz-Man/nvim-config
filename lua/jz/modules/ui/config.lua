@@ -178,11 +178,8 @@ config.nvim_tree = function()
   require('nvim-tree').setup {
     disable_netrw = true,
     hijack_netrw = true,
-    open_on_setup = false,
-    ignore_ft_on_setup = {},
     open_on_tab = true,
     hijack_cursor = true,
-    update_cwd = false,
     diagnostics = { enable = false },
     update_focused_file = {
       enable = true,
@@ -194,14 +191,11 @@ config.nvim_tree = function()
     git = { enable = true, ignore = true, timeout = 500 },
     actions = { open_file = { resize_window = true } },
     view = {
-      hide_root_folder = false,
-      mappings = { custom_only = false, list = {} },
-      number = false,
-      relativenumber = false,
-      signcolumn = 'yes'
+      adaptive_size = true,
+      side = 'left',
+      mappings = { custom_only = false, list = {} }
     },
-    trash = { cmd = 'trash', require_confirm = true },
-    filesystem_watchers = { enable = false, interval = 100 }
+    trash = { cmd = 'trash', require_confirm = true }
   }
 
 end
