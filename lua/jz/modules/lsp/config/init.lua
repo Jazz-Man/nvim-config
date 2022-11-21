@@ -251,7 +251,7 @@ end
 
 conf.lua_lsp = function()
   local lsp_manager = require 'jz.modules.lsp.config.manager'
-  local lua_dev = require 'lua-dev'
+  local lua_dev = require 'neodev'
 
   local luadevcfg = {
     library = {

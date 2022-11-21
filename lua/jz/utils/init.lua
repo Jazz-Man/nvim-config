@@ -32,7 +32,7 @@ local function dir_separator() return vim.fn.has 'win32' == 1 and '\\' or '/' en
 ---comment
 ---@param path string
 ---@param what any
----@return string
+---@return string|boolean
 function M.dir_path( path, what )
 
   if what == nil then what = 'state' end

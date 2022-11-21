@@ -1,4 +1,4 @@
-return function(use)
+return function( use )
   local conf = require 'jz.modules.editor.config'
 
   use { 'numToStr/Comment.nvim', config = conf.comment }

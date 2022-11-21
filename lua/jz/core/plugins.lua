@@ -8,19 +8,19 @@ local fn = vim.fn
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 
 if fn.empty(fn.glob(install_path)) > 0 then
-    PACKER_BOOTSTRAP = fn.system(
+  PACKER_BOOTSTRAP = fn.system(
 
-                         {
-          'git',
-          'clone',
-          '--depth',
-          '1',
-          'https://github.com/wbthomason/packer.nvim',
-          install_path
-      }
-                       )
-    print 'Installing packer close and reopen Neovim...'
-    vim.cmd [[packadd packer.nvim]]
+                       {
+      'git',
+      'clone',
+      '--depth',
+      '1',
+      'https://github.com/wbthomason/packer.nvim',
+      install_path
+    }
+                     )
+  print 'Installing packer close and reopen Neovim...'
+  vim.cmd [[packadd packer.nvim]]
 end
 
 -- Use a protected call so we don't error out on first use
@@ -30,32 +30,37 @@ local packer = require('packer')
 -- Have packer use a popup window
 
 packer.init {
-    ensure_dependencies = true,
-    display = {
-        open_fn = function()
-            return require('packer.util').float {border = 'rounded'}
-        end
-    },
-    autoremove = true
+  ensure_dependencies = true,
+  display = {
+    open_fn = function()
+      return require('packer.util').float { border = 'rounded' }
+    end
+  },
+  autoremove = true
 }
 
 -- Install plugins
 return packer.startup(
          function( use )
-      -- speed up 'require', must be the first plugin
-      use {'lewis6991/impatient.nvim'}
+    -- speed up 'require', must be the first plugin
+    use 'lewis6991/impatient.nvim'
 
-      use {'wbthomason/packer.nvim'} -- packer can manage itself
+    use 'wbthomason/packer.nvim' -- packer can manage itself
 
-      use 'norcalli/nvim_utils'
+    use 'norcalli/nvim_utils'
 
-      use 'nvim-lua/plenary.nvim'
-      use 'nvim-lua/popup.nvim'
+    use 'nvim-lua/plenary.nvim'
+    use 'nvim-lua/popup.nvim'
 
-      for _, modules in ipairs(require('jz.modules')) do modules(use) end
+    require('jz.modules.lsp')(use)
 
-      -- Automatically set up your configuration after cloning packer.nvim
-      -- Put this at the end after all plugins
-      if PACKER_BOOTSTRAP then require('packer').sync() end
+    require('jz.modules.editor')(use)
+    require('jz.modules.tools')(use)
+    require('jz.modules.ui')(use)
+    require('jz.modules.vcs')(use)
+
+    -- Automatically set up your configuration after cloning packer.nvim
+    -- Put this at the end after all plugins
+    if PACKER_BOOTSTRAP then require('packer').sync() end
   end
        )

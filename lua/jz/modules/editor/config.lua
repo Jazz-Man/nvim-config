@@ -23,14 +23,14 @@ config.treesitter = function()
     {
       folding = {
         enable = true,
-        attach = function(bufnr)
+        attach = function( bufnr )
           -- Fold settings are actually window based...
           foldmethod_backups[bufnr] = vim.wo.foldmethod
           foldexpr_backups[bufnr] = vim.wo.foldexpr
           vim.wo.foldmethod = 'expr'
           vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
         end,
-        detach = function(bufnr)
+        detach = function( bufnr )
           vim.wo.foldmethod = foldmethod_backups[bufnr]
           vim.wo.foldexpr = foldexpr_backups[bufnr]
           foldmethod_backups[bufnr] = nil
@@ -41,9 +41,10 @@ config.treesitter = function()
     }
   )
 
-  require 'nvim-treesitter.configs'.setup {
+  require'nvim-treesitter.configs'.setup {
     ensure_installed = 'all',
     sync_install = false,
+    auto_install = true,
     highlight = {
       enable = true, -- false will disable the whole extension
       additional_vim_regex_highlighting = false,

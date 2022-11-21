@@ -352,9 +352,7 @@ autocmd(
           )
 
           m:nmap():desc('Code action'):k('ca'):c(vim.lsp.buf.code_action)
-          m:vmap():desc('Code action (range)'):k('ca'):c(
-            vim.lsp.buf.range_code_action
-          )
+          --- m:vmap():desc('Code action (range)'):k('ca'):c(vim.lsp.buf.range_code_action)
 
           m:nmap():desc('Rename'):k('R'):c(vim.lsp.buf.rename)
 

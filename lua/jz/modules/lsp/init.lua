@@ -22,7 +22,7 @@ return function( use )
   }
 
   use {
-    'folke/lua-dev.nvim',
+    'folke/neodev.nvim',
     wants = 'nvim-lspconfig',
     ft = { 'lua' },
     config = conf.lua_lsp
