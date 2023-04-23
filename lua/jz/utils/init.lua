@@ -52,6 +52,12 @@ function M.dir_path( path, what )
   return dir
 end
 
+---@param plugin string
+function M.has(plugin)
+  return require("lazy.core.config").plugins[plugin] ~= nil
+end
+
+
 ---Keep your cursor position during some actions
 ---@param arguments string
 function M.preserve( arguments )

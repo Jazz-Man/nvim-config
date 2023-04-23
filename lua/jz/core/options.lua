@@ -71,7 +71,7 @@ local global_config = {
   splitbelow = true, -- Horizontal split to the bottom
   ignorecase = true, -- Ignore case letters when search
   smartcase = true, -- Ignore lowercase for the whole pattern
-  termguicolors = true, -- Enable 24-bit RGB colors
+  -- termguicolors = true, -- Enable 24-bit RGB colors
   wrap = false,
   showmode = false, -- If in Insert, Replace or Visual mode put a message on the last line.
   pumblend = 17, -- Enables pseudo-transparency for the popup-menu.
@@ -272,33 +272,6 @@ for name, value in pairs(buffer_options) do bo[name] = value end
 g.vimsyn_embed = 'lPr'
 g.nojoinspaces = true
 
--- disable builtins plugins
-local disabled_built_ins = {
-  '2html_plugin',
-  'getscript',
-  'getscriptPlugin',
-  'gzip',
-  'logipat',
-  'matchit',
-  'netrw',
-  'netrwFileHandlers',
-  'loaded_remote_plugins',
-  'loaded_tutor_mode_plugin',
-  'netrwPlugin',
-  'netrwSettings',
-  'rrhelper',
-  'spellfile_plugin',
-  'tar',
-  'tarPlugin',
-  'vimball',
-  'vimballPlugin',
-  'zip',
-  'zipPlugin',
-  'matchparen' -- matchparen.nvim disables the default
-}
-
-for _, plugin in pairs(disabled_built_ins) do vim.g['loaded_' .. plugin] = 1 end
-
 vim.g.did_load_filetypes = 1
 
 -- Disable providers
@@ -312,11 +285,11 @@ local providers = {
 for _, provider in pairs(providers) do g[fmt('loaded_%s_provider', provider)] =
   0 end
 
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ','
-
 if fn.executable('rg') then
   -- if ripgrep installed, use that as a grepper
   vim.opt.grepprg = 'rg --vimgrep --no-heading --smart-case'
   vim.opt.grepformat = '%f:%l:%c:%m,%f:%l:%m'
 end
+
+-- Fix markdown indentation settings
+vim.g.markdown_recommended_style = 0
