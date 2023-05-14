@@ -1,7 +1,7 @@
 return function( use )
   local conf = require 'jz.modules.ui.config'
 
-  use { 'sainnhe/sonokai', config = conf.sonokai }
+  -- use { 'sainnhe/sonokai', config = conf.sonokai }
 
   use 'folke/lsp-colors.nvim'
 

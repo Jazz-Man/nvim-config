@@ -171,6 +171,5 @@ config.blankline = function()
     }
   )
 end
-config.refactoring = function() require('refactoring').setup({}) end
 
 return config

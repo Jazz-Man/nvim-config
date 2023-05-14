@@ -7,37 +7,37 @@ local autocmd = vim.api.nvim_create_autocmd
 
 local nav_keys = { h = 'Left', j = 'Down', k = 'Up', l = 'Right' }
 
-m:group(
-  { prefix = '<leader>' }, function()
+-- m:group(
+--   { prefix = '<leader>' }, function()
 
-    m:nmap():k('e'):desc('NvimTree: Open File manager')
-      :c(c:cmd('NvimTreeToggle'))
+--     m:nmap():k('e'):desc('NvimTree: Open File manager')
+--       :c(c:cmd('NvimTreeToggle'))
 
-    -- Copy/Paste clipboard
-    m:nmap():k('y'):c('"+y')
-    m:nmap():k('p'):c('"+p')
-    m:nmap():k('P'):c('"+P')
+--     -- Copy/Paste clipboard
+--     m:nmap():k('y'):c('"+y')
+--     m:nmap():k('p'):c('"+p')
+--     m:nmap():k('P'):c('"+P')
 
-    -- Quickly insert an empty new line without entering insert mode
-    m:nmap():k('o'):c('o<Esc>')
-    m:nmap():k('O'):c('O<Esc>')
+--     -- Quickly insert an empty new line without entering insert mode
+--     m:nmap():k('o'):c('o<Esc>')
+--     m:nmap():k('O'):c('O<Esc>')
 
-    m:nmap():k('t'):c(c:cmd('TroubleToggle'))
+--     m:nmap():k('t'):c(c:cmd('TroubleToggle'))
 
-    local terminal_keys = { h = 'horizontal', v = 'vertical' }
+--     local terminal_keys = { h = 'horizontal', v = 'vertical' }
 
-    for t_key, t_direction in pairs(terminal_keys) do
+--     for t_key, t_direction in pairs(terminal_keys) do
 
-      local cms_desc = fmt('toggle in terminal %s mode', t_direction)
+--       local cms_desc = fmt('toggle in terminal %s mode', t_direction)
 
-      m:nmap():k(t_key):desc(cms_desc):c(
-        c:lua(
-          'nvterm.terminal', fmt('new("%s")', t_direction)
-        )
-      )
-    end
-  end
-)
+--       m:nmap():k(t_key):desc(cms_desc):c(
+--         c:lua(
+--           'nvterm.terminal', fmt('new("%s")', t_direction)
+--         )
+--       )
+--     end
+--   end
+-- )
 
 m:group(
   {

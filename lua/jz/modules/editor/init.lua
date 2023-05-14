@@ -28,13 +28,6 @@ return function( use )
     -- ft = conf.ts_autotag_filetypes
   }
 
-  use {
-    'ThePrimeagen/refactoring.nvim',
-    config = conf.refactoring,
-    requires = { 'nvim-lua/plenary.nvim' },
-    after = 'nvim-treesitter'
-  }
-
   use { 'booperlv/nvim-gomove', config = conf.nvim_gomove }
 
   use {
