@@ -6,7 +6,7 @@ return {
       { 'folke/neoconf.nvim', cmd = 'Neoconf', config = true },
       {
         'folke/neodev.nvim',
-        ft = { 'lua' },
+        -- ft = { 'lua' },
         config = {
           library = {
             enabled = true,
