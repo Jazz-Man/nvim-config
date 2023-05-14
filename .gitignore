@@ -1,7 +1,0 @@
-.nvimlog
-.netrwhist
-.DS_Store
-plugin/packer_compiled.*
-.vscode/
-.php_cs
-Profiles.json
