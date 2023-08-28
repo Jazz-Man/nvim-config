@@ -1,3 +1,5 @@
+require 'lua/user/autocmds'
+
 return {
   -- Set colorscheme to use
   colorscheme = "onenord",
