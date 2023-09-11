@@ -2,7 +2,9 @@ local fmt = string.format
 local fn = vim.fn   -- access vim functions
 local opt = vim.opt -- global for let options
 
--- opt.rtp:append(astronvim.install.config .. "/lua")
+-- opt.rtp:append(astronvim.install.config .. "/lua/user/lua")
+-- opt.rtp:append(astronvim.install.config .. "/jz")
+-- opt.rtp:append(astronvim.install.config .. "/lua/user/options")
 
 opt.completeopt:append { "noinsert", "menuone", "noselect", "preview" }
 opt.shortmess:append "c"
@@ -20,9 +22,13 @@ opt.formatoptions = opt.formatoptions
     + "j" -- Auto-remove comments if possible.
     - "2" -- I'm not in gradeschool anymore
 
+
+-- print(vim.inspect(opt.rtp))
+
+
 return {
   opt = {
-    rtp = opt.rtp:append(astronvim.install.config .. "/lua/user/lua"),
+    rtp = opt.rtp,
     exrc = false,       -- enable exrc
     secure = true,      -- enable secure mode
     shell = "/bin/zsh", -- change default shell

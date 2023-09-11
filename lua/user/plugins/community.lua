@@ -15,4 +15,5 @@ return {
   { import = "astrocommunity.diagnostics.trouble-nvim" },
   { import = "astrocommunity.motion.nvim-spider" },
   { import = "astrocommunity.motion.vim-matchup" },
+  { import = "astrocommunity.editing-support.refactoring-nvim" },
 }

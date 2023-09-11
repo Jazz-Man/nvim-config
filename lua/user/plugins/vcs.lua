@@ -9,9 +9,9 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
     event = "User AstroGitFile",
     opts = {
-      diff_binaries = false,   -- Show diffs for binaries
+      diff_binaries = false, -- Show diffs for binaries
       enhanced_diff_hl = true, -- See ':h diffview-config-enhanced_diff_hl'
-      use_icons = true,        -- Requires nvim-web-devicons
+      use_icons = true, -- Requires nvim-web-devicons
     },
   },
 }
