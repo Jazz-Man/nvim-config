@@ -15,5 +15,11 @@ return {
   { import = "astrocommunity.diagnostics.trouble-nvim" },
   { import = "astrocommunity.motion.nvim-spider" },
   { import = "astrocommunity.motion.vim-matchup" },
+
   { import = "astrocommunity.editing-support.refactoring-nvim" },
+  { import = "astrocommunity.editing-support.todo-comments-nvim" },
+  { import = "astrocommunity.editing-support.yanky-nvim" },
+  { import = "astrocommunity.indent.mini-indentscope" },
+  { import = "astrocommunity.programming-language-support.nvim-jqx" },
+  { import = "astrocommunity.programming-language-support.rest-nvim" },
 }

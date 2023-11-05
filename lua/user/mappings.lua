@@ -28,14 +28,16 @@ m:group({ desc = "Duplicate" }, function()
   m:vnoremap():desc("selection downwards"):k("<C-d>"):c(c:cmd "copy.")
 end)
 
-m:xmap():desc("copy selection to clipboard"):k("Y"):c '"+y'
-
-m:nmap():desc("copy entire file contents"):k("yY"):c(function() util.preserve 'norm ggVG"+y' end)
-
-m:nmap():desc("Go to file under cursor (new tab)"):k([[gF]]):c [[<C-w>gf]]
+m:group({ prefix = "s", desc = "Split" }, function()
+  m:nnoremap():desc("left above"):k("h"):c(c:cmd "leftabove vsplit")
+  m:nnoremap():desc("below right"):k("j"):c(c:cmd "belowright split")
+  m:nnoremap():desc("above left"):k("k"):c(c:cmd "aboveleft split")
+  m:nnoremap():desc("right below"):k("l"):c(c:cmd "rightbelow vsplit")
+end)
 
 return {
   n = {
     ["vK"] = { [[<C-\><C-N>:help <C-R><C-W><CR>]], desc = "Show help for current line or string" },
+    ["gF"] = { [[<C-w>gf]], desc = "Go to file under cursor (new tab)" },
   },
 }
