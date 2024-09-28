@@ -75,6 +75,8 @@ return {
     showmatch = true, -- Show matching brackets when text indicator is over them
     magic = true, -- Enable regex magic
 
+    shadafile = fn.stdpath "data" .. "/shada/main.shada",
+
     wildignorecase = true, -- Ignore case when completing file names
 
     wildignore = {

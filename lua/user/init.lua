@@ -1,6 +1,6 @@
 _G.urequire = function(modname)
-  local ok, mod = pcall(require, "lua.user.".. modname)
-  
+  local ok, mod = pcall(require, "lua.user." .. modname)
+
   if not ok then
     vim.notify(mod, vim.log.levels.ERROR)
   else
@@ -8,9 +8,9 @@ _G.urequire = function(modname)
   end
 end
 
-_G.rutils = function (modname)
-  local ok, mod = pcall(require, "user.lua.jz.utils.".. modname)
-  
+_G.rutils = function(modname)
+  local ok, mod = pcall(require, "user.lua.jz.utils." .. modname)
+
   if not ok then
     vim.notify(mod, vim.log.levels.ERROR)
   else
